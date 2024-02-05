@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,22 +17,24 @@ import java.util.List;
 
 public class Loader {
 
-    // Crea una lista de seguimientos de los VAO y VBO
-    private List<Integer> vaos = new ArrayList<>();
-    private List<Integer> vbos = new ArrayList<>();
+    // Crea una lista de seguimientos de los VAO y VBO para poder eliminarlos cuando se cierre el juego
+    private final List<Integer> vaos = new ArrayList<>();
+    private final List<Integer> vbos = new ArrayList<>();
 
     /**
      * Obtiene las posiciones de los vertices y los carga en un VAO.
      *
      * @param positions posiciones de los vertices.
+     * @param indices   indices.
      * @return la informacion sobre el VAO como modelo sin procesar.
      */
-    public RawModel loadToVAO(float[] positions) {
+    public RawModel loadToVAO(float[] positions, int[] indices) {
         int vaoID = createVAO();
+        // Vincula el buffer de indices
+        bindIndicesBuffer(indices);
         storeDataInAttributeList(0, positions);
         unbindVAO();
-        // Divide el numero de vertices del modelo por tres ya que cada vertice tiene tres floats (x, y, z)
-        return new RawModel(vaoID, positions.length / 3);
+        return new RawModel(vaoID, indices.length);
     }
 
     private int createVAO() {
@@ -41,6 +44,19 @@ public class Loader {
         // Activa el VAO
         GL30.glBindVertexArray(vaoID);
         return vaoID;
+    }
+
+    /**
+     * Carga el buffer de indices y lo vincula a un VAO.
+     */
+    private void bindIndicesBuffer(int[] indices) {
+        // Crea un VBO vacio usando los buffers
+        int vboID = GL15.glGenBuffers();
+        vbos.add(vboID);
+        // Vincula el buffer usando un buffer de matriz de elementos y eso le dice a OpenGL que lo use como buffer de indices
+        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboID);
+        IntBuffer buffer = storeDataInIntBuffer(indices);
+        GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
     }
 
     /**
@@ -80,6 +96,19 @@ public class Loader {
      */
     private FloatBuffer storeDataInFloatBuffer(float[] data) {
         FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
+        buffer.put(data);
+        buffer.flip();
+        return buffer;
+    }
+
+    /**
+     * Almacena los indices en el VAO.
+     *
+     * @param data datos.
+     * @return buffer de datos.
+     */
+    private IntBuffer storeDataInIntBuffer(int[] data) {
+        IntBuffer buffer = BufferUtils.createIntBuffer(data.length);
         buffer.put(data);
         buffer.flip();
         return buffer;
