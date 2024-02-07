@@ -1,0 +1,13 @@
+#version 400 core
+
+// La entrada al fragmentShader es la salida del vertexShader
+in vec3 colour;
+
+// La salida es el color del pixel que esta procesando actualmente y que sera un vector de 4 colores
+out vec4 out_Color;
+
+// Convierte el color de entrada al color de salida
+void main(void) {
+    out_Color = vec4(colour, 1.0);
+}
+

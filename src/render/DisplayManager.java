@@ -3,6 +3,10 @@ package render;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.*;
 
+/**
+ * Administra la visualizacion de la ventana.
+ */
+
 public class DisplayManager {
 
     private static final int WIDTH = 1280;

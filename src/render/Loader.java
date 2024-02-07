@@ -24,15 +24,15 @@ public class Loader {
     /**
      * Obtiene las posiciones de los vertices y los carga en un VAO.
      *
-     * @param positions posiciones de los vertices.
-     * @param indices   indices.
+     * @param vertices datos de los vertices.
+     * @param indices  indices.
      * @return la informacion sobre el VAO como modelo sin procesar.
      */
-    public RawModel loadToVAO(float[] positions, int[] indices) {
+    public RawModel loadToVAO(float[] vertices, int[] indices) {
         int vaoID = createVAO();
         // Vincula el buffer de indices
         bindIndicesBuffer(indices);
-        storeDataInAttributeList(0, positions);
+        storeDataInAttributeList(0, vertices);
         unbindVAO();
         return new RawModel(vaoID, indices.length);
     }
