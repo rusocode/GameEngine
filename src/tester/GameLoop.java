@@ -1,8 +1,9 @@
 package tester;
 
-import org.lwjgl.opengl.Display;
 import render.*;
 import shaders.StaticShader;
+
+import org.lwjgl.opengl.Display;
 
 /**
  * El renderizado con index buffer renderiza el juego un poco mas rapido, ademas de garantizar que los modelos no ocupen
