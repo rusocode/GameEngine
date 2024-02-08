@@ -1,4 +1,4 @@
-package render;
+package models;
 
 /**
  * Representa un modelo 3D crudo almacenado en memoria. Cada modelo es un VAO. Las propiedades e informacion de dicho modelo son

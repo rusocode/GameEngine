@@ -15,8 +15,8 @@ public class StaticShader extends ShaderProgram {
 
     @Override
     protected void bindAttributes() {
-        /* Vincula el atributo 0 del VAO porque ahi es donde se almacena la posicion de vertice y lo conecta a la variable de
-         * posicion de entrada en el vertexShader. */
         super.bindAttribute(0, "position");
+        // Vincula las coordenadas de texturas para que le de al sombreador de vertices acceso a estas coordenadas en el VAO
+        super.bindAttribute(1, "textureCoords");
     }
 }
