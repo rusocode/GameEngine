@@ -1,5 +1,7 @@
 package render;
 
+import javax.swing.*;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.*;
 
@@ -21,7 +23,9 @@ public class DisplayManager {
             Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
             Display.create(new PixelFormat(), attribs);
         } catch (LWJGLException e) {
-            throw new RuntimeException(e);
+            JOptionPane.showMessageDialog(null, "Error", e.getMessage(), JOptionPane.ERROR_MESSAGE);
+            Display.destroy();
+            System.exit(1);
         }
 
         GL11.glViewport(0, 0, WIDTH, HEIGHT);

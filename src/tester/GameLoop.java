@@ -4,13 +4,12 @@ import models.RawModel;
 import models.TexturedModel;
 import render.*;
 import shaders.StaticShader;
-
-import org.lwjgl.opengl.Display;
 import textures.ModelTexture;
 
+import org.lwjgl.opengl.Display;
+
 /**
- * El renderizado con index buffer renderiza el juego un poco mas rapido, ademas de garantizar que los modelos no ocupen
- * demasiado espacio en la memoria.
+ * Bucle principal del juego.
  */
 
 public class GameLoop {
