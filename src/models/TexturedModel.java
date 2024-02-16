@@ -3,7 +3,7 @@ package models;
 import textures.ModelTexture;
 
 /**
- * Representa un modelo texturizado, porque el modelo sin formato solo representa datos del modelo.
+ * Representa un modelo texturizado, ya que el modelo sin formato solo representa datos.
  */
 
 public class TexturedModel {

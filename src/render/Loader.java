@@ -34,12 +34,12 @@ public class Loader {
     private final List<Integer> textures = new ArrayList<>();
 
     /**
-     * Obtiene las posiciones de los vertices y los carga en un VAO.
+     * Carga las propiedades del VBO en el VAO.
      *
      * @param positions     posicion de los vertices.
      * @param textureCoords coordenadas de texturas.
      * @param indices       indices.
-     * @return la informacion sobre el VAO como modelo sin procesar.
+     * @return modelo sin procesar.
      */
     public RawModel loadToVAO(float[] positions, float[] textureCoords, int[] indices) {
         int vaoID = createVAO();
@@ -57,7 +57,7 @@ public class Loader {
      */
     private int createVAO() {
         // Crea un VAO vacio
-        int vaoID = GL30.glGenVertexArrays(); // Genera nombres de objetos de matriz de vertices
+        int vaoID = GL30.glGenVertexArrays(); // Generar nombres de objetos de matriz de vertices
         vaos.add(vaoID);
         // Vincula el VAO
         GL30.glBindVertexArray(vaoID); // Vincula un objeto de matriz de vertices
@@ -65,18 +65,18 @@ public class Loader {
     }
 
     /**
-     * Vincula el bufer de indices.
+     * Vincula el buffer de indices.
      *
      * @param indices indices.
      */
     private void bindIndicesBuffer(int[] indices) {
-        // Crea un VBO vacio (bufer vacio)
-        int vboID = GL15.glGenBuffers();
+        // Crea un VBO vacio (buffer vacio)
+        int vboID = GL15.glGenBuffers(); // Generar nombres de objetos de buffer
         vbos.add(vboID);
-        // Vincula el bufer del VBO
+        // Vincula el buffer del VBO
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboID);
         IntBuffer buffer = storeDataInIntBuffer(indices);
-        // Crea e inicializa el almacen de datos de un objeto de bufer
+        // Crea e inicializa el almacen de datos de un objeto de buffer
         GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
     }
 
@@ -90,15 +90,15 @@ public class Loader {
     private void storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data) {
         int vboID = GL15.glGenBuffers();
         vbos.add(vboID);
-        // Vincula el bufer del VBO
+        // Vincula el buffer del VBO
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
         FloatBuffer buffer = storeDataInFloatBuffer(data);
         /* Una vez que tengamos el buffer con los datos, podemos almacenarlos en el VBO especifiando para que se usaran los datos,
          * en este caso se utiliza GL_STATIC_DRAW para que los datos no se puedan editar una vez que esten almacenados. */
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW); // Crea e inicializa el almacen de datos de un objeto de buffer
         /* Coloca el VBO en la lista de atributos (VAO) pasandole el numero de atributo, la longitud de cada vertice, el tipo de
          * dato, si los datos estan normalizados o no, la distancia entra cada uno de sus vertices y el desplazamiento. */
-        GL20.glVertexAttribPointer(attributeNumber, coordinateSize, GL11.GL_FLOAT, false, 0, 0);
+        GL20.glVertexAttribPointer(attributeNumber, coordinateSize, GL11.GL_FLOAT, false, 0, 0); // Definir una matriz de datos de atributos de vertice genericos
         // Una vez terminado se desvincula el VBO actual
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
     }

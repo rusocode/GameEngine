@@ -2,7 +2,7 @@ package models;
 
 /**
  * Representa un modelo 3D crudo almacenado en memoria. Cada modelo es un VAO. Las propiedades e informacion de dicho modelo son
- * VBOS. El EBO (Element Array Buffer) no necesita una asignacion de VAO ya que OpenGL lo vincula automaticamente al VAO
+ * VBO. El EBO (Element Array Buffer) no necesita una asignacion de VAO ya que OpenGL lo vincula automaticamente al VAO
  * actualmente vinculado. Al usar DrawElements, OpenGL sabe automaticamente que debe usar EBO.
  * <p>
  * Vamos a renderizar el modelo 3D mas simple, un rectangulo, que esta hecho por dos triangulos y vamos a tomar los datos de
