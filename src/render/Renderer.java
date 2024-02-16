@@ -15,9 +15,9 @@ import org.lwjgl.util.vector.Matrix4f;
 
 public class Renderer {
 
-    private static final int FOV = 70;
-    private static final float NEAR_PLANE = 0.1f;
-    private static final float FAR_PLANE = 1000;
+    private static final int FOV = 70; // Angulo de vision
+    private static final float NEAR_PLANE = 0.1f; // Plano cercano
+    private static final float FAR_PLANE = 1000; // Plano lejano
 
     private Matrix4f projectionMatrix;
 

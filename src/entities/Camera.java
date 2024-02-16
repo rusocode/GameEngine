@@ -3,9 +3,13 @@ package entities;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 
+/**
+ * En realidad la camara no se mueve, solo las entidades.
+ */
+
 public class Camera {
 
-    private Vector3f position = new Vector3f(0, 0, 0);
+    private final Vector3f position = new Vector3f(0, 0, 0);
     private float pitch; // Rotacion alrededor de los ejes XYZ, tambien conocido como la inclinacion de la camara
     private float yaw; // Hacia arriba o abajo
     private float roll;

@@ -107,7 +107,7 @@ public class GameLoop {
 
         };
 
-        // Carga el modelo crudo y la textura para usarlos en la clase TexturedModel
+        // Carga el modelo crudo para usarlo en la clase TexturedModel
         RawModel model = loader.loadToVAO(vertices, textureCoords, indices);
         TexturedModel staticModel = new TexturedModel(model, new ModelTexture(loader.loadTexture("image")));
 

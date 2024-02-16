@@ -104,7 +104,7 @@ public abstract class ShaderProgram {
     }
 
     /**
-     * Carga una matrix en el codigo del sombreador.
+     * Carga la matriz en el codigo del sombreador.
      */
     public void loadMatrix(int location, Matrix4f matrix) {
         matrix.store(matrixBuffer);
