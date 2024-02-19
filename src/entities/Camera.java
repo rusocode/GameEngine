@@ -4,7 +4,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 
 /**
- * En realidad la camara no se mueve, solo las entidades.
+ *
  */
 
 public class Camera {
@@ -18,6 +18,9 @@ public class Camera {
 
     }
 
+    /**
+     * Mueve la camara dependiendo la tecla pulsada.
+     */
     public void move() {
         if (Keyboard.isKeyDown(Keyboard.KEY_W)) position.z -= 0.02f;
         if (Keyboard.isKeyDown(Keyboard.KEY_D)) position.x += 0.02f;

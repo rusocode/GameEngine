@@ -59,6 +59,8 @@ import org.lwjgl.util.vector.Vector3f;
  * }
  * }</pre>
  * Este shader establece que cada pixel en la pantalla tendra un color naranja constante.
+ *
+ * <h3>Adjuntar un shader a un programa de shader</h3>
  */
 
 public abstract class ShaderProgram {
@@ -72,8 +74,28 @@ public abstract class ShaderProgram {
     public ShaderProgram(String vertexFile, String fragmentFile) {
         vertexShaderID = loadShader(vertexFile, GL20.GL_VERTEX_SHADER);
         fragmentShaderID = loadShader(fragmentFile, GL20.GL_FRAGMENT_SHADER);
-        // Une los dos shaders
+        /* La función glCreateProgram() en OpenGL se utiliza para crear un nuevo objeto de programa de shader. En OpenGL, los
+         * programas de shader son programas escritos en lenguajes como GLSL (OpenGL Shading Language) que se ejecutan en la
+         * unidad de procesamiento de shaders de la tarjeta gráfica.
+         *
+         * Un programa de shader en OpenGL está compuesto por al menos un fragment shader y un vertex shader. El fragment shader
+         * se encarga de calcular el color de cada píxel en una pantalla, mientras que el vertex shader se encarga de calcular la
+         * posición de los vértices en el espacio 3D.
+         *
+         * La función glCreateProgram() devuelve un identificador único para el programa de shader recién creado. Posteriormente,
+         * los shaders (tanto el fragment shader como el vertex shader) se adjuntan al programa utilizando funciones como
+         * glAttachShader(). Después de adjuntar los shaders, se debe enlazar el programa utilizando glLinkProgram().
+         *
+         * En resumen, glCreateProgram() se utiliza para inicializar y obtener un identificador para un nuevo programa de shader
+         * en OpenGL, que luego se completa adjuntando shaders y enlazando el programa antes de su uso en el pipeline de gráficos. */
         programID = GL20.glCreateProgram();
+
+        /* La función glAttachShader() en OpenGL se utiliza para adjuntar un objeto de shader a un programa de shader. Un programa
+         * de shader en OpenGL está compuesto por al menos un shader de vértices y un shader de fragmentos, y posiblemente también
+         * por otros tipos de shaders como shaders de geometría o de teselación.
+         *
+         * La función glAttachShader() toma como parámetros el identificador del programa al que se desea adjuntar el shader y el
+         * identificador del shader que se desea adjuntar. Específicamente, se utiliza de la siguiente manera: */
         GL20.glAttachShader(programID, vertexShaderID);
         GL20.glAttachShader(programID, fragmentShaderID);
         // Vincula los atributos antes de vincular el programa

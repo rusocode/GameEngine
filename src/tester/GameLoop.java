@@ -115,11 +115,13 @@ public class GameLoop {
         Vector3f translation = new Vector3f(0, 0, -5);
         Vector3f scale = new Vector3f(1, 1, 1);
         float angle = 0;
+        // Crea la entidad con el modelo texturizado pasandole por parametro la operaciones de transformacion que se aplicaran al modelo 3D
         Entity entity = new Entity(staticModel, translation, angle, angle, angle, scale);
         Camera camera = new Camera();
 
         while (!Display.isCloseRequested()) {
             entity.increaseRotation(1, 1, 0);
+            // entity.increasePosition(0.01f, 0, 0);
             camera.move();
             renderer.prepare();
             shader.start();
