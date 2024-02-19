@@ -1,7 +1,7 @@
 package textures;
 
 /**
- * Representa una textura que se utiliza para texturizar los modelos.
+ * Representa una textura que se utiliza para texturizar los modelos 3D.
  */
 
 public class ModelTexture {

@@ -25,7 +25,7 @@ public class GameLoop {
         StaticShader shader = new StaticShader();
         Renderer renderer = new Renderer(shader);
 
-        // Vertex Data (OpenGL espera que los vertices se definan en sentido antihorario de forma predeterminada)
+        // Datos de vertices (OpenGL espera que los vertices se definan en sentido antihorario de forma predeterminada)
         float[] vertices = {
                 -0.5f, 0.5f, -0.5f, // V0
                 -0.5f, -0.5f, -0.5f, // V1
@@ -90,7 +90,7 @@ public class GameLoop {
 
         };
 
-        // El Index Buffer indica la posicion de los vertices que forman el primer y segundo triangulo
+        // Indices utilizados por el Index Buffer
         int[] indices = {
                 0, 1, 3,
                 3, 1, 2,
@@ -109,9 +109,13 @@ public class GameLoop {
 
         // Carga el modelo crudo para usarlo en la clase TexturedModel
         RawModel model = loader.loadToVAO(vertices, textureCoords, indices);
+        // Ahora el modelo crudo y la textura se "juntan" para crear el modelo texturizado (TexturedModel)
         TexturedModel staticModel = new TexturedModel(model, new ModelTexture(loader.loadTexture("image")));
 
-        Entity entity = new Entity(staticModel, new Vector3f(0, 0, -5), 0, 0, 0, 1);
+        Vector3f translation = new Vector3f(0, 0, -5);
+        Vector3f scale = new Vector3f(1, 1, 1);
+        float angle = 0;
+        Entity entity = new Entity(staticModel, translation, angle, angle, angle, scale);
         Camera camera = new Camera();
 
         while (!Display.isCloseRequested()) {
