@@ -27,6 +27,7 @@ public class StaticShader extends ShaderProgram {
      */
     @Override
     protected void getAllUniformLocations() {
+        // Obtiene la ubicacion de la variable uniforme
         location_projectionMatrix = super.getUniformLocation("projectionMatrix");
         location_viewMatrix = super.getUniformLocation("viewMatrix");
         location_transformationMatrix = super.getUniformLocation("transformationMatrix");
