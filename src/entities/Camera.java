@@ -3,10 +3,6 @@ package entities;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 
-/**
- *
- */
-
 public class Camera {
 
     private final Vector3f position = new Vector3f(0, 0, 0);

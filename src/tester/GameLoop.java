@@ -117,6 +117,7 @@ public class GameLoop {
         float angle = 0;
         // Crea la entidad con el modelo texturizado pasandole por parametro la operaciones de transformacion que se aplicaran al modelo 3D
         Entity entity = new Entity(staticModel, translation, angle, angle, angle, scale);
+        // Crea la camara
         Camera camera = new Camera();
 
         while (!Display.isCloseRequested()) {

@@ -10,7 +10,7 @@ out vec2 pass_textureCoords;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 transformationMatrix;
-
+or
 // Metodo principal que se ejecutara cada vez que este sombreador de vertices procese un vertice
 void main(void) {
 
