@@ -5,10 +5,6 @@ import org.lwjgl.util.vector.Matrix;
 import org.lwjgl.util.vector.Matrix4f;
 import toolBox.Maths;
 
-/**
- * Carga la transformacion de la entidad para que represente el modelo texturizado en una posicion diferente.
- */
-
 public class StaticShader extends ShaderProgram {
 
     private static final String VERTEX_FILE = "src/shaders/vertexShader.txt";

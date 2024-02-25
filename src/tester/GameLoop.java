@@ -25,8 +25,12 @@ public class GameLoop {
         StaticShader shader = new StaticShader();
         Renderer renderer = new Renderer(shader);
 
-        // Datos de vertices (OpenGL espera que los vertices se definan en sentido antihorario de forma predeterminada)
+        /* Para este ejemplo, los datos de vertices (OpenGL espera que los vertices se definan en sentido antihorario de forma
+         * predeterminada) representan las caras de un cuadrado 3D. Cada cara esta compuesta por dos triangulos (o poligonos) en
+         * donde cada triangulo esta formado por tres vertices. El cuarto vertice (V3) representa el segundo triangulo en la otra
+         * esquina. Cada vertice esta formado por los tres ejes de coordenadas (x,y,z). */
         float[] vertices = {
+                // Cara
                 -0.5f, 0.5f, -0.5f, // V0
                 -0.5f, -0.5f, -0.5f, // V1
                 0.5f, -0.5f, -0.5f, // V2
@@ -112,6 +116,7 @@ public class GameLoop {
         // Ahora el modelo crudo y la textura se "juntan" para crear el modelo texturizado (TexturedModel)
         TexturedModel staticModel = new TexturedModel(model, new ModelTexture(loader.loadTexture("image")));
 
+        // Operaciones de transformacion
         Vector3f translation = new Vector3f(0, 0, -5);
         Vector3f scale = new Vector3f(1, 1, 1);
         float angle = 0;

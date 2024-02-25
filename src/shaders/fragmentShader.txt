@@ -1,7 +1,6 @@
 #version 400 core
 
 // La entrada al fragmentShader es la salida del vertexShader
-// in vec3 colour;
 in vec2 pass_textureCoords;
 
 // La salida es el color del pixel que esta procesando actualmente y que sera un vector de 4 colores
@@ -11,13 +10,10 @@ uniform sampler2D textureSampler;
 
 // Convierte el color de entrada al color de salida
 void main(void) {
-    // out_Color = vec4(colour, 1.0);
 
-    /*
-    Metodo especial de GLSL que devuelve el color del pixel en la textura en esas coordenadas que le damos, de modo
-    que ese metodo muestreara la textura que le dimos en el textureSampler y la probara en esas coordenadas de texturas
-    que le dimos en pass_textureCoords, y obtendra el color del pixel que encuentre en esas coordenadas de textura y lo
-    que vamos a hacer con ese color es simplemente enviarlo al pixel que se esta procesando actualmente.
-    */
+    /* Metodo especial de GLSL que devuelve el color del pixel en la textura en esas coordenadas que le damos, de modo
+     * que ese metodo muestreara la textura que le dimos en el textureSampler y la probara en esas coordenadas de
+     * texturas que le dimos en pass_textureCoords, y obtendra el color del pixel que encuentre en esas coordenadas de
+     * textura y lo que vamos a hacer con ese color es simplemente enviarlo al pixel que se esta procesando actualmente. */
     out_Color = texture(textureSampler, pass_textureCoords);
 }

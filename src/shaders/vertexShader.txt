@@ -1,36 +1,27 @@
 #version 400 core // Version de GLSL
 
-in vec3 position; // La entrada sera la posicion del vertice que obtenemos del VAO
+in vec3 position; // La entrada sera la posicion de los vertices que obtenemos del VAO
 in vec2 textureCoords;
-
-// out vec3 colour; // La salida es un vector 3D llamado colour
 
 out vec2 pass_textureCoords;
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 transformationMatrix;
-or
+
 // Metodo principal que se ejecutara cada vez que este sombreador de vertices procese un vertice
 void main(void) {
 
     // Le dice a OpenGL donde representar este vertice en la pantalla
     gl_Position = projectionMatrix * viewMatrix * transformationMatrix * vec4(position, 1.0);
-    // Crea el color de salida con color rojo para la posicion x sumandole 0.5 para evitar valores negativos, verde para z y azul para y
-    // colour = vec3(position.x + 0.5, 1.0, position.y + 0.5);
     pass_textureCoords = textureCoords;
 
 }
 
-/*
-Para resumir, tenemos nuestro cuadrado con sus cuatro vertices y lo tenemos almacenado en una matriz de atributos en un
-VAO (-0.5, 0.5, 0) (-0.5, -0.5, 0) (0.5, -0.5, 0) (0.5, 0.5, 0) y el sombreador de vertices que acabamos de programar
-tiene acceso a estas posiciones en la forma de esa posicion: in vec3 position. Para que el sobreador de vertices se
-ejcute para cada vertice y use esta posicion de entrada primero debe decirle a la GPU en que parte de la pantalla se
-debe representar el vertice. Esto se hace estableciendo la variable de posicion gl_Position = vec4(position, 1.0).
-Luego el sombreador de vertices calcula el color para cada vertice basado en la posicion de ese vertice estableciendo el
-color rojo en la posicion x + 0.5, etc. y genere estas salidas de color. Ahora el sombreador de fragmentos se ejecuta
-para cada pixel para decidir que color debe ser cada pixel del cuadrado y el color de entrada para cada ejecucion del
-sombreador de fragmentos es un valor de color interpolado linealmente de los colores de salida del sombreador de vertices.
-Estos colores interpolados se distribuyen sobre toda la superficie del cuadrado mediante el fragment shader.
-*/
+/* Para resumir, tenemos nuestro cuadrado de 6 lados con sus cuatro vertices almacenados en una matriz de atributos en
+ * un VAO: V1 (-0.5, 0.5, -0.5), V1 (-0.5, -0.5, -0.5), V2 (0.5, -0.5, -0.5) y V3 (0.5, 0.5, -0.5). El sombreador de
+ * vertices que acabamos de programar tiene acceso a estas posiciones desde: in vec4 position. Para que el sombreador de
+ * vertices se ejecute para cada vertice y use esta posicion de entrada primero debe decirle a la GPU en que parte de la
+ * pantalla se debe representar el vertice. Esto se hace estableciendo la variable de posicion gl_Position = vec4(position, 1.0).
+ * Luego el sombreador de vertices calcula el color para cada vertice basado en la posicion de ese vertice usando las
+ * coordenadas de texturas. */

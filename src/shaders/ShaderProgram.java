@@ -59,8 +59,6 @@ import org.lwjgl.util.vector.Vector3f;
  * }
  * }</pre>
  * Este shader establece que cada pixel en la pantalla tendra un color naranja constante.
- *
- * <h3>Adjuntar un shader a un programa de shader</h3>
  */
 
 public abstract class ShaderProgram {
@@ -163,8 +161,8 @@ public abstract class ShaderProgram {
 
     public void clean() {
         stop();
-        /* La funcion glDetachShader() se utiliza para desvincular un shader de un programa de shader. Un programa de
-         * shader en OpenGL esta compuesto por uno o mas shaders (vertex shader, fragment shader, etc.), y glDetachShader() permite
+        /* La funcion glDetachShader() se utiliza para desvincular un shader de un programa de shader. Un programa de shader en
+         * OpenGL esta compuesto por uno o mas shaders (vertex shader, fragment shader, etc.), y glDetachShader() permite
          * eliminar la conexion entre un shader especifico y el programa, sin destruir el shader en si. */
         GL20.glDetachShader(programID, vertexShaderID);
         GL20.glDetachShader(programID, fragmentShaderID);
