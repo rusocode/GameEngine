@@ -60,7 +60,7 @@ public class Loader {
     /**
      * Carga las propiedades del modelo en el VAO.
      *
-     * @param positions     posicion de los vertices.
+     * @param positions     posicion de los vertices. TODO Aunque se podria llamar vertex o vertexPosition
      * @param textureCoords coordenadas de texturas.
      * @param indices       indices.
      * @return modelo sin procesar.
