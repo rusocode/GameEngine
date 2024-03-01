@@ -18,9 +18,10 @@ public class Camera {
      * Mueve la camara dependiendo la tecla pulsada.
      */
     public void move() {
-        if (Keyboard.isKeyDown(Keyboard.KEY_W)) position.z -= 0.1f;
+        if (Keyboard.isKeyDown(Keyboard.KEY_W)) position.y += 0.1f;
         if (Keyboard.isKeyDown(Keyboard.KEY_D)) position.x += 0.1f;
         if (Keyboard.isKeyDown(Keyboard.KEY_A)) position.x -= 0.1f;
+        if (Keyboard.isKeyDown(Keyboard.KEY_Q)) position.z -= 0.1f;
     }
 
     public Vector3f getPosition() {

@@ -2,18 +2,34 @@
 
 // La entrada al fragmentShader es la salida del vertexShader
 in vec2 pass_textureCoords;
+in vec3 surfaceNormal;
+in vec3 toLightVector;
 
 // La salida es el color del pixel que esta procesando actualmente y que sera un vector de 4 colores
 out vec4 out_Color;
 
 uniform sampler2D textureSampler;
+uniform vec3 lightColour;
 
 // Convierte el color de entrada al color de salida
 void main(void) {
 
-    /* Metodo especial de GLSL que devuelve el color del pixel en la textura en esas coordenadas que le damos, de modo
+    /* Normaliza los dos vectores para asegurarse de que el tamanio de los dos vectores sea uno. Asi la direccion del
+     * vector permanece exactamente igual, de modo que solo importa la direccion y la magnitud del vector es irrelevante. */
+    vec3 unitNormal = normalize(surfaceNormal);
+    vec3 unitLightVector = normalize(toLightVector);
+
+    // Calcula el producto escalar de los dos vectores normales. El resultado representa que tan correcto debe ser el pixel
+    float nDotl = dot(unitNormal, unitLightVector);
+    // Se asegura de que el resultado se encuentre entre 0 y 1, porque a veces el producto escalar devolvera valores menores a 0
+    float brightness = max(nDotl, 0.0);
+    // Multiplica el brillo por el color de la luz para obtener la iluminacion final
+    vec3 diffuse = brightness * lightColour;
+
+    /* texture() es un metodo especial de GLSL que devuelve el color del pixel en la textura en esas coordenadas que le damos, de modo
      * que ese metodo muestreara la textura que le dimos en el textureSampler y la probara en esas coordenadas de
      * texturas que le dimos en pass_textureCoords, y obtendra el color del pixel que encuentre en esas coordenadas de
-     * textura y lo que vamos a hacer con ese color es simplemente enviarlo al pixel que se esta procesando actualmente. */
-    out_Color = texture(textureSampler, pass_textureCoords);
+     * textura y lo que vamos a hacer con ese color es simplemente enviarlo al pixel que se esta procesando actualmente.
+     * Por ultimo, el color de la textura se multiplica por la luz calculada. */
+    out_Color = vec4(diffuse, 1.0) * texture(textureSampler, pass_textureCoords);
 }

@@ -1,6 +1,7 @@
 package shaders;
 
 import entities.Camera;
+import entities.Light;
 import org.lwjgl.util.vector.Matrix;
 import org.lwjgl.util.vector.Matrix4f;
 import toolBox.Maths;
@@ -13,6 +14,8 @@ public class StaticShader extends ShaderProgram {
     private int location_projectionMatrix;
     private int location_viewMatrix;
     private int location_transformationMatrix;
+    private int location_lightPosition;
+    private int location_lightColour;
 
     public StaticShader() {
         super(VERTEX_FILE, FRAGMENT_FILE);
@@ -27,6 +30,8 @@ public class StaticShader extends ShaderProgram {
         location_projectionMatrix = super.getUniformLocation("projectionMatrix");
         location_viewMatrix = super.getUniformLocation("viewMatrix");
         location_transformationMatrix = super.getUniformLocation("transformationMatrix");
+        location_lightPosition = super.getUniformLocation("lightPosition");
+        location_lightColour = super.getUniformLocation("lightColour");
     }
 
     @Override
@@ -34,6 +39,7 @@ public class StaticShader extends ShaderProgram {
         super.bindAttribute(0, "position");
         // Vincula las coordenadas de texturas para que le de al sombreador de vertices acceso a estas coordenadas en el VAO
         super.bindAttribute(1, "textureCoords");
+        super.bindAttribute(2, "normal");
     }
 
     /**
@@ -64,5 +70,12 @@ public class StaticShader extends ShaderProgram {
         super.loadMatrix(location_transformationMatrix, matrix);
     }
 
+    /**
+     * Carga las variables de luz.
+     */
+    public void loadLight(Light light) {
+        super.loadVector(location_lightPosition, light.getPosition());
+        super.loadVector(location_lightColour, light.getColour());
+    }
 
 }
