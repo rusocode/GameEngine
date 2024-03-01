@@ -4,6 +4,7 @@ import entities.Entity;
 import models.RawModel;
 import models.TexturedModel;
 import shaders.StaticShader;
+import textures.ModelTexture;
 import toolBox.Maths;
 
 import org.lwjgl.opengl.*;
@@ -63,6 +64,9 @@ public class Renderer {
         GL20.glEnableVertexAttribArray(2);
         Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), entity.getRotX(), entity.getRotY(), entity.getRotZ(), entity.getScale());
         shader.loadTransformationMatrix(transformationMatrix);
+        // Carga las variables de brillo en el sombreador antes de renderizar
+        ModelTexture texture = model.getTexture();
+        shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
         /* La funcion glActiveTexture() en OpenGL se utiliza para especificar que unidad de textura activar entre las disponibles
          * en el contexto de OpenGL. En OpenGL, puedes tener multiples unidades de textura (usualmente numeradas desde GL_TEXTURE0
          * hasta GL_TEXTURE31, dependiendo de la implementacion) y glActiveTexture() te permite seleccionar cual de ellas estara

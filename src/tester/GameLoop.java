@@ -34,8 +34,12 @@ public class GameLoop {
         // Ahora el modelo crudo y la textura se "juntan" para crear el modelo texturizado (TexturedModel)
         TexturedModel staticModel = new TexturedModel(model, new ModelTexture(loader.loadTexture("white")));
 
+        ModelTexture texture = staticModel.getTexture();
+        texture.setShineDamper(10);
+        texture.setReflectivity(1);
+
         // Operaciones de transformacion
-        Vector3f translation = new Vector3f(0, 0, -25);
+        Vector3f translation = new Vector3f(0, -5, -35);
         Vector3f scale = new Vector3f(1, 1, 1);
         float angle = 0;
         // Crea la entidad con el modelo texturizado pasandole por parametro la operaciones de transformacion que se aplicaran al modelo 3D
