@@ -4,17 +4,16 @@
 in vec2 pass_textureCoords;
 in vec3 surfaceNormal;
 in vec3 toLightVector;
-in vec3 toCameraVector; // Vector que apunta a la camara
-
-// La salida es el color del pixel que esta procesando actualmente y que sera un vector de 4 colores
-out vec4 out_Color;
+in vec3 toCameraVector;
 
 uniform sampler2D textureSampler;
 uniform vec3 lightColour;
 uniform float shineDamper;
 uniform float reflectivity;
 
-// Convierte el color de entrada al color de salida
+// La salida es el color del pixel que esta procesando actualmente y que sera un vector de 4 colores con su respectiva luz y luz especular
+out vec4 out_Color;
+
 void main(void) {
 
     /* Normaliza los dos vectores para asegurarse de que el tamanio de los dos vectores sea uno. Asi la direccion del
@@ -43,7 +42,7 @@ void main(void) {
     /* Aplica la amortiguacion elevando el factor especular a la potencia del valor de amortiguacion, lo que hace que
      * los factores especulares bajos sean aun mas bajos, pero no afecta tanto a los valores mas altos. */
     float dampedFactor = pow(specularFactor, shineDamper);
-    // Multiplica el factor amortiguado por el color de la luz que la luz especular sea el color de la fuente de luz
+    // Multiplica el factor amortiguado por la reflectividad por el color de la luz que la luz especular sea el color de la fuente de luz
     vec3 finalSpecular = dampedFactor * reflectivity * lightColour;
 
     /* texture() es un metodo especial de GLSL que devuelve el color del pixel en la textura en esas coordenadas que le damos, de modo

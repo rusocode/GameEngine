@@ -40,7 +40,7 @@ public class OBJLoader {
                  * primer vertice dentro del archivo stall.obj la linea "v 3.227124 -0.065127 -1.000000" se divide en 4 cadenas:
                  * currentLine[0] = "v" | currentLine[1] = "3.227124" | currentLine[2] = "-0.065127" | currentLine[3] = "-1.000000" */
                 String[] currentLine = line.split(" ");
-                if (line.startsWith("v ")) { // TODO Hace falta el espacio?
+                if (line.startsWith("v ")) {
                     // Crea un vector 3D utilizando los vertices del modelo
                     Vector3f vertex = new Vector3f(Float.parseFloat(currentLine[1]), Float.parseFloat(currentLine[2]), Float.parseFloat(currentLine[3]));
                     vertices.add(vertex);

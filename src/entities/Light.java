@@ -3,7 +3,7 @@ package entities;
 import org.lwjgl.util.vector.Vector3f;
 
 /**
- * Fuente de luz para iluminar los modelos.
+ * Fuente de luz que ilumina los modelos.
  */
 
 public class Light {

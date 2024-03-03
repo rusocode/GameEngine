@@ -29,31 +29,22 @@ public class GameLoop {
         StaticShader shader = new StaticShader();
         Renderer renderer = new Renderer(shader);
 
-        // Carga el modelo crudo para usarlo en la clase TexturedModel
-        RawModel model = OBJLoader.loadObjModel("dragon", loader);
-        // Ahora el modelo crudo y la textura se "juntan" para crear el modelo texturizado (TexturedModel)
-        TexturedModel staticModel = new TexturedModel(model, new ModelTexture(loader.loadTexture("white")));
+        // Carga el modelo crudo
+        RawModel rawModel = OBJLoader.loadObjModel("dragon", loader);
+        // Ahora el modelo crudo y la textura se "juntan" para crear el modelo texturizado que se usara para aplicarlo a la entidad
+        TexturedModel texturedModel = new TexturedModel(rawModel, new ModelTexture(loader.loadTexture("white")));
 
-        ModelTexture texture = staticModel.getTexture();
-        texture.setShineDamper(10);
-        texture.setReflectivity(1);
-
-        // Operaciones de transformacion
-        Vector3f translation = new Vector3f(0, -5, -35);
-        Vector3f scale = new Vector3f(1, 1, 1);
-        float angle = 0;
-        // Crea la entidad con el modelo texturizado pasandole por parametro la operaciones de transformacion que se aplicaran al modelo 3D
-        Entity entity = new Entity(staticModel, translation, angle, angle, angle, scale);
-        Light light = new Light(new Vector3f(0, 0, -20), new Vector3f(1, 1, 1));
-        // Crea la camara
+        Entity entity = getEntity(texturedModel);
+        Light light = new Light(new Vector3f(0, 0, -20), new Vector3f(1, 1, 1)); // Fuente de luz
         Camera camera = new Camera();
 
         while (!Display.isCloseRequested()) {
-            entity.increaseRotation(0, 1, 0); // Solo rota sobre el eje y
+            entity.increaseRotation(0, 1, 0);
             // entity.increasePosition(0.01f, 0, 0);
             camera.move();
             renderer.prepare();
             shader.start();
+            // Carga la fuente de luz y la camara antes de renderizar la entidad
             shader.loadLight(light);
             shader.loadViewMatrix(camera);
             renderer.render(entity, shader);
@@ -64,6 +55,26 @@ public class GameLoop {
         shader.clean();
         loader.clean();
         DisplayManager.close();
+    }
+
+    /**
+     * Obtiene la entidad texturizada aplicando iluminacion especular y operaciones de transformacion.
+     *
+     * @param texturedModel modelo texturizado.
+     * @return la entidad texturizada con iluminacion especular y transformacion aplicadas.
+     */
+    private static Entity getEntity(TexturedModel texturedModel) {
+        // Aplica iluminacion especular a la textura
+        ModelTexture texture = texturedModel.getTexture();
+        texture.setShineDamper(10);
+        texture.setReflectivity(1);
+
+        // Define las operaciones de transformacion
+        Vector3f translation = new Vector3f(0, -5, -35); // Vector de traslacion
+        Vector3f scale = new Vector3f(1, 1, 1); // Vector de escala
+        float angle = 0; // Angulo de rotacion
+
+        return new Entity(texturedModel, translation, angle, angle, angle, scale);
     }
 
 }

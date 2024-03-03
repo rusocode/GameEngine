@@ -23,27 +23,27 @@ public class StaticShader extends ShaderProgram {
         super(VERTEX_FILE, FRAGMENT_FILE);
     }
 
+    @Override
+    protected void bindAttributes() {
+        bindAttribute(0, "position");
+        // Vincula las coordenadas de texturas para que le de al sombreador de vertices acceso a estas coordenadas en el VAO
+        bindAttribute(1, "textureCoords");
+        bindAttribute(2, "normal");
+    }
+
     /**
      * Carga todas las ubicaciones uniformes declaradas en el vertexShader.
      */
     @Override
     protected void getAllUniformLocations() {
         // Obtiene la ubicacion de la variable uniforme
-        location_projectionMatrix = super.getUniformLocation("projectionMatrix");
-        location_viewMatrix = super.getUniformLocation("viewMatrix");
-        location_transformationMatrix = super.getUniformLocation("transformationMatrix");
-        location_lightPosition = super.getUniformLocation("lightPosition");
-        location_lightColour = super.getUniformLocation("lightColour");
-        location_shineDamper = super.getUniformLocation("shineDamper");
-        location_reflectivity = super.getUniformLocation("reflectivity");
-    }
-
-    @Override
-    protected void bindAttributes() {
-        super.bindAttribute(0, "position");
-        // Vincula las coordenadas de texturas para que le de al sombreador de vertices acceso a estas coordenadas en el VAO
-        super.bindAttribute(1, "textureCoords");
-        super.bindAttribute(2, "normal");
+        location_projectionMatrix = getUniformLocation("projectionMatrix");
+        location_viewMatrix = getUniformLocation("viewMatrix");
+        location_transformationMatrix = getUniformLocation("transformationMatrix");
+        location_lightPosition = getUniformLocation("lightPosition");
+        location_lightColour = getUniformLocation("lightColour");
+        location_shineDamper = getUniformLocation("shineDamper");
+        location_reflectivity = getUniformLocation("reflectivity");
     }
 
     /**
@@ -52,7 +52,7 @@ public class StaticShader extends ShaderProgram {
      * @param matrix matriz de proyeccion.
      */
     public void loadProjectionMatrix(Matrix4f matrix) {
-        super.loadMatrix(location_projectionMatrix, matrix);
+        loadMatrix(location_projectionMatrix, matrix);
     }
 
     /**
@@ -62,7 +62,7 @@ public class StaticShader extends ShaderProgram {
      */
     public void loadViewMatrix(Camera camera) {
         Matrix4f viewMatrix = Maths.createViewMatrix(camera);
-        super.loadMatrix(location_viewMatrix, viewMatrix);
+        loadMatrix(location_viewMatrix, viewMatrix);
     }
 
     /**
@@ -71,23 +71,23 @@ public class StaticShader extends ShaderProgram {
      * @param matrix matriz de transformacion.
      */
     public void loadTransformationMatrix(Matrix4f matrix) {
-        super.loadMatrix(location_transformationMatrix, matrix);
+        loadMatrix(location_transformationMatrix, matrix);
     }
 
     /**
      * Carga las variables de luz.
      */
     public void loadLight(Light light) {
-        super.loadVector(location_lightPosition, light.getPosition());
-        super.loadVector(location_lightColour, light.getColour());
+        loadVector(location_lightPosition, light.getPosition());
+        loadVector(location_lightColour, light.getColour());
     }
 
     /**
      * Carga las variables de brillo.
      */
     public void loadShineVariables(float damper, float reflectivity) {
-        super.loadFloat(location_shineDamper, damper);
-        super.loadFloat(location_reflectivity, reflectivity);
+        loadFloat(location_shineDamper, damper);
+        loadFloat(location_reflectivity, reflectivity);
     }
 
 }

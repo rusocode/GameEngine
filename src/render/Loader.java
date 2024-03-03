@@ -116,7 +116,7 @@ public class Loader {
      *
      * @param index indice del atributo del vertice.
      * @param size  numero de componentes por atributo.
-     * @param data  atributos de vertices.
+     * @param data  datos del vertice.
      */
     private void storeDataInAttributeList(int index, int size, float[] data) {
         int vboID = GL15.glGenBuffers();

@@ -8,8 +8,8 @@ public class ModelTexture {
 
     private final int textureID;
 
-    private float shineDamper = 1;
-    private float reflectivity = 0;
+    private float shineDamper = 1; // Factor de amortiguacion
+    private float reflectivity = 0; // Luz reflejada
 
     public ModelTexture(int textureID) {
         this.textureID = textureID;

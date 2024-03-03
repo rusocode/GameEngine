@@ -105,7 +105,27 @@ public abstract class ShaderProgram {
         getAllUniformLocations();
     }
 
+    protected abstract void bindAttributes();
+
     protected abstract void getAllUniformLocations();
+
+    /**
+     * Vincula el atributo.
+     *
+     * @param index indice de ubicacion del atributo que se esta asociando (el numero de la lista de atributos en el VAO).
+     * @param name  nombre del atributo que se asocia al indice de ubicacion en el programa (nombre de la variable en el codigo shader).
+     */
+    protected void bindAttribute(int index, String name) {
+        /* La funcion glBindAttribLocation() en OpenGL se utiliza para asociar un indice de ubicacion de atributo a un nombre de
+         * atributo especifico en un programa de shader. Los atributos son variables en los shaders, generalmente en el vertex
+         * shader, que reciben datos de los vertices durante la renderizacion.
+         * Esta funcion es util cuando deseas establecer manualmente las ubicaciones de atributos en lugar de dejar que OpenGL las
+         * elija automaticamente. La vinculacion de atributos es importante para establecer la correspondencia entre los atributos
+         * en el codigo del shader y los datos de los vertices proporcionados por tu aplicacion.
+         * Despues de llamar a glBindAttribLocation(), deberias enlazar el programa con glLinkProgram() para que la asociacion
+         * tenga efecto. */
+        GL20.glBindAttribLocation(programID, index, name); // Asocia el nombre especificado al indice de ubicacion especificado
+    }
 
     protected int getUniformLocation(String uniformName) {
         /* La funcion glGetUniformLocation() se utiliza para obtener la ubicacion de una variable uniforme en un programa de
@@ -129,7 +149,16 @@ public abstract class ShaderProgram {
         GL20.glUniform1f(location, toLoad);
     }
 
+    /**
+     * @param location Especifica la ubicacion de la variable uniforme en el programa de sombreado actual. Debes obtener esta
+     *                 ubicacion utilizando la funcion glGetUniformLocation().
+     * @param value    Especifica el valor float que se va a asignar a la variable uniforme.
+     */
     protected void loadFloat(int location, float value) {
+        /* El metodo glUniform1f() de OpenGL es una funcion que se utiliza para asignar un valor de tipo float a una variable
+         * uniforme en un programa de sombreado (shader) de OpenGL. Las variables uniformes son variables en shaders que mantienen
+         * su valor constante durante la ejecucion de un conjunto de vertices o fragmentos. El nombre "1f" en el nombre de la
+         * funcion indica que se está asignando un solo valor de tipo float. */
         GL20.glUniform1f(location, value);
     }
 
@@ -182,26 +211,6 @@ public abstract class ShaderProgram {
          * recomendable liberar los programas de shader cuando ya no se necesiten para evitar posibles perdidas de memoria. */
         GL20.glDeleteProgram(programID);
     }
-
-    /**
-     * Vincula el atributo.
-     *
-     * @param index indice de ubicacion del atributo que se esta asociando (el numero de la lista de atributos en el VAO).
-     * @param name  nombre del atributo que se asocia al indice de ubicacion en el programa (nombre de la variable en el codigo shader).
-     */
-    protected void bindAttribute(int index, String name) {
-        /* La funcion glBindAttribLocation() en OpenGL se utiliza para asociar un indice de ubicacion de atributo a un nombre de
-         * atributo especifico en un programa de shader. Los atributos son variables en los shaders, generalmente en el vertex
-         * shader, que reciben datos de los vertices durante la renderizacion.
-         * Esta funcion es util cuando deseas establecer manualmente las ubicaciones de atributos en lugar de dejar que OpenGL las
-         * elija automaticamente. La vinculacion de atributos es importante para establecer la correspondencia entre los atributos
-         * en el codigo del shader y los datos de los vertices proporcionados por tu aplicacion.
-         * Despues de llamar a glBindAttribLocation(), deberias enlazar el programa con glLinkProgram() para que la asociacion
-         * tenga efecto. */
-        GL20.glBindAttribLocation(programID, index, name); // Asocia el nombre especificado al indice de ubicacion especificado
-    }
-
-    protected abstract void bindAttributes();
 
     /**
      * Carga el shader.
