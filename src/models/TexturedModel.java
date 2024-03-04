@@ -8,8 +8,8 @@ import textures.ModelTexture;
 
 public class TexturedModel {
 
-    private final RawModel rawModel; // Modelo sin formato
-    private final ModelTexture texture; // Textura del modelo con la que queremos texturizar ese modelo a seguir
+    private final RawModel rawModel; // Modelo sin formato o crudo
+    private final ModelTexture texture; // Textura del modelo con la que queremos texturizar el modelo especificado
 
     public TexturedModel(RawModel rawModel, ModelTexture texture) {
         this.rawModel = rawModel;

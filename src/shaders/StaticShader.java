@@ -25,18 +25,15 @@ public class StaticShader extends ShaderProgram {
 
     @Override
     protected void bindAttributes() {
+        // Vincula la variable position al indice 0 para que le de al Vertex Shader acceso a esta posicion en el VAO
         bindAttribute(0, "position");
-        // Vincula las coordenadas de texturas para que le de al sombreador de vertices acceso a estas coordenadas en el VAO
         bindAttribute(1, "textureCoords");
         bindAttribute(2, "normal");
     }
 
-    /**
-     * Carga todas las ubicaciones uniformes declaradas en el vertexShader.
-     */
     @Override
     protected void getAllUniformLocations() {
-        // Obtiene la ubicacion de la variable uniforme
+        // Obtiene la ubicacion de la variable uniforme en el shader y la almacena en la variable local
         location_projectionMatrix = getUniformLocation("projectionMatrix");
         location_viewMatrix = getUniformLocation("viewMatrix");
         location_transformationMatrix = getUniformLocation("transformationMatrix");

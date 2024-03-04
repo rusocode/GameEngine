@@ -1,15 +1,9 @@
 #version 400 core // Version de GLSL
 
-in vec3 position; // La entrada sera la posicion de los vertices que obtenemos del VAO
-in vec2 textureCoords;
-/* Lo que es importante tener en cuenta es que el producto escalar de dos vectores unitarios que apuntan exactamente en
- * la misma direccion es uno y el producto escalar de dos vectores perpendiculares que apuntan en direcciones totalmente
- * diferentes es 0 y todo lo demas esta en algun punto intermedio (0.6, 0.3, etc.). Esto nos da una representacion
- * perfecta de que tan similares son dos vectores y, por lo tanto, una representacion perfecta de que tan brillante debe
- * ser un cierto punto en el objeto. */
+// Datos entrantes de OpenGL
+in vec3 position;
 in vec3 normal;
 
-out vec2 pass_textureCoords;
 out vec3 surfaceNormal; // Superficie normal del vector
 out vec3 toLightVector; // Vector que apunta hacia la fuente de luz
 out vec3 toCameraVector; // Vector que apunta hacia la camara
@@ -25,7 +19,6 @@ void main(void) {
     vec4 worldPosition = transformationMatrix * vec4(position, 1.0);
     // Le dice a la GPU donde representar este vertice en la pantalla
     gl_Position = projectionMatrix * viewMatrix * worldPosition;
-    pass_textureCoords = textureCoords;
 
     /* Podria pensar que la normal de la superficie deberia ser igual a la normal que obtenemos, pero no olvidemos que
      * a veces vamos a rotar el modelo. Cuando tenemos la matriz de transformacion, va a rotar la entidad, por lo que

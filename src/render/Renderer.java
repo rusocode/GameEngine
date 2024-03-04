@@ -44,7 +44,7 @@ public class Renderer {
     }
 
     /**
-     * Renderiza el modelo.
+     * Renderiza la entidad.
      *
      * @param entity entidad.
      * @param shader shader.
@@ -53,37 +53,31 @@ public class Renderer {
         TexturedModel model = entity.getModel();
         RawModel rawModel = model.getRawModel();
         GL30.glBindVertexArray(rawModel.getVaoID());
-        /* Habilita los atributos de vertice almacenados en el VAO especificando el indice (este indice corresponde al indice del
-         * atributo en el shader de vertices). Estas llamadas son comunes despues de haber configurado los atributos de vertices
-         * en un VAO y preceden al renderizado.
-         * Al habilitar un atributo de vertice, le estas indicando a OpenGL que debe usar los datos asociados a ese atributo
-         * durante el proceso de renderizado. Es importante destacar que despues de habilitar un atributo, deberias deshabilitarlo
-         * cuando ya no lo necesites para evitar problemas inesperados. Esto se hace mediante la funcion glDisableVertexAttribArray(). */
+        /* Habilita los atributos de vertices en OpenGL al especificar el indice correspondiente al atributo en el Vertex Shader,
+         * despues de vincular los atributos en un VAO. Al habilitar un atributo, se indica a OpenGL que utilice esos datos
+         * durante el renderizado. */
         GL20.glEnableVertexAttribArray(0);
         GL20.glEnableVertexAttribArray(1);
         GL20.glEnableVertexAttribArray(2);
         Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), entity.getRotX(), entity.getRotY(), entity.getRotZ(), entity.getScale());
         shader.loadTransformationMatrix(transformationMatrix);
-        // Carga las variables de brillo en el sombreador antes de renderizar
         ModelTexture texture = model.getTexture();
+        // Carga las variables de brillo en el sombreador antes de renderizar
         shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
-        /* La funcion glActiveTexture() en OpenGL se utiliza para especificar que unidad de textura activar entre las disponibles
-         * en el contexto de OpenGL. En OpenGL, puedes tener multiples unidades de textura (usualmente numeradas desde GL_TEXTURE0
-         * hasta GL_TEXTURE31, dependiendo de la implementacion) y glActiveTexture() te permite seleccionar cual de ellas estara
-         * activa para las operaciones subsiguientes.
-         * Este mecanismo es especialmente util cuando trabajas con sombreadores (shaders) en OpenGL, ya que te permite asignar
-         * diferentes texturas a diferentes unidades de textura y luego usar uniformes en tus shaders para especificar a cual
-         * unidad de textura debe hacer referencia cada textura. */
+        /* Selecciona la unidad de textura activa entre las disponibles en el contexto. OpenGL permite multiples unidades de
+         * textura (generalmente numeradas desde GL_TEXTURE0 hasta GL_TEXTURE31), y esta funcion te permite elegir cual estara
+         * activa para las operaciones subsiguientes. Es especialmente util al trabajar con shaders, ya que posibilita asignar
+         * diferentes texturas a diferentes unidades y luego utilizar uniformes en los shaders para especificar a cual unidad de
+         * textura debe hacer referencia cada textura. */
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
-        /* La funcion glBindTexture() en OpenGL se utiliza para enlazar (bind) una textura a una unidad de textura activa. En
-         * OpenGL, las texturas se asocian a unidades de textura, y glBindTexture() se encarga de esa asociacion.
-         * Es comun usar varias unidades de textura en OpenGL, y glBindTexture() permite cambiar facilmente entre texturas al
-         * activar diferentes unidades de textura y enlazar las texturas apropiadas a esas unidades. Ademas, al enlazar texturas,
-         * se puede configurar como interactuan con los fragmentos en el shader durante el proceso de renderizado. */
+        /* Enlaza una textura a una unidad de textura activa. En OpenGL, las texturas se vinculan a unidades de textura, y esta
+         * funcion gestiona esa asociacion. En el uso comun de varias unidades de textura en OpenGL, glBindTexture() facilita
+         * cambiar entre texturas al activar diferentes unidades y vincular las texturas correspondientes a esas unidades. Ademas,
+         * al enlazar texturas, se puede configurar como interactuan con los fragmentos en el shader durante el proceso de
+         * renderizado. */
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getTexture().getTextureID());
-        /* La funcion glDrawElements() en OpenGL se utiliza para renderizar primitivas graficas (como triangulos, lineas o puntos)
-         * utilizando indices almacenados en un Vertex Buffer Object (VBO). Este metodo es parte del proceso de renderizado y es
-         * fundamental para la visualizacion de modelos 3D. */
+        /* Renderiza primitivas graficas, como triangulos, lineas o puntos, mediante el uso de indices almacenados en un VBO. Esta
+         * funcion es esencial en el proceso de renderizado y juega un papel fundamental en la visualizacion de modelos 3D. */
         GL11.glDrawElements(GL11.GL_TRIANGLES, rawModel.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
         // Deshabilita la lista de atributos
         GL20.glDisableVertexAttribArray(0);

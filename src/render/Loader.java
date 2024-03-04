@@ -81,11 +81,10 @@ public class Loader {
      * @return el identificador del VAO.
      */
     private int createVAO() {
-        // La funcion glGenVertexArrays() en OpenGL se utiliza para generar identificadores (IDs) para Vertex Array Objects (VAOs)
+        // Genera un identificador para el VAO
         int vaoID = GL30.glGenVertexArrays();
         vaos.add(vaoID);
-        /* La funcion glBindVertexArray() toma como argumento el identificador (ID) del VAO que se desea enlazar. Cuando un VAO
-         * esta enlazado, cualquier operacion subsiguiente que afecte a los estados del VAO se aplicara a ese VAO en particular. */
+        // Enlaza el identificador del VAO
         GL30.glBindVertexArray(vaoID);
         return vaoID;
     }
@@ -96,18 +95,17 @@ public class Loader {
      * @param indices indices.
      */
     private void bindIndicesBuffer(int[] indices) {
-        // La funcion glGenBuffers() en OpenGL se utiliza para generar identificadores (IDs) para Vertex Buffer Objects (VBOs)
+        // Genera un identificador para el VBO
         int vboID = GL15.glGenBuffers();
         vbos.add(vboID);
-        /* La funcion glBindBuffer() en OpenGL se utiliza para enlazar (bind) un VBO especifico. El primer parametro especifica el
-         * tipo de destino al cual se enlazara el VBO. Puede ser GL_ARRAY_BUFFER (para datos de atributos de vertices) o
-         * GL_ELEMENT_ARRAY_BUFFER (para indices de elementos en un VAO, a menudo asociado con glDrawElements). El segundo
-         * parametro indica el ID del VBO que se va a enlazar. */
+        /* Enlaza el VBO especifico. El primer parametro determina el tipo de destino al cual se vinculara el VBO, pudiendo ser
+         * GL_ARRAY_BUFFER (para datos de atributos de vertices) o GL_ELEMENT_ARRAY_BUFFER (para indices de elementos en un VAO,
+         * generalmente asociado con glDrawElements). */
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboID);
         IntBuffer buffer = storeIndicesInBuffer(indices);
-        /* Carga el bufer de indices en el VBO que esta actualmente enlazado. El tercer parametro especifica como se utilizaran
-         * los datos en el VBO. Puede ser GL_STATIC_DRAW (datos que rara vez cambian), GL_DYNAMIC_DRAW (datos que cambian
-         * ocasionalmente) o GL_STREAM_DRAW (datos que cambian frecuentemente). */
+        /* Carga el bufer de indices en el VBO actualmente enlazado. El tercer parametro especifica el uso previsto de los datos
+         * en el VBO, pudiendo ser GL_STATIC_DRAW (datos que rara vez cambian), GL_DYNAMIC_DRAW (datos que cambian ocasionalmente)
+         * o GL_STREAM_DRAW (datos que cambian frecuentemente). */
         GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
     }
 
@@ -124,17 +122,16 @@ public class Loader {
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
         FloatBuffer buffer = storeDataInBuffer(data);
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
-        /* La funcion glVertexAttribPointer() en OpenGL se utiliza para especificar como los datos de los atributos de los
-         * vertices estan organizados y almacenados en un VBO. Esta funcion se utiliza tipicamente en conjunto con VAOs para
-         * describir la disposicion de los datos de los vertices. El parametro index especifica el indice del atributo del vertice.
-         * Corresponde al indice del atributo en el shader de vertices. El parametro size especifica el numero de componentes por
-         * atributo (por ejemplo, 3 para coordenadas XYZ). El parametro type especifica el tipo de datos de cada componente (por
-         * ejemplo, GL_FLOAT para valores de punto flotante). El parametro normalized especifica si los datos deben ser
-         * normalizados antes de ser almacenados en el VBO. El parametro stride especifica el espacio entre los conjuntos de datos
-         * consecutivos (en bytes). Si es 0, los datos son adyacentes. El parametro pointer o buffer_buffer_offset especifica un
-         * desplazamiento (offset) dentro del VBO donde comienzan los datos del atributo. */
+        /* Define la organizacion y almacenamiento de los datos de los atributos de los vertices en un VBO. Se usa comunmente con
+         * VAOs para describir la disposicion de los datos de los vertices. El parametro `index` indica el indice del atributo del
+         * vertice, correspondiendo al indice en el shader de vertices. El parametro `size` especifica el numero de componentes
+         * por atributo (por ejemplo, 3 para coordenadas XYZ). El parametro `type` indica el tipo de datos de cada componente (por
+         * ejemplo, GL_FLOAT para valores de punto flotante). El parametro `normalized` determina si los datos deben normalizarse
+         * antes de almacenarse en el VBO. El parametro `stride` establece el espacio entre conjuntos consecutivos de datos (en
+         * bytes); si es 0, los datos son adyacentes. Finalmente, el parametro `pointer` o `buffer_offset` indica un
+         * desplazamiento (offset) dentro del VBO donde comienzan los datos del atributo.  */
         GL20.glVertexAttribPointer(index, size, GL11.GL_FLOAT, false, 0, 0);
-        // Una vez terminado se desvincula el VBO actual
+        // Desvincula el VBO actual
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
     }
 
@@ -175,10 +172,9 @@ public class Loader {
      * Elimina todos los VAO, VBO y texturas.
      */
     public void clean() {
-        /* La funcion glDeleteVertexArrays() se utiliza para eliminar VAOs previamente generados. Es importante destacar que al
-         * eliminar un VAO, se liberan los recursos asociados a este objeto, liberando la memoria y recursos de la GPU. Tambien es
-         * recomendable desenlazar el VAO antes de eliminarlo mediante glBindVertexArray(0) para evitar posibles problemas. Esto
-         * mismo se aplica para el metodo glDeleteBuffers() y glDeleteTextures(). */
+        /* Elimina los VAOs previamente creados. Al hacerlo, se liberan los recursos asociados al objeto, liberando memoria y
+         * recursos de la GPU. Es crucial desvincular el VAO antes de eliminarlo utilizando glBindVertexArray(0) para evitar
+         * posibles problemas. Este mismo enfoque se aplica a los metodos glDeleteBuffers() y glDeleteTextures(). */
         for (int vao : vaos) GL30.glDeleteVertexArrays(vao);
         for (int vbo : vbos) GL15.glDeleteBuffers(vbo);
         for (int texture : textures) GL11.glDeleteTextures(texture);

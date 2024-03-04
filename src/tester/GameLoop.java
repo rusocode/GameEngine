@@ -29,9 +29,9 @@ public class GameLoop {
         StaticShader shader = new StaticShader();
         Renderer renderer = new Renderer(shader);
 
-        // Carga el modelo crudo
+        // Carga el modelo en crudo
         RawModel rawModel = OBJLoader.loadObjModel("dragon", loader);
-        // Ahora el modelo crudo y la textura se "juntan" para crear el modelo texturizado que se usara para aplicarlo a la entidad
+        // Ahora el modelo en crudo y la textura se "juntan" para crear el modelo texturizado que se usara para aplicarlo a la entidad
         TexturedModel texturedModel = new TexturedModel(rawModel, new ModelTexture(loader.loadTexture("white")));
 
         Entity entity = getEntity(texturedModel);
