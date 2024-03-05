@@ -40,7 +40,6 @@ public class GameLoop {
 
         while (!Display.isCloseRequested()) {
             entity.increaseRotation(0, 1, 0);
-            // entity.increasePosition(0.01f, 0, 0);
             camera.move();
             renderer.prepare();
             shader.start();
@@ -72,9 +71,12 @@ public class GameLoop {
         // Define las operaciones de transformacion
         Vector3f translation = new Vector3f(0, -5, -35); // Vector de traslacion
         Vector3f scale = new Vector3f(1, 1, 1); // Vector de escala
-        float angle = 0; // Angulo de rotacion
+        // Angulos de rotacion
+        float angleX = 10;
+        float angleY = 165;
+        float angleZ = 0;
 
-        return new Entity(texturedModel, translation, angle, angle, angle, scale);
+        return new Entity(texturedModel, translation, angleX, angleY, angleZ, scale);
     }
 
 }

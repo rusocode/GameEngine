@@ -2,8 +2,10 @@
 
 // Datos entrantes de la aplicacion
 in vec3 position;
+in vec2 textureCoords;
 in vec3 normal;
 
+out vec2 pass_textureCoords;
 out vec3 surfaceNormal; // Superficie normal del vector
 out vec3 toLightVector; // Vector que apunta hacia la fuente de luz
 out vec3 toCameraVector; // Vector que apunta hacia la camara
@@ -19,6 +21,8 @@ void main(void) {
     vec4 worldPosition = transformationMatrix * vec4(position, 1.0);
     // Le dice a la GPU donde representar este vertice en la pantalla
     gl_Position = projectionMatrix * viewMatrix * worldPosition;
+    // Pasa (pass_) las coordendas de texturas al Fragment Shader
+    pass_textureCoords = textureCoords;
 
     /* Podria pensar que la normal de la superficie deberia ser igual a la normal que obtenemos, pero no olvidemos que
      * a veces vamos a rotar el modelo. Cuando tenemos la matriz de transformacion, va a rotar la entidad, por lo que
