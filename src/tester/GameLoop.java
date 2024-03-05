@@ -9,6 +9,7 @@ import models.TexturedModel;
 import org.lwjgl.util.vector.Vector3f;
 import render.*;
 import shaders.StaticShader;
+import terrains.Terrain;
 import textures.ModelTexture;
 
 import org.lwjgl.opengl.Display;
@@ -33,7 +34,11 @@ public class GameLoop {
         TexturedModel texturedModel = new TexturedModel(rawModel, new ModelTexture(loader.loadTexture("white")));
 
         Entity entity = getEntity(texturedModel);
-        Light light = new Light(new Vector3f(0, 0, -20), new Vector3f(1, 1, 1)); // Fuente de luz
+        Light light = new Light(new Vector3f(3000, 2000, 2000), new Vector3f(1, 1, 1)); // Fuente de luz
+
+        Terrain terrain = new Terrain(0, 0, loader, new ModelTexture(loader.loadTexture("pasto")));
+        Terrain terrain2 = new Terrain(0, 0, loader, new ModelTexture(loader.loadTexture("pasto")));
+
         Camera camera = new Camera();
 
         MasterRenderer renderer = new MasterRenderer();
@@ -41,8 +46,13 @@ public class GameLoop {
         while (!Display.isCloseRequested()) {
             // entity.increaseRotation(0, 1, 0);
             camera.move();
+
+            renderer.processTerrain(terrain);
+            renderer.processTerrain(terrain2);
             renderer.processEntity(entity);
+
             renderer.render(light, camera);
+
             DisplayManager.update();
         }
 

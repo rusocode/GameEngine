@@ -1,0 +1,51 @@
+#version 400 core // Version de GLSL
+
+// Datos entrantes de la aplicacion
+in vec3 position;
+in vec2 textureCoords;
+in vec3 normal;
+
+out vec2 pass_textureCoords;
+out vec3 surfaceNormal; // Superficie normal del vector
+out vec3 toLightVector; // Vector que apunta hacia la fuente de luz
+out vec3 toCameraVector; // Vector que apunta hacia la camara
+
+uniform mat4 projectionMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 transformationMatrix;
+uniform vec3 lightPosition;
+
+// Metodo principal que se ejecutara cada vez que este sombreador de vertices procese un vertice
+void main(void) {
+
+    vec4 worldPosition = transformationMatrix * vec4(position, 1.0);
+    // Le dice a la GPU donde representar este vertice en la pantalla
+    gl_Position = projectionMatrix * viewMatrix * worldPosition;
+    // Pasa (pass_) las coordendas de texturas al Fragment Shader
+    pass_textureCoords = textureCoords;
+
+    /* Podria pensar que la normal de la superficie deberia ser igual a la normal que obtenemos, pero no olvidemos que
+     * a veces vamos a rotar el modelo. Cuando tenemos la matriz de transformacion, va a rotar la entidad, por lo que
+     * la normal tambien tiene que rotarse porque cambiara su direccion si la entidad se gira. Asi que tenemos que hacer
+     * una matriz de transformacion multiplicada por la normal y tenemos que convertir la normal en un vector 4D para que
+     * pueda multiplicarse por la matriz 4x4 de transformacion. */
+    surfaceNormal = (transformationMatrix * vec4(normal, 0.0)).xyz;
+    // Calcula la diferencia entre la posicion de la luz y la posicion mundial del vertice, y como la posicion mundial es un vector 4D y solo necesitamos que sea 3D, entonces obtiene los componentes xyz
+    toLightVector = lightPosition - worldPosition.xyz;
+
+    /* Como no tenemos la camara en ningun lado del codigo del shader, utilizamos viewMatrix que contiene la version
+     * negativa de la posicion de la camara. Por lo que toma la inversa de esa matriz y aplica esta transformacion a un
+     * vector 0,0,0 para convertirlo en un vector 4D, siendo esta la posicion de la camara. Ahora podemos obtener el
+     * el vector desde el vertice a la camara restando la posicion de los vertices de la posicion de la camara. */
+    toCameraVector = (inverse(viewMatrix) * vec4(0.0, 0.0, 0.0, 1.0)).xyz - worldPosition.xyz;
+
+}
+
+// Este comentario se aplica a los primeros videos que hacen referencia un cuadrado rectangulo
+/* Para resumir, tenemos nuestro cuadrado de 6 lados con sus cuatro vertices almacenados en una matriz de atributos en
+ * un VAO: V1 (-0.5, 0.5, -0.5), V1 (-0.5, -0.5, -0.5), V2 (0.5, -0.5, -0.5) y V3 (0.5, 0.5, -0.5). El sombreador de
+ * vertices que acabamos de programar tiene acceso a estas posiciones desde: in vec4 position. Para que el sombreador de
+ * vertices se ejecute para cada vertice y use esta posicion de entrada primero debe decirle a la GPU en que parte de la
+ * pantalla se debe representar el vertice. Esto se hace estableciendo la variable de posicion gl_Position = vec4(position, 1.0).
+ * Luego el sombreador de vertices calcula el color para cada vertice basado en la posicion de ese vertice usando las
+ * coordenadas de texturas. */
