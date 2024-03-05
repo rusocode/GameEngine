@@ -10,6 +10,9 @@ import toolBox.Maths;
 import org.lwjgl.opengl.*;
 import org.lwjgl.util.vector.Matrix4f;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Renderiza el modelo texturizado.
  * <p>
@@ -25,8 +28,13 @@ public class Renderer {
     private static final float FAR_PLANE = 1000; // Plano lejano
 
     private Matrix4f projectionMatrix;
+    private final StaticShader shader;
 
     public Renderer(StaticShader shader) {
+        this.shader = shader;
+        // Detiene los triangulos que miran hacia afuera de la camara para que no se rendericen las caras posteriores del modelo (Culling Faces)
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        GL11.glEnable(GL11.GL_BACK);
         createProjectionMatrix();
         shader.start();
         shader.loadProjectionMatrix(projectionMatrix);
@@ -44,13 +52,32 @@ public class Renderer {
     }
 
     /**
-     * Renderiza la entidad.
+     * Renderiza las entidades.
      *
-     * @param entity entidad.
-     * @param shader shader.
+     * @param entities lista de entidades.
      */
-    public void render(Entity entity, StaticShader shader) {
-        TexturedModel model = entity.getModel();
+    public void render(Map<TexturedModel, List<Entity>> entities) {
+        // Itera todos los modelos
+        for (TexturedModel model : entities.keySet()) {
+            prepareTexturedModel(model);
+            // Obtiene todas las entidades que usan el modelo texturizado y las itera
+            List<Entity> batch = entities.get(model);
+            for (Entity entity : batch) {
+                prepareInstance(entity);
+                /* Renderiza primitivas graficas, como triangulos, lineas o puntos, mediante el uso de indices almacenados en un VBO. Esta
+                 * funcion es esencial en el proceso de renderizado y juega un papel fundamental en la visualizacion de modelos 3D. */
+                GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+            }
+            unbindTexturedModel();
+        }
+    }
+
+    /**
+     * Prepara el modelo texturizado.
+     *
+     * @param model modelo texturizado.
+     */
+    private void prepareTexturedModel(TexturedModel model) {
         RawModel rawModel = model.getRawModel();
         GL30.glBindVertexArray(rawModel.getVaoID());
         /* Despues de vincular los atributos en el VAO, los habilita especificando el indice correspondiente al atributo en el
@@ -58,8 +85,6 @@ public class Renderer {
         GL20.glEnableVertexAttribArray(0);
         GL20.glEnableVertexAttribArray(1);
         GL20.glEnableVertexAttribArray(2);
-        Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), entity.getRotX(), entity.getRotY(), entity.getRotZ(), entity.getScale());
-        shader.loadTransformationMatrix(transformationMatrix);
         ModelTexture texture = model.getTexture();
         // Carga las variables de luz especular en el shader antes de renderizar
         shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
@@ -75,9 +100,23 @@ public class Renderer {
          * al enlazar texturas, se puede configurar como interactuan con los fragmentos en el shader durante el proceso de
          * renderizado. */
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getTexture().getTextureID());
-        /* Renderiza primitivas graficas, como triangulos, lineas o puntos, mediante el uso de indices almacenados en un VBO. Esta
-         * funcion es esencial en el proceso de renderizado y juega un papel fundamental en la visualizacion de modelos 3D. */
-        GL11.glDrawElements(GL11.GL_TRIANGLES, rawModel.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+    }
+
+
+    /**
+     * Prepara la entidad.
+     *
+     * @param entity entidad.
+     */
+    private void prepareInstance(Entity entity) {
+        Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), entity.getRotX(), entity.getRotY(), entity.getRotZ(), entity.getScale());
+        shader.loadTransformationMatrix(transformationMatrix);
+    }
+
+    /**
+     * Deshabilita el modelo texturizado.
+     */
+    private void unbindTexturedModel() {
         // Deshabilita la lista de atributos
         GL20.glDisableVertexAttribArray(0);
         GL20.glDisableVertexAttribArray(1);

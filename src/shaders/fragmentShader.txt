@@ -51,7 +51,7 @@ void main(void) {
     // Multiplica el factor amortiguado por la reflectividad por el color de la luz que la luz especular sea el color de la fuente de luz
     vec3 finalSpecular = dampedFactor * reflectivity * lightColour;
 
-    // PIXEL CON EL RESULTADO FINAL
+    // PIXEL CON LA ILUMINACION FINAL
     /* El metodo texture() devuelve el color del pixel en la coordenada de textura obtenida, de modo que muestreara la
      * textura del textureSampler y la probara en las coordenadas de texturas del pass_textureCoords. Asi obtiene el
      * color del pixel que encuentre en esas coordenadas de textura y lo envia al pixel que se esta procesando

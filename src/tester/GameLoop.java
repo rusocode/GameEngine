@@ -26,8 +26,6 @@ public class GameLoop {
         DisplayManager.create();
 
         Loader loader = new Loader();
-        StaticShader shader = new StaticShader();
-        Renderer renderer = new Renderer(shader);
 
         // Carga el modelo en crudo
         RawModel rawModel = OBJLoader.loadObjModel("dragon", loader);
@@ -38,20 +36,17 @@ public class GameLoop {
         Light light = new Light(new Vector3f(0, 0, -20), new Vector3f(1, 1, 1)); // Fuente de luz
         Camera camera = new Camera();
 
+        MasterRenderer renderer = new MasterRenderer();
+
         while (!Display.isCloseRequested()) {
-            entity.increaseRotation(0, 1, 0);
+            // entity.increaseRotation(0, 1, 0);
             camera.move();
-            renderer.prepare();
-            shader.start();
-            // Carga la fuente de luz y la camara antes de renderizar la entidad
-            shader.loadLight(light);
-            shader.loadViewMatrix(camera);
-            renderer.render(entity, shader);
-            shader.stop();
+            renderer.processEntity(entity);
+            renderer.render(light, camera);
             DisplayManager.update();
         }
 
-        shader.clean();
+        renderer.clean();
         loader.clean();
         DisplayManager.close();
     }
