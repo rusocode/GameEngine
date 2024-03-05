@@ -26,7 +26,7 @@ public class StaticShader extends ShaderProgram {
     @Override
     protected void bindAttributes() {
         // Vincula la variable position al indice 0 para que le de al Vertex Shader acceso a esta posicion en el VAO
-        bindAttribute(0, "position");
+        bindAttribute(0, "position"); // Es importante que los nombres de las variables coincidan con los del Vertex Shader
         bindAttribute(1, "textureCoords");
         bindAttribute(2, "normal");
     }
@@ -72,7 +72,9 @@ public class StaticShader extends ShaderProgram {
     }
 
     /**
-     * Carga las variables de luz.
+     * Carga las variables de iluminacion.
+     *
+     * @param light fuente de luz.
      */
     public void loadLight(Light light) {
         loadVector(location_lightPosition, light.getPosition());
@@ -80,7 +82,10 @@ public class StaticShader extends ShaderProgram {
     }
 
     /**
-     * Carga las variables de brillo.
+     * Carga las variables de luz especular.
+     *
+     * @param damper       factor de amortiguacion.
+     * @param reflectivity reflectividad.
      */
     public void loadShineVariables(float damper, float reflectivity) {
         loadFloat(location_shineDamper, damper);

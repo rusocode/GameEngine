@@ -1,6 +1,6 @@
 #version 400 core // Version de GLSL
 
-// Datos entrantes de OpenGL
+// Datos entrantes de la aplicacion
 in vec3 position;
 in vec3 normal;
 

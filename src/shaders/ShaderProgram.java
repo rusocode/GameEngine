@@ -23,7 +23,7 @@ import org.lwjgl.util.vector.Vector3f;
  * tridimensional de los objetos en la escena.
  * <li><b>Vertex Shader:</b> Este shader procesa cada vertice individual, realizando transformaciones como traslacion, rotacion y
  * escala. Tambien puede realizar calculos adicionales, como iluminacion o deformaciones.
- * <li><b>Tessellation:</b> Opcionalmente, esta etapa divide poligonos grandes en fragmentos mas pequeños para un mayor detalle 
+ * <li><b>Tessellation:</b> Opcionalmente, esta etapa divide poligonos grandes en fragmentos mas pequeños para un mayor detalle
  * geometrico.
  * <li><b>Geometry Shader:</b> Tambien es opcional, este shader manipula la geometria, generando nuevos vertices o primitivas, lo
  * que permite efectos como la creacion de instancias multiples o la generacion de sombras.
@@ -127,15 +127,15 @@ public abstract class ShaderProgram {
         fragmentShaderID = loadShader(fragmentFile, GL20.GL_FRAGMENT_SHADER);
         // Crea un programa de shader
         programID = GL20.glCreateProgram();
-        // Adjunta un shader a un programa de shader
+        // Adjunta el shader al programa de shader
         GL20.glAttachShader(programID, vertexShaderID);
         GL20.glAttachShader(programID, fragmentShaderID);
         // Vincula los atributos antes de vincular el programa
         bindAttributes();
-        /* Enlaza los shaders adjuntos a un programa de shader. Despues de adjuntar shaders individuales al programa, glLinkProgram()
+        /* Enlaza los shaders adjuntos al programa de shader. Despues de adjuntar los shaders individuales al programa, glLinkProgram()
          * realiza la vinculacion final para crear un programa de shader completo y listo para su uso en el pipeline grafico. */
         GL20.glLinkProgram(programID);
-        /* Valida un programa de shader despues de ser enlazado. La validacion proporciona informacion sobre la compatibilidad
+        /* Valida el programa de shader despues de ser enlazado. La validacion proporciona informacion sobre la compatibilidad
          * entre los shaders en el programa y asegura que esten configurados de manera coherente para ejecutarse correctamente en
          * el hardware de la tarjeta grafica. */
         GL20.glValidateProgram(programID);
@@ -163,7 +163,7 @@ public abstract class ShaderProgram {
     }
 
     /**
-     * Obtiene la ubicacion de la variable uniforme declarada en el Vertex Shader.
+     * Obtiene la ubicacion de la variable uniforme declarada en el shader.
      * <p>
      * Estas variables permanecen constantes durante la ejecucion del shader y se emplean para enviar datos desde la aplicacion
      * de OpenGL al shader. La funcion toma como parametros el identificador del programa de shader y el nombre de la variable
@@ -178,12 +178,11 @@ public abstract class ShaderProgram {
     }
 
     /**
-     * Carga un valor de tipo float a una variable uniforme en un programa de shader. Las variables uniformes mantienen su
-     * valor constante durante la ejecucion de conjuntos de vertices o fragmentos. El "1f" en el nombre de la funcion señala que
-     * se asigna un solo valor de tipo float.
+     * Carga un valor de tipo float a una variable uniforme del shader. El "1f" en el nombre de la funcion señala que se asigna un
+     * solo valor de tipo float.
      *
-     * @param location Especifica la ubicacion de la variable uniforme en el programa de shader actual.
-     * @param value    Especifica el valor float que se va a asignar a la variable uniforme.
+     * @param location ubicacion de la variable uniforme.
+     * @param value    valor que se va a asignar a la variable uniforme.
      */
     protected void loadFloat(int location, float value) {
         GL20.glUniform1f(location, value);
@@ -241,7 +240,7 @@ public abstract class ShaderProgram {
      *
      * @param file archivo del shader.
      * @param type tipo de shader.
-     * @return identificador del shader
+     * @return el identificador del shader
      */
     private static int loadShader(String file, int type) {
         StringBuilder shaderSource = new StringBuilder();

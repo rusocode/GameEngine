@@ -1,6 +1,6 @@
 #version 400 core
 
-// La entrada al fragmentShader es la salida del vertexShader
+// La entrada al Fragment Shader es la salida del Vertex Shader
 in vec2 textureCoords;
 in vec3 surfaceNormal;
 in vec3 toLightVector;

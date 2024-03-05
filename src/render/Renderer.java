@@ -53,16 +53,15 @@ public class Renderer {
         TexturedModel model = entity.getModel();
         RawModel rawModel = model.getRawModel();
         GL30.glBindVertexArray(rawModel.getVaoID());
-        /* Habilita los atributos de vertices en OpenGL al especificar el indice correspondiente al atributo en el Vertex Shader,
-         * despues de vincular los atributos en un VAO. Al habilitar un atributo, se indica a OpenGL que utilice esos datos
-         * durante el renderizado. */
+        /* Despues de vincular los atributos en el VAO, los habilita especificando el indice correspondiente al atributo en el
+         * Vertex Shader. Al habilitar un atributo, se indica a OpenGL que utilice esos datos durante el renderizado. */
         GL20.glEnableVertexAttribArray(0);
         GL20.glEnableVertexAttribArray(1);
         GL20.glEnableVertexAttribArray(2);
         Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), entity.getRotX(), entity.getRotY(), entity.getRotZ(), entity.getScale());
         shader.loadTransformationMatrix(transformationMatrix);
         ModelTexture texture = model.getTexture();
-        // Carga las variables de brillo en el sombreador antes de renderizar
+        // Carga las variables de luz especular en el shader antes de renderizar
         shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
         /* Selecciona la unidad de textura activa entre las disponibles en el contexto. OpenGL permite multiples unidades de
          * textura (generalmente numeradas desde GL_TEXTURE0 hasta GL_TEXTURE31), y esta funcion te permite elegir cual estara
