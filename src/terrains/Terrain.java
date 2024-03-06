@@ -6,13 +6,19 @@ import textures.ModelTexture;
 
 /**
  * Un terreno es basicamente una entidad.
+ * <p>
+ * Es importante que las texturas sean potencia de 2 para evitar bordes negros.
+ * <p>
+ * xGrid y zGrid son coordenadas que determinan en que cuadricula del mundo aparecera el terreno. El mundo esta formado por una
+ * cuadricula donde cada cuadrado tiene bordes del tamaño del terreno (SIZE).
  */
 
 public class Terrain {
 
     private static final float SIZE = 800; // Tamaño del terreno
-    private static final int VERTEX_COUNT = 128; // ?
+    private static final int VERTEX_COUNT = 128; // Cantidad de vertices del terreno
 
+    // El eje y no es necesario ya que el terreno permanece en la misma altura
     private final float x, z;
     private final RawModel model;
     private final ModelTexture texture;
@@ -25,6 +31,7 @@ public class Terrain {
     }
 
     private RawModel generateTerrain(Loader loader) {
+        // Calcula la potencia de VERTEX_COUNT para obtener el numero total de vertices
         int count = VERTEX_COUNT * VERTEX_COUNT;
         float[] vertices = new float[count * 3];
         float[] normals = new float[count * 3];
