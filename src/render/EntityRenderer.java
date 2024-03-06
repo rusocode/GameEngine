@@ -3,7 +3,7 @@ package render;
 import entities.Entity;
 import models.RawModel;
 import models.TexturedModel;
-import shaders.StaticShader;
+import shaders.EntityShader;
 import textures.ModelTexture;
 import toolBox.Maths;
 
@@ -23,9 +23,9 @@ import java.util.Map;
 
 public class EntityRenderer {
 
-    private final StaticShader shader;
+    private final EntityShader shader;
 
-    public EntityRenderer(StaticShader shader, Matrix4f projectionMatrix) {
+    public EntityRenderer(EntityShader shader, Matrix4f projectionMatrix) {
         this.shader = shader;
         shader.start();
         shader.loadProjectionMatrix(projectionMatrix);
@@ -44,7 +44,7 @@ public class EntityRenderer {
             // Obtiene todas las entidades que usan el modelo texturizado y las itera
             List<Entity> batch = entities.get(model);
             for (Entity entity : batch) {
-                prepareInstance(entity);
+                loadModelMatrix(entity);
                 /* Renderiza primitivas graficas, como triangulos, lineas o puntos, mediante el uso de indices almacenados en un VBO. Esta
                  * funcion es esencial en el proceso de renderizado y juega un papel fundamental en la visualizacion de modelos 3D. */
                 GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
@@ -83,13 +83,12 @@ public class EntityRenderer {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getTexture().getTextureID());
     }
 
-
     /**
-     * Prepara la entidad.
+     * Carga el modelo de la matriz.
      *
      * @param entity entidad.
      */
-    private void prepareInstance(Entity entity) {
+    private void loadModelMatrix(Entity entity) {
         Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), entity.getRotX(), entity.getRotY(), entity.getRotZ(), entity.getScale());
         shader.loadTransformationMatrix(transformationMatrix);
     }

@@ -10,13 +10,12 @@ import textures.ModelTexture;
 
 public class Terrain {
 
-    private static final float SIZE = 800;
-    private static final int VERTEX_COUNT = 128;
+    private static final float SIZE = 800; // Tamaño del terreno
+    private static final int VERTEX_COUNT = 128; // ?
 
-    private float x;
-    private float z;
-    private RawModel model;
-    private ModelTexture texture;
+    private final float x, z;
+    private final RawModel model;
+    private final ModelTexture texture;
 
     public Terrain(float gridX, float gridZ, Loader laoder, ModelTexture texture) {
         this.x = gridX * SIZE;

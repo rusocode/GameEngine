@@ -1,20 +1,19 @@
 package render;
 
-import entities.Entity;
+import java.util.List;
+
 import models.RawModel;
-import models.TexturedModel;
+import shaders.TerrainShader;
+import terrains.Terrain;
+import textures.ModelTexture;
+import toolBox.Maths;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
-import shaders.TerrainShader;
-import terrains.Terrain;
-import textures.ModelTexture;
-import toolBox.Maths;
-
-import java.util.List;
 
 public class TerrainRenderer {
 
@@ -29,15 +28,14 @@ public class TerrainRenderer {
 
     public void render(List<Terrain> terrains) {
         for (Terrain terrain : terrains) {
-            prepareTerrain(terrain);
+            prepareTexturedModel(terrain);
             loadModelMatrix(terrain);
             GL11.glDrawElements(GL11.GL_TRIANGLES, terrain.getModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
             unbindTexturedModel();
         }
     }
 
-
-    private void prepareTerrain(Terrain terrain) {
+    private void prepareTexturedModel(Terrain terrain) {
         RawModel rawModel = terrain.getModel();
         GL30.glBindVertexArray(rawModel.getVaoID());
         GL20.glEnableVertexAttribArray(0);

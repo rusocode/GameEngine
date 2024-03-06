@@ -25,15 +25,13 @@ public class TerrainShader extends ShaderProgram {
 
     @Override
     protected void bindAttributes() {
-        // Vincula la variable position al indice 0 para que le de al Vertex Shader acceso a esta posicion en el VAO
-        bindAttribute(0, "position"); // Es importante que los nombres de las variables coincidan con los del Vertex Shader
+        bindAttribute(0, "position");
         bindAttribute(1, "textureCoords");
         bindAttribute(2, "normal");
     }
 
     @Override
     protected void getAllUniformLocations() {
-        // Obtiene la ubicacion de la variable uniforme en el shader y la almacena en la variable local
         location_projectionMatrix = getUniformLocation("projectionMatrix");
         location_viewMatrix = getUniformLocation("viewMatrix");
         location_transformationMatrix = getUniformLocation("transformationMatrix");
@@ -58,8 +56,8 @@ public class TerrainShader extends ShaderProgram {
      * @param camera camara.
      */
     public void loadViewMatrix(Camera camera) {
-        Matrix4f viewMatrix = Maths.createViewMatrix(camera);
-        loadMatrix(location_viewMatrix, viewMatrix);
+        Matrix4f matrix = Maths.createViewMatrix(camera);
+        loadMatrix(location_viewMatrix, matrix);
     }
 
     /**

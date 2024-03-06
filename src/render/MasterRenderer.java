@@ -7,7 +7,7 @@ import models.TexturedModel;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
-import shaders.StaticShader;
+import shaders.EntityShader;
 import shaders.TerrainShader;
 import terrains.Terrain;
 
@@ -19,31 +19,31 @@ public class MasterRenderer {
 
     private Matrix4f projectionMatrix;
 
-    private final StaticShader shader = new StaticShader();
-    private final EntityRenderer renderer;
+    private final EntityShader entityShader = new EntityShader();
+    private final EntityRenderer entityRenderer;
 
-    private TerrainRenderer terrainRenderer;
-    private TerrainShader terrainShader = new TerrainShader();
+    private final TerrainShader terrainShader = new TerrainShader();
+    private final TerrainRenderer terrainRenderer;
 
     private final Map<TexturedModel, List<Entity>> entities = new HashMap<>();
     private final List<Terrain> terrains = new ArrayList<>();
 
     public MasterRenderer() {
-        // Detiene los triangulos que miran hacia afuera de la camara para que no se rendericen las caras posteriores del modelo (Culling Faces)
+        // Evita que se rendericen las caras posteriores del modelo (Culling Faces)
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glEnable(GL11.GL_BACK);
         createProjectionMatrix();
-        renderer = new EntityRenderer(shader, projectionMatrix);
+        entityRenderer = new EntityRenderer(entityShader, projectionMatrix);
         terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
     }
 
     public void render(Light sun, Camera camera) {
         prepare();
-        shader.start();
-        shader.loadLight(sun);
-        shader.loadViewMatrix(camera);
-        renderer.render(entities);
-        shader.stop();
+        entityShader.start();
+        entityShader.loadLight(sun);
+        entityShader.loadViewMatrix(camera);
+        entityRenderer.render(entities);
+        entityShader.stop();
         terrainShader.start();
         terrainShader.loadLight(sun);
         terrainShader.loadViewMatrix(camera);
@@ -74,10 +74,9 @@ public class MasterRenderer {
     }
 
     public void clean() {
-        shader.clean();
+        entityShader.clean();
         terrainShader.clean();
     }
-
 
     /**
      * Se llama una vez en cada fotograma y simplemente prepara a OpenGL para renderizar el juego.
