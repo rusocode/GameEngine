@@ -54,7 +54,7 @@ void main(void) {
     vec4 textureColor = texture(modelTexture, pass_textureCoords);
     // Verifica si el color alpha (transparente) de la textura es menor a 0.5
     if (textureColor.a < 0.5) {
-        // Le dice a OpenGL que no renderice estas secciones negras transparentes de las texturas
+        // Le dice a OpenGL (o a la GPU?) que no renderice las secciones negras transparentes de las texturas
         discard;
     }
 

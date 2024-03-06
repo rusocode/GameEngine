@@ -73,7 +73,7 @@ public class EntityShader extends ShaderProgram {
     }
 
     /**
-     * Carga las variables de iluminacion.
+     * Carga la fuente de luz.
      *
      * @param light fuente de luz.
      */
@@ -83,17 +83,22 @@ public class EntityShader extends ShaderProgram {
     }
 
     /**
-     * Carga las variables de luz especular.
+     * Carga la luz especular.
      *
      * @param damper       factor de amortiguacion.
      * @param reflectivity reflectividad.
      */
-    public void loadShineVariables(float damper, float reflectivity) { // TODO Quitar el nombre Variables
+    public void loadSpecularLight(float damper, float reflectivity) {
         loadFloat(location_shineDamper, damper);
         loadFloat(location_reflectivity, reflectivity);
     }
 
-    public void loadFakeLightingVariable(boolean useFake) {
+    /**
+     * Carga la iluminacion falsa.
+     *
+     * @param useFake si la textura usa o no iluminacion falsa.
+     */
+    public void loadFakeLighting(boolean useFake) {
         loadBoolean(location_useFakeLighting, useFake);
     }
 

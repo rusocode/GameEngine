@@ -38,7 +38,7 @@ void main(void) {
      * la normal tambien tiene que rotarse porque cambiara su direccion si la entidad se gira. Asi que tenemos que hacer
      * una matriz de transformacion multiplicada por la normal y tenemos que convertir la normal en un vector 4D para que
      * pueda multiplicarse por la matriz 4x4 de transformacion. */
-    surfaceNormal = (transformationMatrix * vec4(normal, 0.0)).xyz;
+    surfaceNormal = (transformationMatrix * vec4(actualNormal, 0.0)).xyz;
     // Calcula la diferencia entre la posicion de la luz y la posicion mundial del vertice, y como la posicion mundial es un vector 4D y solo necesitamos que sea 3D, entonces obtiene los componentes xyz
     toLightVector = lightPosition - worldPosition.xyz;
 

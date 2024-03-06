@@ -69,9 +69,8 @@ public class EntityRenderer {
         ModelTexture texture = model.getTexture();
         // Deshabilita la seleccion de caras posteriores cada vez que renderiza una textura con transparencia
         if (texture.isHasTransparency()) MasterRenderer.disableCulling();
-        shader.loadFakeLightingVariable(texture.isUseFakeLighting());
-        // Carga las variables de luz especular en el shader antes de renderizar
-        shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
+        shader.loadFakeLighting(texture.isUseFakeLighting());
+        shader.loadSpecularLight(texture.getShineDamper(), texture.getReflectivity());
         /* Selecciona la unidad de textura activa entre las disponibles en el contexto. OpenGL permite multiples unidades de
          * textura (generalmente numeradas desde GL_TEXTURE0 hasta GL_TEXTURE31), y esta funcion te permite elegir cual estara
          * activa para las operaciones subsiguientes. Es especialmente util al trabajar con shaders, ya que posibilita asignar

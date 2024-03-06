@@ -70,7 +70,7 @@ public class TerrainShader extends ShaderProgram {
     }
 
     /**
-     * Carga las variables de iluminacion.
+     * Carga la fuente de luz.
      *
      * @param light fuente de luz.
      */
@@ -80,15 +80,14 @@ public class TerrainShader extends ShaderProgram {
     }
 
     /**
-     * Carga las variables de luz especular.
+     * Carga la luz especular.
      *
      * @param damper       factor de amortiguacion.
      * @param reflectivity reflectividad.
      */
-    public void loadShineVariables(float damper, float reflectivity) {
+    public void loadSpecularLight(float damper, float reflectivity) {
         loadFloat(location_shineDamper, damper);
         loadFloat(location_reflectivity, reflectivity);
     }
-
 
 }

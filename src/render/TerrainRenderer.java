@@ -42,7 +42,7 @@ public class TerrainRenderer {
         GL20.glEnableVertexAttribArray(1);
         GL20.glEnableVertexAttribArray(2);
         ModelTexture texture = terrain.getTexture();
-        shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
+        shader.loadSpecularLight(texture.getShineDamper(), texture.getReflectivity());
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getTextureID());
     }
