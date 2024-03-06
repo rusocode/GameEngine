@@ -17,6 +17,7 @@ public class EntityShader extends ShaderProgram {
     private int location_lightColour;
     private int location_shineDamper;
     private int location_reflectivity;
+    private int location_useFakeLighting;
 
     public EntityShader() {
         super(VERTEX_FILE, FRAGMENT_FILE);
@@ -40,6 +41,7 @@ public class EntityShader extends ShaderProgram {
         location_lightColour = getUniformLocation("lightColour");
         location_shineDamper = getUniformLocation("shineDamper");
         location_reflectivity = getUniformLocation("reflectivity");
+        location_useFakeLighting = getUniformLocation("useFakeLighting");
     }
 
     /**
@@ -86,9 +88,13 @@ public class EntityShader extends ShaderProgram {
      * @param damper       factor de amortiguacion.
      * @param reflectivity reflectividad.
      */
-    public void loadShineVariables(float damper, float reflectivity) {
+    public void loadShineVariables(float damper, float reflectivity) { // TODO Quitar el nombre Variables
         loadFloat(location_shineDamper, damper);
         loadFloat(location_reflectivity, reflectivity);
+    }
+
+    public void loadFakeLightingVariable(boolean useFake) {
+        loadBoolean(location_useFakeLighting, useFake);
     }
 
 }

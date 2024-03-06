@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Renderiza el modelo texturizado.
+ * Renderiza la entidad.
  * <p>
  * La matriz de vista controla la posicion y orientacion de la camara, mientras que la matriz de proyeccion controla como se
  * proyectan los objetos en la pantalla. Ambas son cruciales para lograr una representacion precisa y realista en un entorno 3D.
@@ -67,6 +67,9 @@ public class EntityRenderer {
         GL20.glEnableVertexAttribArray(1);
         GL20.glEnableVertexAttribArray(2);
         ModelTexture texture = model.getTexture();
+        // Deshabilita la seleccion de caras posteriores cada vez que renderiza una textura con transparencia
+        if (texture.isHasTransparency()) MasterRenderer.disableCulling();
+        shader.loadFakeLightingVariable(texture.isUseFakeLighting());
         // Carga las variables de luz especular en el shader antes de renderizar
         shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
         /* Selecciona la unidad de textura activa entre las disponibles en el contexto. OpenGL permite multiples unidades de
@@ -89,7 +92,7 @@ public class EntityRenderer {
      * @param entity entidad.
      */
     private void loadModelMatrix(Entity entity) {
-        Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), entity.getRotX(), entity.getRotY(), entity.getRotZ(), entity.getScale());
+        Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getTranslation(), entity.getRotX(), entity.getRotY(), entity.getRotZ(), entity.getScale());
         shader.loadTransformationMatrix(transformationMatrix);
     }
 
@@ -97,6 +100,8 @@ public class EntityRenderer {
      * Deshabilita el modelo texturizado.
      */
     private void unbindTexturedModel() {
+        // Habilita la seleccion nuevamente para que este habilitado para el siguiente modelo
+        MasterRenderer.enableCulling();
         // Deshabilita la lista de atributos
         GL20.glDisableVertexAttribArray(0);
         GL20.glDisableVertexAttribArray(1);

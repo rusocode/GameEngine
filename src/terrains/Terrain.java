@@ -9,7 +9,7 @@ import textures.ModelTexture;
  * <p>
  * Es importante que las texturas sean potencia de 2 para evitar bordes negros.
  * <p>
- * xGrid y zGrid son coordenadas que determinan en que cuadricula del mundo aparecera el terreno. El mundo esta formado por una
+ * xGrid y zGrid son coordenadas que determinan en que cuadricula del mundo aparece el terreno. El mundo esta formado por una
  * cuadricula donde cada cuadrado tiene bordes del tamaño del terreno (SIZE).
  */
 

@@ -15,6 +15,9 @@ uniform mat4 viewMatrix;
 uniform mat4 transformationMatrix;
 uniform vec3 lightPosition;
 
+// El valor sera 0 si no debemos usar iluminacion falsa y 1 en caso contrario
+uniform float useFakeLighting;
+
 // Metodo principal que se ejecutara cada vez que este sombreador de vertices procese un vertice
 void main(void) {
 
@@ -23,6 +26,12 @@ void main(void) {
     gl_Position = projectionMatrix * viewMatrix * worldPosition;
     // Pasa (pass_) las coordendas de texturas al Fragment Shader
     pass_textureCoords = textureCoords;
+
+    vec3 actualNormal = normal;
+    if (useFakeLighting > 0.5) {
+        // Si la iluminacion falsa es mayor a 0.5, entonces la normal apunta hacia arriba
+        actualNormal = vec3(0.0, 1.0, 0.0);
+    }
 
     /* Podria pensar que la normal de la superficie deberia ser igual a la normal que obtenemos, pero no olvidemos que
      * a veces vamos a rotar el modelo. Cuando tenemos la matriz de transformacion, va a rotar la entidad, por lo que

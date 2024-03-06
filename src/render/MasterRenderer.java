@@ -21,7 +21,6 @@ public class MasterRenderer {
 
     private final EntityShader entityShader = new EntityShader();
     private final EntityRenderer entityRenderer;
-
     private final TerrainShader terrainShader = new TerrainShader();
     private final TerrainRenderer terrainRenderer;
 
@@ -29,12 +28,21 @@ public class MasterRenderer {
     private final List<Terrain> terrains = new ArrayList<>();
 
     public MasterRenderer() {
-        // Evita que se rendericen las caras posteriores del modelo (Culling Faces)
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glEnable(GL11.GL_BACK);
+        enableCulling();
         createProjectionMatrix();
         entityRenderer = new EntityRenderer(entityShader, projectionMatrix);
         terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
+    }
+
+    public static void enableCulling() {
+        // Evita que se rendericen las caras posteriores del modelo (Culling Faces)
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        GL11.glEnable(GL11.GL_BACK);
+    }
+
+    // Desactiva la seleccion de caras posteriores cada vez que renderiza un objeto con transparencia
+    public static void disableCulling() {
+        GL11.glDisable(GL11.GL_CULL_FACE);
     }
 
     public void render(Light sun, Camera camera) {
@@ -58,7 +66,7 @@ public class MasterRenderer {
     }
 
     /**
-     * Coloca las entidades en la HashMap de entidades.
+     * Coloca las entidades en el HashMap de entidades.
      *
      * @param entity entidad.
      */

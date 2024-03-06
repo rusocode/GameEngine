@@ -19,7 +19,7 @@ public class Camera {
      * Mueve la camara dependiendo la tecla pulsada.
      */
     public void move() {
-        float speed = 1f;
+        float speed = 0.2f;
         if (Keyboard.isKeyDown(Keyboard.KEY_W)) position.y += speed;
         if (Keyboard.isKeyDown(Keyboard.KEY_S)) position.y -= speed;
         // TODO Por que la camara se mueve hacia la izq? Es como que esta invertida
