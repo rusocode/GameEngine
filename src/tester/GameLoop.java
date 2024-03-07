@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import converter.ModelData;
+import converter.OBJFileLoader;
 import entities.*;
 import models.*;
 import render.*;
@@ -33,8 +35,11 @@ public class GameLoop {
         Light light = new Light(new Vector3f(20000, 20000, 2000), new Vector3f(1, 1, 1));
         MasterRenderer renderer = new MasterRenderer();
 
+        ModelData data = OBJFileLoader.loadOBJ("tree");
+        RawModel treeModel = loader.loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getIndices());
+
         // Ahora el modelo en crudo y la textura se "juntan" para crear el modelo texturizado
-        TexturedModel tree = new TexturedModel(OBJLoader.loadObjModel("tree", loader), new ModelTexture(loader.loadTexture("tree")));
+        TexturedModel tree = new TexturedModel(treeModel, new ModelTexture(loader.loadTexture("tree")));
         TexturedModel herb = new TexturedModel(OBJLoader.loadObjModel("herb", loader), new ModelTexture(loader.loadTexture("herb")));
         herb.getTexture().setHasTransparency(true);
         herb.getTexture().setUseFakeLighting(true);
@@ -47,7 +52,7 @@ public class GameLoop {
             entities.add(getEntity(fern, 0.6f));
         }
 
-        // Crea dos cuadriculas de terreno con diferente pasto
+        // Crea dos cuadriculas de terreno con diferentes texturas
         Terrain terrain = new Terrain(0, 0, loader, new ModelTexture(loader.loadTexture("grass")));
         Terrain terrain2 = new Terrain(0, 1, loader, new ModelTexture(loader.loadTexture("grass2")));
 

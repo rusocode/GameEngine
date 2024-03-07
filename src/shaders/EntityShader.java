@@ -3,6 +3,7 @@ package shaders;
 import entities.Camera;
 import entities.Light;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
 import toolBox.Maths;
 
 public class EntityShader extends ShaderProgram {
@@ -18,6 +19,7 @@ public class EntityShader extends ShaderProgram {
     private int location_shineDamper;
     private int location_reflectivity;
     private int location_useFakeLighting;
+    private int location_skyColor;
 
     public EntityShader() {
         super(VERTEX_FILE, FRAGMENT_FILE);
@@ -42,6 +44,7 @@ public class EntityShader extends ShaderProgram {
         location_shineDamper = getUniformLocation("shineDamper");
         location_reflectivity = getUniformLocation("reflectivity");
         location_useFakeLighting = getUniformLocation("useFakeLighting");
+        location_skyColor = getUniformLocation("skyColor");
     }
 
     /**
@@ -100,6 +103,17 @@ public class EntityShader extends ShaderProgram {
      */
     public void loadFakeLighting(boolean useFake) {
         loadBoolean(location_useFakeLighting, useFake);
+    }
+
+    /**
+     * Carga el color del cielo.
+     *
+     * @param r canal rojo.
+     * @param b canal azul.
+     * @param g canal verde.
+     */
+    public void loadSkyColor(float r, float g, float b) {
+        loadVector(location_skyColor, new Vector3f(r, g, b));
     }
 
 }

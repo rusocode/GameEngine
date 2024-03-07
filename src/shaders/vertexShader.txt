@@ -9,6 +9,7 @@ out vec2 pass_textureCoords;
 out vec3 surfaceNormal; // Superficie normal del vector
 out vec3 toLightVector; // Vector que apunta hacia la fuente de luz
 out vec3 toCameraVector; // Vector que apunta hacia la camara
+out float visibility;
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
@@ -18,12 +19,17 @@ uniform vec3 lightPosition;
 // El valor sera 0 si no debemos usar iluminacion falsa y 1 en caso contrario
 uniform float useFakeLighting;
 
+const float density = 0.0035; // Determina el espesor de la niebla, y aumentar este valor disminuye la visibilidad general de la escena
+const float gradient = 5.0; // Determina que tan rapido disminuye la visibilidad con la distancia, y aumentar este valor hace que la transicion de visibilidad total a visibilidad 0 sea mucho mas pequenia
+
 // Metodo principal que se ejecutara cada vez que este sombreador de vertices procese un vertice
 void main(void) {
 
     vec4 worldPosition = transformationMatrix * vec4(position, 1.0);
+    // Distancia del vertice a la camara
+    vec4 positionRelativeToCam = viewMatrix * worldPosition;
     // Le dice a la GPU donde representar este vertice en la pantalla
-    gl_Position = projectionMatrix * viewMatrix * worldPosition;
+    gl_Position = projectionMatrix * positionRelativeToCam;
     // Pasa (pass_) las coordendas de texturas al Fragment Shader
     pass_textureCoords = textureCoords;
 
@@ -47,6 +53,18 @@ void main(void) {
      * vector 0,0,0 para convertirlo en un vector 4D, siendo esta la posicion de la camara. Ahora podemos obtener el
      * el vector desde el vertice a la camara restando la posicion de los vertices de la posicion de la camara. */
     toCameraVector = (inverse(viewMatrix) * vec4(0.0, 0.0, 0.0, 1.0)).xyz - worldPosition.xyz;
+
+    // Distancia desde la camara obteniendo los componentes xyz con el metodo length()
+    float distance = length(positionRelativeToCam.xyz);
+    /* Aplica la funcion exponencial al resultado negativo de la potencia de la distancia por la densidad elevada al
+     * degradado. La multiplicacion de la distancia por la densidad controla como la densidad afecta la visibilidad en
+     * funcion de la distancia. El resultado anterior se eleva a la potencia indicada por gradient. Esto permite ajustar
+     * como la visibilidad disminuira con la distancia. Luego aplica la funcion exponencial al resultado negativo de la
+     * potencia. La funcion exponencial se utiliza para suavizar la transicion y asegurar que la visibilidad disminuya
+     * de manera suave y realista con la distancia. */
+    visibility = exp(-pow((distance * density), gradient));
+    // Se asegura de que la visibilidad se mantenga entre cero y uno
+    visibility = clamp(visibility, 0.0, 1.0);
 
 }
 

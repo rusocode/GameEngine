@@ -5,7 +5,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class Camera {
 
-    private final Vector3f position = new Vector3f(400, 7, 300);
+    private final Vector3f position = new Vector3f(400, 7, 0);
     private float pitch = 10; // Rotacion alrededor de los ejes XYZ, tambien conocido como la inclinacion de la camara
     // Rotacion
     private float yaw = 180;

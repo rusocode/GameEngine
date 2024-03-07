@@ -41,7 +41,7 @@ public class EntityRenderer {
         // Itera todos los modelos
         for (TexturedModel model : entities.keySet()) {
             prepareTexturedModel(model);
-            // Obtiene todas las entidades que usan el modelo texturizado y las itera
+            // Obtiene la lista de entidades de ese modelo texturizado y las itera
             List<Entity> batch = entities.get(model);
             for (Entity entity : batch) {
                 loadModelMatrix(entity);

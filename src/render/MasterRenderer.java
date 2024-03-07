@@ -17,6 +17,11 @@ public class MasterRenderer {
     private static final float NEAR_PLANE = 0.1f; // Plano cercano
     private static final float FAR_PLANE = 1000; // Plano lejano
 
+    // https://rgbcolorpicker.com/0-1
+    private static final float RED = 0.592f;
+    private static final float GREEN = 0.871f;
+    private static final float BLUE = 0.949f;
+
     private Matrix4f projectionMatrix;
 
     private final EntityShader entityShader = new EntityShader();
@@ -48,11 +53,13 @@ public class MasterRenderer {
     public void render(Light sun, Camera camera) {
         prepare();
         entityShader.start();
+        entityShader.loadSkyColor(RED, GREEN, BLUE); // Lo carga en cada frame para el ciclo dia/noche
         entityShader.loadLight(sun);
         entityShader.loadViewMatrix(camera);
         entityRenderer.render(entities);
         entityShader.stop();
         terrainShader.start();
+        terrainShader.loadSkyColor(RED, GREEN, BLUE);
         terrainShader.loadLight(sun);
         terrainShader.loadViewMatrix(camera);
         terrainRenderer.render(terrains);
@@ -93,7 +100,7 @@ public class MasterRenderer {
         GL11.glEnable(GL11.GL_DEPTH_TEST); // Para que OpenGL pruebe que triangulo esta por encima del otro evitando que se superpongan
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         // Borra el color del ultimo fotograma
-        GL11.glClearColor(0.49f, 89f, 0.98f, 1);
+        GL11.glClearColor(RED, GREEN, BLUE, 1);
     }
 
     /**
