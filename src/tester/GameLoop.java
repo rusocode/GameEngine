@@ -35,15 +35,20 @@ public class GameLoop {
         Light light = new Light(new Vector3f(20000, 20000, 2000), new Vector3f(1, 1, 1));
         MasterRenderer renderer = new MasterRenderer();
 
-        ModelData data = OBJFileLoader.loadOBJ("tree");
-        RawModel treeModel = loader.loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getIndices());
-
+        ModelData treeData = OBJFileLoader.loadOBJ("tree");
+        RawModel treeModel = loader.loadToVAO(treeData.getVertices(), treeData.getTextureCoords(), treeData.getNormals(), treeData.getIndices());
         // Ahora el modelo en crudo y la textura se "juntan" para crear el modelo texturizado
         TexturedModel tree = new TexturedModel(treeModel, new ModelTexture(loader.loadTexture("tree")));
-        TexturedModel herb = new TexturedModel(OBJLoader.loadObjModel("herb", loader), new ModelTexture(loader.loadTexture("herb")));
+
+        ModelData herbData = OBJFileLoader.loadOBJ("herb");
+        RawModel herbModel = loader.loadToVAO(herbData.getVertices(), herbData.getTextureCoords(), herbData.getNormals(), herbData.getIndices());
+        TexturedModel herb = new TexturedModel(herbModel, new ModelTexture(loader.loadTexture("herb")));
         herb.getTexture().setHasTransparency(true);
         herb.getTexture().setUseFakeLighting(true);
-        TexturedModel fern = new TexturedModel(OBJLoader.loadObjModel("fern", loader), new ModelTexture(loader.loadTexture("fern")));
+
+        ModelData fernData = OBJFileLoader.loadOBJ("fern");
+        RawModel fernModel = loader.loadToVAO(fernData.getVertices(), fernData.getTextureCoords(), fernData.getNormals(), fernData.getIndices());
+        TexturedModel fern = new TexturedModel(fernModel, new ModelTexture(loader.loadTexture("fern")));
         fern.getTexture().setHasTransparency(true);
 
         for (int i = 0; i < 500; i++) {

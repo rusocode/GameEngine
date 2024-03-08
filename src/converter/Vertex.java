@@ -2,16 +2,12 @@ package converter;
 
 import org.lwjgl.util.vector.Vector3f;
 
-/**
- * Objeto vertice con un indice (identificador) y posicion (Vector3f).
- */
-
 public class Vertex {
 
-    private final int index; // Identificador del vertice
+    private final int index; // id?
     private final Vector3f position;
 
-    private final float length; // Longitud del vertice, pj: 3.227124
+    private final float length; // Longitud del vertice
 
     private int textureIndex = -1, normalIndex = -1;
     private Vertex duplicateVertex;
@@ -23,9 +19,9 @@ public class Vertex {
     }
 
     /**
-     * Si los datos del vertice (coordenadas de textura y normales) ya se establecieron.
+     * Si el vertice ya se establecio.
      *
-     * @return verdadero si los los datos del vertice se establecieron o false.
+     * @return verdadero si el vertice ya se establecio o false.
      */
     public boolean isSet() {
         return textureIndex != -1 && normalIndex != -1;

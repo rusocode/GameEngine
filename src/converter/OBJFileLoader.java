@@ -1,7 +1,6 @@
 package converter;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -40,23 +39,22 @@ public class OBJFileLoader {
         // Bufer que lee desde el archivo
         BufferedReader reader = new BufferedReader(fr);
         String line;
-        List<Vertex> vertices = new ArrayList<>(); // Lista de objetos Vertex
+        List<Vertex> vertices = new ArrayList<>(); // Lista de objetos Vertex (vertices)
         List<Vector2f> textures = new ArrayList<>(); // Lista de texturas
         List<Vector3f> normals = new ArrayList<>(); // Lista de normales
         List<Integer> indices = new ArrayList<>(); // Lista de indices
 
         try {
+            // Almacena las posiciones, coordenadas de textura y normales del modelo en listas
             while (true) {
                 line = reader.readLine();
                 if (line.startsWith("v ")) {
-                    /* Divide la linea especificando el delimitador. En este caso el delimitador es un espacio. Para el ejemplo del
-                     * primer vertice dentro del archivo stall.obj la linea "v 3.227124 -0.065127 -1.000000" se divide en 4 cadenas:
-                     * currentLine[0] = "v" | currentLine[1] = "3.227124" | currentLine[2] = "-0.065127" | currentLine[3] = "-1.000000" */
+                    /* Divide la linea especificando el espacio como delimitador. Tomando como ejemplo el primer vertice del
+                     * archivo fern.obj, la linea "v -1.668906 1.421207 -4.981303" se divide en 4 cadenas:
+                     * currentLine[0] = "v" | currentLine[1] = "-1.668906" | currentLine[2] = "1.421207" | currentLine[3] = "-4.981303" */
                     String[] currentLine = line.split(" ");
-                    /* vertices.size() es una forma de especificar el vertice actual, es decir que para el primer vertice se
-                     * almacena el valor 0 en la variable index del objeto Vertex. Por lo tanto, cada vez que se agrega un nuevo
-                     * objeto Vertex a la lista se aumenta el tamaño de la lista y por lo tanto el valor para la variable index
-                     * aumenta. Es decir, se agregan objetos Vertex a la lista aumentando el index de forma ascendente. */
+                    /* Crea un objeto Vertex especificando el indice (aumenta cada vez que se agrega un objeto a la lista) y la
+                     * posicion, y lo agrega a la lista. */
                     vertices.add(new Vertex(vertices.size(), new Vector3f(Float.parseFloat(currentLine[1]), Float.parseFloat(currentLine[2]), Float.parseFloat(currentLine[3]))));
                 } else if (line.startsWith("vt ")) {
                     String[] currentLine = line.split(" ");
@@ -65,29 +63,30 @@ public class OBJFileLoader {
                     String[] currentLine = line.split(" ");
                     normals.add(new Vector3f(Float.parseFloat(currentLine[1]), Float.parseFloat(currentLine[2]), Float.parseFloat(currentLine[3])));
                 } else if (line.startsWith("f ")) break;
-                // Llego al final del archivo (caras), por lo que sale del bucle para iterar las lineas base
+                // Llego al final del archivo, por lo que sale del bucle para iterar las lineas base
             }
 
             // Si la linea es distinta a null y comienza con f
             while (line != null && line.startsWith("f ")) {
 
-                /* La linea base "f 41/1/1 38/2/1 45/3/1" representa un triangulo en el modelo. Cada uno de los bloques "41/1/1"
-                 * es un vertice de ese triangulo y los tres numeros (en orden) hacen referencia a la posicion, coordenada de
-                 * textura y normal. Entonces, la linea base dice que este triangulo en particular esta compuesto por la posicion
-                 * 41, que usa la primera coordenada de textura y la primera normal, y ese vertice (41) esta conectado a la
-                 * posicion 38 que usa la segunda coordenada de textura y la primera normal, a su vez este vertice (38) esta
-                 * conectado a la posicion 45 que usa la tercera coordenada de textura y la primera normal. Tecnicamente hablando,
-                 * en el primer bloque, 41 hace referencia a por ejemplo "v 0.000000 0.013570 -0.158272", 1 hace referencia a por
-                 * ejemplo "vt 0.888672 0.240270" y 1 hace referencia a por ejemplo "vn -0.965911 0.000000 0.258797". */
+                /* La primera linea base de fern.obj "f 3/1/1 4/2/2 1/3/3" representa un triangulo en el modelo. Cada uno de los
+                 * bloques "1/3/3" es un vertice de ese triangulo y los tres numeros (en orden) hacen referencia a la posicion,
+                 * coordenada de textura y normal. Entonces, el ultimo bloque de la linea base (1/3/3) dice que este triangulo en
+                 * particular esta compuesto por el vertice 1, que usa la tercera coordenada de textura y la tercera normal, y ese
+                 * vertice (1) esta conectado al vertice 4 que usa la segunda coordenada de textura y la segunda normal, a su vez
+                 * este vertice (4) esta conectado al vertice 3 que usa la primera coordenada de textura y la primera normal.
+                 * Tecnicamente hablando, en el ultimo bloque (1/3/3), 1 hace referencia al primer vertice del archivo .obj: "v -1.668906 1.421207 -4.981303".
+                 * Luego, 3 hace referencia a la tercera coordenada de textura "vt 0.261788 0.999931" y el ultimo numero del
+                 * bloque (3) hace referencia a la tercera normal "vn 0.008454 0.417798 -0.908475". */
 
-                /* Divide la linea especificando el delimitador. En este caso el delimitador es un espacio. Para el ejemplo del
-                 * primer triangulo dentro del archivo stall.obj la linea "f 41/1/1 38/2/1 45/3/1" se divide en 4 cadenas:
-                 * currentLine[0] = "f" | currentLine[1] = "41/1/1" | currentLine[2] = "38/2/1" | currentLine[3] = "45/3/1" */
+                /* Divide la linea especificando el espacio como delimitador. Tomando como ejemplo el primer triangulo del archivo
+                 * fern.obj, la linea "f 3/1/1 4/2/2 1/3/3" se divide en 4 cadenas:
+                 * currentLine[0] = "f" | currentLine[1] = "3/1/1" | currentLine[2] = "4/2/2" | currentLine[3] = "1/3/3" */
                 String[] currentLine = line.split(" ");
-                // Divide el bloque "41/1/1" en tres cadenas separadas por el delimitador "/"
-                String[] vertex1 = currentLine[1].split("/"); // Ahora el array vertex1 contiene 3 cadenas: "41", "1" y "1"
+                String[] vertex1 = currentLine[1].split("/");
                 String[] vertex2 = currentLine[2].split("/");
-                String[] vertex3 = currentLine[3].split("/");
+                // Divide el bloque "1/3/3" en tres cadenas separadas por el delimitador "/"
+                String[] vertex3 = currentLine[3].split("/"); // Ahora el array vertex3 contiene 3 cadenas: "1", "3" y "3"
 
                 // Procesa los 3 vertices del triangulo
                 processVertex(vertex1, vertices, indices);
@@ -105,10 +104,14 @@ public class OBJFileLoader {
 
         removeUnusedVertices(vertices);
 
+        // Arrays con los tamaños adecuados para cada lista de dato
         float[] verticesArray = new float[vertices.size() * 3];
         float[] texturesArray = new float[vertices.size() * 2];
         float[] normalsArray = new float[vertices.size() * 3];
-        float furthest = convertDataToArrays(vertices, textures, normals, verticesArray, texturesArray, normalsArray);
+
+        // TODO Se pasa la direccion de memoria y no el valor?
+        float furthest = convertDataListToArrays(vertices, textures, normals, verticesArray, texturesArray, normalsArray);
+
         int[] indicesArray = convertIndicesListToArray(indices);
 
         return new ModelData(verticesArray, texturesArray, normalsArray, indicesArray, furthest);
@@ -118,17 +121,20 @@ public class OBJFileLoader {
      * Procesa el vertice.
      */
     private static void processVertex(String[] vertex, List<Vertex> vertices, List<Integer> indices) {
-        /* Obtiene el indice del primer vertice en el triangulo actual (41), es decir, el valor de la variable index del objeto
-         * Vertex. A la posicion del vertice se le resta 1 porque los archivos .obj comienzan en 1 y las matrices en 0. */
+        /* Tomando como ejemplo el bloque "1/3/3", obtiene la primera cadena del array vertex (vertex[0]) que es 1 y le resta 1
+         * porque los archivos .obj comienzan en 1 y los arrays en 0. Por lo tanto se almacena 0 en la variable index. */
         int index = Integer.parseInt(vertex[0]) - 1;
-        /* Obtiene el vertice del indice especificado, por ejemplo 41, en donde 41 representa la posicion del vertice, por
-        /* ejemplo: x = "3.227124" | y = "-0.065127" | z = "-1.000000" */
+        // Obtiene el objeto Vertex pasandole el index 0, es decir, el primer objeto Vertex creado anteriormente
         Vertex currentVertex = vertices.get(index);
+        // Hace lo mismo para el indice de la coordenada de textura y la normal
         int textureIndex = Integer.parseInt(vertex[1]) - 1;
         int normalIndex = Integer.parseInt(vertex[2]) - 1;
+        // Si el vertice no se establecio
         if (!currentVertex.isSet()) {
+            // Establece los indices de la coordenada de textura y la normal del vertice actual
             currentVertex.setTextureIndex(textureIndex);
             currentVertex.setNormalIndex(normalIndex);
+            // Agrega el indice del vertice actual a la lista de indices
             indices.add(index);
         } else dealWithAlreadyProcessedVertex(currentVertex, textureIndex, normalIndex, indices, vertices);
     }
@@ -154,27 +160,53 @@ public class OBJFileLoader {
         }
     }
 
+    /**
+     * Convierte la lista de indices en un array.
+     *
+     * @param indices lista de indices.
+     * @return el array con los indices.
+     */
     private static int[] convertIndicesListToArray(List<Integer> indices) {
-        int[] indicesArray = new int[indices.size()];
-        for (int i = 0; i < indicesArray.length; i++) indicesArray[i] = indices.get(i);
-        return indicesArray;
+        int[] array = new int[indices.size()];
+        for (int i = 0; i < array.length; i++) array[i] = indices.get(i);
+        return array;
     }
 
-    private static float convertDataToArrays(List<Vertex> vertices, List<Vector2f> textures,
-                                             List<Vector3f> normals, float[] verticesArray, float[] texturesArray,
-                                             float[] normalsArray) {
+    /**
+     * Convierte la lista de datos (vertices, coordenadas de texturas y normales) en arrays.
+     *
+     * @param vertices      lista de vertices.
+     * @param textures      lista de coordenadas de textura.
+     * @param normals       lista de normales.
+     * @param verticesArray array para la lista de vertices.
+     * @param texturesArray array para la lista de coordenadas de textura.
+     * @param normalsArray  array para la lista de normales.
+     * @return el punto mas lejano.
+     */
+    private static float convertDataListToArrays(List<Vertex> vertices, List<Vector2f> textures,
+                                                 List<Vector3f> normals, float[] verticesArray, float[] texturesArray,
+                                                 float[] normalsArray) {
         float furthestPoint = 0;
         for (int i = 0; i < vertices.size(); i++) {
+
+            // Obtiene el vertice actual
             Vertex currentVertex = vertices.get(i);
+
             if (currentVertex.getLength() > furthestPoint) furthestPoint = currentVertex.getLength();
+
+            // A partir del vertice actual se obtiene la posicion
             Vector3f position = currentVertex.getPosition();
+            // A partir del vertice actual se obtiene el indice de la coordenada de textura y a partir de ese indice se obtiene la coordenada de textura
             Vector2f textureCoord = textures.get(currentVertex.getTextureIndex());
             Vector3f normalVector = normals.get(currentVertex.getNormalIndex());
+
+            // Y desde los vectores se obtienen los ejes correspondientes que se usaran para llenar los arrays con los datos del .obj
             verticesArray[i * 3] = position.x;
             verticesArray[i * 3 + 1] = position.y;
             verticesArray[i * 3 + 2] = position.z;
+            // Agrega la coordenada de textura a la matriz de texturas en la posicion del vertice actual y se multiplica por 2 ya que las coordenadas de texturas son vectores 2D
             texturesArray[i * 2] = textureCoord.x;
-            texturesArray[i * 2 + 1] = 1 - textureCoord.y;
+            texturesArray[i * 2 + 1] = 1 - textureCoord.y; // Le resta 1 a la posicion de y de la textura porque OpenGL comienza desde la esquina superior izquierda de una textura
             normalsArray[i * 3] = normalVector.x;
             normalsArray[i * 3 + 1] = normalVector.y;
             normalsArray[i * 3 + 2] = normalVector.z;
@@ -182,8 +214,14 @@ public class OBJFileLoader {
         return furthestPoint;
     }
 
+    /**
+     * Elimina los vertices no utilizados.
+     *
+     * @param vertices lista de vertices.
+     */
     private static void removeUnusedVertices(List<Vertex> vertices) {
         for (Vertex vertex : vertices) {
+            // Si el vertice no se establecio
             if (!vertex.isSet()) {
                 vertex.setTextureIndex(0);
                 vertex.setNormalIndex(0);
