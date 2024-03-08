@@ -3,16 +3,16 @@ package converter;
 import org.lwjgl.util.vector.Vector3f;
 
 /**
- * Vertice.
+ * Objeto vertice con un indice (identificador) y posicion (Vector3f).
  */
 
 public class Vertex {
 
-
-    private final int index;
+    private final int index; // Identificador del vertice
     private final Vector3f position;
 
-    private final float length;
+    private final float length; // Longitud del vertice, pj: 3.227124
+
     private int textureIndex = -1, normalIndex = -1;
     private Vertex duplicateVertex;
 

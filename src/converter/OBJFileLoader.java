@@ -40,7 +40,7 @@ public class OBJFileLoader {
         // Bufer que lee desde el archivo
         BufferedReader reader = new BufferedReader(fr);
         String line;
-        List<Vertex> vertices = new ArrayList<>(); // Lista de vertices
+        List<Vertex> vertices = new ArrayList<>(); // Lista de objetos Vertex
         List<Vector2f> textures = new ArrayList<>(); // Lista de texturas
         List<Vector3f> normals = new ArrayList<>(); // Lista de normales
         List<Integer> indices = new ArrayList<>(); // Lista de indices
@@ -53,6 +53,10 @@ public class OBJFileLoader {
                      * primer vertice dentro del archivo stall.obj la linea "v 3.227124 -0.065127 -1.000000" se divide en 4 cadenas:
                      * currentLine[0] = "v" | currentLine[1] = "3.227124" | currentLine[2] = "-0.065127" | currentLine[3] = "-1.000000" */
                     String[] currentLine = line.split(" ");
+                    /* vertices.size() es una forma de especificar el vertice actual, es decir que para el primer vertice se
+                     * almacena el valor 0 en la variable index del objeto Vertex. Por lo tanto, cada vez que se agrega un nuevo
+                     * objeto Vertex a la lista se aumenta el tamaño de la lista y por lo tanto el valor para la variable index
+                     * aumenta. Es decir, se agregan objetos Vertex a la lista aumentando el index de forma ascendente. */
                     vertices.add(new Vertex(vertices.size(), new Vector3f(Float.parseFloat(currentLine[1]), Float.parseFloat(currentLine[2]), Float.parseFloat(currentLine[3]))));
                 } else if (line.startsWith("vt ")) {
                     String[] currentLine = line.split(" ");
@@ -67,13 +71,14 @@ public class OBJFileLoader {
             // Si la linea es distinta a null y comienza con f
             while (line != null && line.startsWith("f ")) {
 
-                /* La linea base (f 41/1/1 38/2/1 45/3/1) representa un triangulo en el modelo. Cada uno de los bloques (41/1/1)
-                 * es un vertice de ese triangulo y los tres numeros (en orden) hacen referencia a la posicion del vertice, a la
-                 * coordenada de textura y al normal que usa ese vertice. Entonces, la linea "f 41/1/1 38/2/1 45/3/1" dice que
-                 * este triangulo en particular esta compuesto por la posicion 41 del vertice en la matriz de posicion de vertice
-                 * que usa la primera coordenada de textura y la primera normal, y ese vertice (41) esta conectado a la posicion
-                 * de vertice 38 que usa la segunda coordenada de textura y la primera normal, a su vez este vertice (38) esta
-                 * conectado al vertice 45 que usa la tercera coordenada de textura y la primera normal. */
+                /* La linea base "f 41/1/1 38/2/1 45/3/1" representa un triangulo en el modelo. Cada uno de los bloques "41/1/1"
+                 * es un vertice de ese triangulo y los tres numeros (en orden) hacen referencia a la posicion, coordenada de
+                 * textura y normal. Entonces, la linea base dice que este triangulo en particular esta compuesto por la posicion
+                 * 41, que usa la primera coordenada de textura y la primera normal, y ese vertice (41) esta conectado a la
+                 * posicion 38 que usa la segunda coordenada de textura y la primera normal, a su vez este vertice (38) esta
+                 * conectado a la posicion 45 que usa la tercera coordenada de textura y la primera normal. Tecnicamente hablando,
+                 * en el primer bloque, 41 hace referencia a por ejemplo "v 0.000000 0.013570 -0.158272", 1 hace referencia a por
+                 * ejemplo "vt 0.888672 0.240270" y 1 hace referencia a por ejemplo "vn -0.965911 0.000000 0.258797". */
 
                 /* Divide la linea especificando el delimitador. En este caso el delimitador es un espacio. Para el ejemplo del
                  * primer triangulo dentro del archivo stall.obj la linea "f 41/1/1 38/2/1 45/3/1" se divide en 4 cadenas:
@@ -84,7 +89,7 @@ public class OBJFileLoader {
                 String[] vertex2 = currentLine[2].split("/");
                 String[] vertex3 = currentLine[3].split("/");
 
-                // Procesa cada vertice del triangulo actual
+                // Procesa los 3 vertices del triangulo
                 processVertex(vertex1, vertices, indices);
                 processVertex(vertex2, vertices, indices);
                 processVertex(vertex3, vertices, indices);
@@ -113,9 +118,11 @@ public class OBJFileLoader {
      * Procesa el vertice.
      */
     private static void processVertex(String[] vertex, List<Vertex> vertices, List<Integer> indices) {
-        /* Obtiene el indice del vertice actual (41). Con este vertice sabemos que coordenada de textura y que normal estan
-         * asociados a el. A la posicion del vertice se le resta 1 porque los archivos .obj comienzan en 1, y las matrices en 0. */
+        /* Obtiene el indice del primer vertice en el triangulo actual (41), es decir, el valor de la variable index del objeto
+         * Vertex. A la posicion del vertice se le resta 1 porque los archivos .obj comienzan en 1 y las matrices en 0. */
         int index = Integer.parseInt(vertex[0]) - 1;
+        /* Obtiene el vertice del indice especificado, por ejemplo 41, en donde 41 representa la posicion del vertice, por
+        /* ejemplo: x = "3.227124" | y = "-0.065127" | z = "-1.000000" */
         Vertex currentVertex = vertices.get(index);
         int textureIndex = Integer.parseInt(vertex[1]) - 1;
         int normalIndex = Integer.parseInt(vertex[2]) - 1;
