@@ -82,7 +82,7 @@ public class EntityRenderer {
          * cambiar entre texturas al activar diferentes unidades y vincular las texturas correspondientes a esas unidades. Ademas,
          * al enlazar texturas, se puede configurar como interactuan con los fragmentos en el shader durante el proceso de
          * renderizado. */
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getTexture().getTextureID());
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getTexture().getID());
     }
 
     /**

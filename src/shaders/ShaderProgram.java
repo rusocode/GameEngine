@@ -178,7 +178,17 @@ public abstract class ShaderProgram {
     }
 
     /**
-     * Carga un valor de tipo float a una variable uniforme del shader. El "1f" en el nombre de la funcion señala que se asigna un
+     * Carga el valor de tipo int a la variable uniforme del shader.
+     *
+     * @param location ubicacion de la variable uniforme.
+     * @param value    valor que se va a asignar a la variable uniforme.
+     */
+    protected void loadInt(int location, int value) {
+        GL20.glUniform1i(location, value);
+    }
+
+    /**
+     * Carga el valor de tipo float a la variable uniforme del shader. El "1f" en el nombre de la funcion señala que se asigna un
      * solo valor de tipo float.
      *
      * @param location ubicacion de la variable uniforme.

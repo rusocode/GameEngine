@@ -23,7 +23,6 @@ void main(void) {
     vec4 worldPosition = transformationMatrix * vec4(position, 1.0);
     vec4 positionRelativeToCam = viewMatrix * worldPosition;
     gl_Position = projectionMatrix * positionRelativeToCam;
-    // Multiplica las coordenadas de textura por 40 para colocarlas en forma de tiles dando una mejor definicion
     pass_textureCoords = textureCoords;
 
     surfaceNormal = (transformationMatrix * vec4(normal, 0.0)).xyz;

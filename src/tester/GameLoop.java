@@ -14,6 +14,8 @@ import textures.ModelTexture;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
+import textures.TerrainTexture;
+import textures.TerrainTexturePack;
 
 /**
  * Bucle principal del juego.
@@ -32,8 +34,20 @@ public class GameLoop {
 
         Loader loader = new Loader();
         Camera camera = new Camera();
-        Light light = new Light(new Vector3f(20000, 20000, 2000), new Vector3f(1, 1, 1));
+        Light light = new Light(new Vector3f(20000, 40000, 20000), new Vector3f(1, 1, 1));
         MasterRenderer renderer = new MasterRenderer();
+
+        // *** TERRAIN TEXTURE
+        TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grass"));
+        TerrainTexture backgroundTexture2 = new TerrainTexture(loader.loadTexture("grass2"));
+        TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("dirt"));
+        TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("grassFlowers"));
+        TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("path"));
+
+        TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
+        TerrainTexturePack texturePack2 = new TerrainTexturePack(backgroundTexture2, rTexture, gTexture, bTexture);
+        TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
+        // *** TERRAIN TEXTURE
 
         ModelData treeData = OBJFileLoader.loadOBJ("tree");
         RawModel treeModel = loader.loadToVAO(treeData.getVertices(), treeData.getTextureCoords(), treeData.getNormals(), treeData.getIndices());
@@ -46,20 +60,33 @@ public class GameLoop {
         herb.getTexture().setHasTransparency(true);
         herb.getTexture().setUseFakeLighting(true);
 
+        ModelData flowerData = OBJFileLoader.loadOBJ("herb");
+        RawModel flowerModel = loader.loadToVAO(flowerData.getVertices(), flowerData.getTextureCoords(), flowerData.getNormals(), flowerData.getIndices());
+        TexturedModel flower = new TexturedModel(flowerModel, new ModelTexture(loader.loadTexture("flower")));
+        flower.getTexture().setHasTransparency(true);
+        flower.getTexture().setUseFakeLighting(true);
+
         ModelData fernData = OBJFileLoader.loadOBJ("fern");
         RawModel fernModel = loader.loadToVAO(fernData.getVertices(), fernData.getTextureCoords(), fernData.getNormals(), fernData.getIndices());
         TexturedModel fern = new TexturedModel(fernModel, new ModelTexture(loader.loadTexture("fern")));
         fern.getTexture().setHasTransparency(true);
 
-        for (int i = 0; i < 500; i++) {
-            entities.add(getEntity(tree, 3));
-            entities.add(getEntity(herb, 1));
-            entities.add(getEntity(fern, 0.6f));
+        Random random = new Random(676452);
+
+        for (int i = 0; i < 400; i++) {
+            if (i % 7 == 0) {
+                entities.add(getEntity(herb, random.nextFloat() * 800, 0, random.nextFloat() * 800, 0, 0, 0, 1.8f));
+                entities.add(getEntity(flower, random.nextFloat() * 800, 0, random.nextFloat() * 800, 0, 0, 0, 2.3f));
+            }
+            if (i % 3 == 0) {
+                entities.add(getEntity(tree, random.nextFloat() * 800, 0, random.nextFloat() * 800, 0, 0, 0, random.nextFloat() * 1 + 4));
+                entities.add(getEntity(fern, random.nextFloat() * 800, 0, random.nextFloat() * 800, 0, random.nextFloat() * 360, 0, 0.9f));
+            }
         }
 
         // Crea dos cuadriculas de terreno con diferentes texturas
-        Terrain terrain = new Terrain(0, 0, loader, new ModelTexture(loader.loadTexture("grass")));
-        Terrain terrain2 = new Terrain(0, 1, loader, new ModelTexture(loader.loadTexture("grass2")));
+        Terrain terrain = new Terrain(0, 0, loader, texturePack, blendMap); // 0, -1
+        Terrain terrain2 = new Terrain(0, 1, loader, texturePack2, blendMap); // -1, -1
 
         while (!Display.isCloseRequested()) {
             camera.move();
@@ -85,22 +112,15 @@ public class GameLoop {
      * @param texturedModel modelo texturizado.
      * @return la entidad texturizada con iluminacion especular y transformacion.
      */
-    private static Entity getEntity(TexturedModel texturedModel, float scaleValue) {
+    private static Entity getEntity(TexturedModel texturedModel, float posX, float posY, float posZ, float angleX, float angleY, float angleZ, float scaleValue) {
         // Aplica iluminacion especular a la textura
         ModelTexture texture = texturedModel.getTexture();
         // texture.setShineDamper(10);
         // texture.setReflectivity(1);
 
         // Operaciones de transformacion
-        Random random = new Random();
-        // Vector de traslacion con coordenadas x e z aleatorias
-        Vector3f translation = new Vector3f(random.nextFloat() * 800, 0, random.nextFloat() * 800);
-        // Angulos de rotacion
-        float angleX = 0;
-        float angleY = 0;
-        float angleZ = 0;
-        // Vector de escala
-        Vector3f scale = new Vector3f(scaleValue, scaleValue, scaleValue);
+        Vector3f translation = new Vector3f(posX, posY, posZ); // Vector de traslacion
+        Vector3f scale = new Vector3f(scaleValue, scaleValue, scaleValue); // Vector de escala
 
         return new Entity(texturedModel, translation, angleX, angleY, angleZ, scale);
     }

@@ -2,7 +2,8 @@ package terrains;
 
 import models.RawModel;
 import render.Loader;
-import textures.ModelTexture;
+import textures.TerrainTexture;
+import textures.TerrainTexturePack;
 
 /**
  * Un terreno es basicamente una entidad.
@@ -21,13 +22,15 @@ public class Terrain {
     // El eje y no es necesario ya que el terreno permanece en la misma altura
     private final float x, z;
     private final RawModel model;
-    private final ModelTexture texture;
+    private final TerrainTexturePack texturePack;
+    private final TerrainTexture blendMap;
 
-    public Terrain(float gridX, float gridZ, Loader laoder, ModelTexture texture) {
+    public Terrain(float gridX, float gridZ, Loader laoder, TerrainTexturePack texturePack, TerrainTexture blendMap) {
         this.x = gridX * SIZE;
         this.z = gridZ * SIZE;
         this.model = generateTerrain(laoder);
-        this.texture = texture;
+        this.texturePack = texturePack;
+        this.blendMap = blendMap;
     }
 
     private RawModel generateTerrain(Loader loader) {
@@ -81,7 +84,11 @@ public class Terrain {
         return model;
     }
 
-    public ModelTexture getTexture() {
-        return texture;
+    public TerrainTexturePack getTexturePack() {
+        return texturePack;
+    }
+
+    public TerrainTexture getBlendMap() {
+        return blendMap;
     }
 }

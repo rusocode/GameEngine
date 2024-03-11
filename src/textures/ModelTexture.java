@@ -6,7 +6,7 @@ package textures;
 
 public class ModelTexture {
 
-    private final int textureID;
+    private final int id;
 
     private float shineDamper = 1; // Factor de amortiguacion
     private float reflectivity = 0; // Luz reflejada
@@ -16,12 +16,12 @@ public class ModelTexture {
      * falsa. */
     private boolean useFakeLighting;
 
-    public ModelTexture(int textureID) {
-        this.textureID = textureID;
+    public ModelTexture(int id) {
+        this.id = id;
     }
 
-    public int getTextureID() {
-        return textureID;
+    public int getID() {
+        return id;
     }
 
     public float getShineDamper() {

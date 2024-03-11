@@ -20,6 +20,12 @@ public class TerrainShader extends ShaderProgram {
     private int location_shineDamper;
     private int location_reflectivity;
     private int location_skyColor;
+    private int location_backgroundTexture;
+    private int location_rTexture;
+    private int location_gTexture;
+    private int location_bTexture;
+    private int location_blendMap;
+
 
     public TerrainShader() {
         super(VERTEX_FILE, FRAGMENT_FILE);
@@ -42,6 +48,22 @@ public class TerrainShader extends ShaderProgram {
         location_shineDamper = getUniformLocation("shineDamper");
         location_reflectivity = getUniformLocation("reflectivity");
         location_skyColor = getUniformLocation("skyColor");
+        location_backgroundTexture = getUniformLocation("backgroundTexture");
+        location_rTexture = getUniformLocation("rTexture");
+        location_gTexture = getUniformLocation("gTexture");
+        location_bTexture = getUniformLocation("bTexture");
+        location_blendMap = getUniformLocation("blendMap");
+    }
+
+    /**
+     * Conecta los samplers del shader a cada unidad de textura.
+     */
+    public void connectTextureUnits() {
+        loadInt(location_backgroundTexture, 0);
+        loadInt(location_rTexture, 1);
+        loadInt(location_gTexture, 2);
+        loadInt(location_bTexture, 3);
+        loadInt(location_blendMap, 4);
     }
 
     /**
@@ -93,6 +115,13 @@ public class TerrainShader extends ShaderProgram {
         loadFloat(location_reflectivity, reflectivity);
     }
 
+    /**
+     * Carga el color del cielo.
+     *
+     * @param r canal rojo.
+     * @param g canal verde.
+     * @param b canal azul.
+     */
     public void loadSkyColor(float r, float g, float b) {
         loadVector(location_skyColor, new Vector3f(r, g, b));
     }
