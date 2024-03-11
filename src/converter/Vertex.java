@@ -4,7 +4,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class Vertex {
 
-    private final int index; // id?
+    private final int index; // Seria como un id?
     private final Vector3f position;
 
     private final float length; // Longitud del vertice
@@ -19,18 +19,18 @@ public class Vertex {
     }
 
     /**
-     * Si el vertice ya se establecio.
+     * Si el vertice se establecio.
      *
-     * @return verdadero si el vertice ya se establecio o false.
+     * @return true si el vertice se establecio o false.
      */
     public boolean isSet() {
         return textureIndex != -1 && normalIndex != -1;
     }
 
     /**
-     * Si es la misma textura y normal.
+     * Si tiene la misma textura y normal.
      *
-     * @return verdadero si es la misma textura y normal o false.
+     * @return true si tiene la misma textura y normal o false.
      */
     public boolean hasSameTextureAndNormal(int textureIndexOther, int normalIndexOther) {
         return textureIndexOther == textureIndex && normalIndexOther == normalIndex;

@@ -22,11 +22,9 @@ public class OBJFileLoader {
     private static final String RES_LOC = "res/";
 
     /**
-     * Carga el modelo.
-     * <p>
-     * TODO No seria mejor nombrarlo loadModel?
+     * Carga el obj.
      *
-     * @param fileName archivo del modelo.
+     * @param fileName nombre del archivo.
      * @return los datos del modelo.
      */
     public static ModelData loadOBJ(String fileName) {
@@ -104,7 +102,7 @@ public class OBJFileLoader {
 
         removeUnusedVertices(vertices);
 
-        // Arrays con los tamaños adecuados para cada lista de dato
+        // Arrays con los tamaños adecuados para cada lista de datos
         float[] verticesArray = new float[vertices.size() * 3];
         float[] texturesArray = new float[vertices.size() * 2];
         float[] normalsArray = new float[vertices.size() * 3];
@@ -119,6 +117,10 @@ public class OBJFileLoader {
 
     /**
      * Procesa el vertice.
+     *
+     * @param vertex   array con los numeros del bloque.
+     * @param vertices lista de vertices.
+     * @param indices  lista de indices.
      */
     private static void processVertex(String[] vertex, List<Vertex> vertices, List<Integer> indices) {
         /* Tomando como ejemplo el bloque "1/3/3", obtiene la primera cadena del array vertex (vertex[0]) que es 1 y le resta 1
@@ -136,19 +138,19 @@ public class OBJFileLoader {
             currentVertex.setNormalIndex(normalIndex);
             // Agrega el indice del vertice actual a la lista de indices
             indices.add(index);
-        } else dealWithAlreadyProcessedVertex(currentVertex, textureIndex, normalIndex, indices, vertices);
+        } else dealWithAlreadyProcessedVertex(currentVertex, textureIndex, normalIndex, vertices, indices);
     }
 
     /**
      * Trata con el vertice ya procesado.
      */
-    private static void dealWithAlreadyProcessedVertex(Vertex previousVertex, int newTextureIndex, int newNormalIndex, List<Integer> indices, List<Vertex> vertices) {
+    private static void dealWithAlreadyProcessedVertex(Vertex previousVertex, int newTextureIndex, int newNormalIndex, List<Vertex> vertices, List<Integer> indices) {
         // Si es la misma textura, entonces la agrega a la lista de indices
         if (previousVertex.hasSameTextureAndNormal(newTextureIndex, newNormalIndex)) indices.add(previousVertex.getIndex());
         else {
             Vertex anotherVertex = previousVertex.getDuplicateVertex();
             if (anotherVertex != null)
-                dealWithAlreadyProcessedVertex(anotherVertex, newTextureIndex, newNormalIndex, indices, vertices);
+                dealWithAlreadyProcessedVertex(anotherVertex, newTextureIndex, newNormalIndex, vertices, indices);
             else {
                 Vertex duplicateVertex = new Vertex(vertices.size(), previousVertex.getPosition());
                 duplicateVertex.setTextureIndex(newTextureIndex);
@@ -173,7 +175,7 @@ public class OBJFileLoader {
     }
 
     /**
-     * Convierte la lista de datos (vertices, coordenadas de texturas y normales) en arrays.
+     * Convierte la lista de datos en arrays.
      *
      * @param vertices      lista de vertices.
      * @param textures      lista de coordenadas de textura.
@@ -187,6 +189,7 @@ public class OBJFileLoader {
                                                  List<Vector3f> normals, float[] verticesArray, float[] texturesArray,
                                                  float[] normalsArray) {
         float furthestPoint = 0;
+
         for (int i = 0; i < vertices.size(); i++) {
 
             // Obtiene el vertice actual
@@ -200,13 +203,17 @@ public class OBJFileLoader {
             Vector2f textureCoord = textures.get(currentVertex.getTextureIndex());
             Vector3f normalVector = normals.get(currentVertex.getNormalIndex());
 
-            // Y desde los vectores se obtienen los ejes correspondientes que se usaran para llenar los arrays con los datos del .obj
+            /* Desde los vectores se obtienen los ejes correspondientes que se usaran para llenar los arrays con los datos del
+             * .obj. Es importante aclarar que el indice del verticesArray se multiplica por 3 en cada iteracion del for para
+             * cambiar de posicion correctamente ya que es un vector 3D. Para la primera iteracion, la operacion "i * 3" da 0, ese
+             * indice se usa para almacenar la coordenada x, despues se suma 1 al indice para alamacenar la coordenada y. Por
+             * ultimo, se suma 2 al indice para almacenar la coordenada z en la posicion correcta del array. */
             verticesArray[i * 3] = position.x;
             verticesArray[i * 3 + 1] = position.y;
             verticesArray[i * 3 + 2] = position.z;
-            // Agrega la coordenada de textura a la matriz de texturas en la posicion del vertice actual y se multiplica por 2 ya que las coordenadas de texturas son vectores 2D
+            // El indice de textureArray se multiplica por 2 ya que es un vector 2D
             texturesArray[i * 2] = textureCoord.x;
-            texturesArray[i * 2 + 1] = 1 - textureCoord.y; // Le resta 1 a la posicion de y de la textura porque OpenGL comienza desde la esquina superior izquierda de una textura
+            texturesArray[i * 2 + 1] = 1 - textureCoord.y; // Le resta 1 a la coordenada y de la textura porque OpenGL comienza desde la esquina superior izquierda de una textura
             normalsArray[i * 3] = normalVector.x;
             normalsArray[i * 3 + 1] = normalVector.y;
             normalsArray[i * 3 + 2] = normalVector.z;

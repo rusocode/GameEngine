@@ -6,7 +6,12 @@ in vec3 toLightVector;
 in vec3 toCameraVector;
 in float visibility;
 
-uniform sampler2D modelTexture;
+uniform sampler2D backgroundTexture; // Textura de fondo
+uniform sampler2D rTexture;
+uniform sampler2D gTexture;
+uniform sampler2D bTexture;
+uniform sampler2D blendMap;
+
 uniform vec3 lightColour;
 uniform float shineDamper;
 uniform float reflectivity;
@@ -15,6 +20,20 @@ uniform vec3 skyColor;
 out vec4 out_Color;
 
 void main(void) {
+
+    // Obtiene el color del mapa de mezcla, que nos dira que cantidad de cada textura debemos renderizar
+    vec4 blendMapColor = texture(blendMap, pass_textureCoords);
+    // Calcula la cantidad que queremos renderizar, 1 menos el color total del mapa de mezcla, porque queremos que esto se renderice cuando el blenMap este negro
+    float backTextureAmount = 1 - (blendMaoColor.r + blendMaoColor.g + blendMaoColor.b);
+    // Calcula las coordenadas de la textura en tiles
+    vec2 tiledCoords = pass_textureCoords * 40.0;
+    // Muestrea la textura de fondo en las coordenadas de textura del tile y lo multiplica por la cantidad que se debe representar
+    vec4 backgroundTextureColor = texture(backgroundTexture, tiledCoords) * backTextureAmount;
+    /* La textura r se representa dependiendo del valor rojo en el blendMap. Se obtenie el color de esa textura y lo
+     * multiplica por el componente rojo del color del blendMap. */
+    vec4 rTextureColor = texture(rTexture, tiledCoords) * blendMapColor.r;
+    vec4 gTextureColor = texture(gTexture, tiledCoords) * blendMapColor.g;
+    vec4 bTextureColor = texture(bTexture, tiledCoords) * blendMapColor.b;
 
     vec3 unitNormal = normalize(surfaceNormal);
     vec3 unitLightVector = normalize(toLightVector);
