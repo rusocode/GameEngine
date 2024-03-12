@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Random;
 
 import converter.ModelData;
-import converter.OBJFileLoader;
+import converter.OBJLoader;
+import converter.OldOBJLoader;
 import entities.*;
 import models.*;
 import render.*;
@@ -49,27 +50,17 @@ public class GameLoop {
         TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
         // *** TERRAIN TEXTURE
 
-        ModelData treeData = OBJFileLoader.loadOBJ("tree");
-        RawModel treeModel = loader.loadToVAO(treeData.getVertices(), treeData.getTextureCoords(), treeData.getNormals(), treeData.getIndices());
         // Ahora el modelo en crudo y la textura se "juntan" para crear el modelo texturizado
-        TexturedModel tree = new TexturedModel(treeModel, new ModelTexture(loader.loadTexture("tree")));
+        TexturedModel tree = new TexturedModel(OldOBJLoader.loadOBJ("tree", loader), new ModelTexture(loader.loadTexture("tree")));
+        TexturedModel fern = new TexturedModel(OldOBJLoader.loadOBJ("fern", loader), new ModelTexture(loader.loadTexture("fern")));
+        TexturedModel herb = new TexturedModel(OldOBJLoader.loadOBJ("herb", loader), new ModelTexture(loader.loadTexture("herb")));
+        TexturedModel flower = new TexturedModel(OldOBJLoader.loadOBJ("herb", loader), new ModelTexture(loader.loadTexture("flower")));
 
-        ModelData herbData = OBJFileLoader.loadOBJ("herb");
-        RawModel herbModel = loader.loadToVAO(herbData.getVertices(), herbData.getTextureCoords(), herbData.getNormals(), herbData.getIndices());
-        TexturedModel herb = new TexturedModel(herbModel, new ModelTexture(loader.loadTexture("herb")));
+        fern.getTexture().setHasTransparency(true);
         herb.getTexture().setHasTransparency(true);
         herb.getTexture().setUseFakeLighting(true);
-
-        ModelData flowerData = OBJFileLoader.loadOBJ("herb");
-        RawModel flowerModel = loader.loadToVAO(flowerData.getVertices(), flowerData.getTextureCoords(), flowerData.getNormals(), flowerData.getIndices());
-        TexturedModel flower = new TexturedModel(flowerModel, new ModelTexture(loader.loadTexture("flower")));
         flower.getTexture().setHasTransparency(true);
         flower.getTexture().setUseFakeLighting(true);
-
-        ModelData fernData = OBJFileLoader.loadOBJ("fern");
-        RawModel fernModel = loader.loadToVAO(fernData.getVertices(), fernData.getTextureCoords(), fernData.getNormals(), fernData.getIndices());
-        TexturedModel fern = new TexturedModel(fernModel, new ModelTexture(loader.loadTexture("fern")));
-        fern.getTexture().setHasTransparency(true);
 
         Random random = new Random(676452);
 
@@ -79,7 +70,7 @@ public class GameLoop {
                 entities.add(getEntity(flower, random.nextFloat() * 800, 0, random.nextFloat() * 800, 0, 0, 0, 2.3f));
             }
             if (i % 3 == 0) {
-                entities.add(getEntity(tree, random.nextFloat() * 800, 0, random.nextFloat() * 800, 0, 0, 0, random.nextFloat() * 1 + 4));
+                entities.add(getEntity(tree, random.nextFloat() * 800, 0, random.nextFloat() * 800, 0, 0, 0, random.nextFloat() + 4));
                 entities.add(getEntity(fern, random.nextFloat() * 800, 0, random.nextFloat() * 800, 0, random.nextFloat() * 360, 0, 0.9f));
             }
         }

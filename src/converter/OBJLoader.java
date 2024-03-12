@@ -1,11 +1,7 @@
 package converter;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
@@ -17,9 +13,7 @@ import org.lwjgl.util.vector.Vector3f;
  * habrian cargado correctamente con el cargador OBJ anterior.
  */
 
-public class OBJFileLoader {
-
-    private static final String RES_LOC = "res/";
+public class OBJLoader {
 
     /**
      * Carga el obj.
@@ -30,7 +24,7 @@ public class OBJFileLoader {
     public static ModelData loadOBJ(String fileName) {
         FileReader fr = null;
         try {
-            fr = new FileReader(RES_LOC + fileName + ".obj");
+            fr = new FileReader("res/" + fileName + ".obj");
         } catch (FileNotFoundException e) {
             System.err.println("Couldn't load file!/n" + e.getMessage());
         }
@@ -97,12 +91,12 @@ public class OBJFileLoader {
             reader.close();
 
         } catch (IOException e) {
-            System.err.println("Error reading the file");
+            System.err.println("Error reading the file!/n" + e.getMessage());
         }
 
         removeUnusedVertices(vertices);
 
-        // Arrays con los tamaños adecuados para cada lista de datos
+        // Crea los arrays (para poder cargarlos en el VAO) con los tamaños adecuados para cada lista de datos
         float[] verticesArray = new float[vertices.size() * 3];
         float[] texturesArray = new float[vertices.size() * 2];
         float[] normalsArray = new float[vertices.size() * 3];
@@ -125,9 +119,9 @@ public class OBJFileLoader {
     private static void processVertex(String[] vertex, List<Vertex> vertices, List<Integer> indices) {
         /* Tomando como ejemplo el bloque "1/3/3", obtiene la primera cadena del array vertex (vertex[0]) que es 1 y le resta 1
          * porque los archivos .obj comienzan en 1 y los arrays en 0. Por lo tanto se almacena 0 en la variable index. */
-        int index = Integer.parseInt(vertex[0]) - 1;
+        int i = Integer.parseInt(vertex[0]) - 1;
         // Obtiene el objeto Vertex pasandole el index 0, es decir, el primer objeto Vertex creado anteriormente
-        Vertex currentVertex = vertices.get(index);
+        Vertex currentVertex = vertices.get(i);
         // Hace lo mismo para el indice de la coordenada de textura y la normal
         int textureIndex = Integer.parseInt(vertex[1]) - 1;
         int normalIndex = Integer.parseInt(vertex[2]) - 1;
@@ -137,7 +131,7 @@ public class OBJFileLoader {
             currentVertex.setTextureIndex(textureIndex);
             currentVertex.setNormalIndex(normalIndex);
             // Agrega el indice del vertice actual a la lista de indices
-            indices.add(index);
+            indices.add(i);
         } else dealWithAlreadyProcessedVertex(currentVertex, textureIndex, normalIndex, vertices, indices);
     }
 
@@ -198,7 +192,7 @@ public class OBJFileLoader {
             if (currentVertex.getLength() > furthestPoint) furthestPoint = currentVertex.getLength();
 
             // A partir del vertice actual se obtiene la posicion
-            Vector3f position = currentVertex.getPosition();
+            Vector3f vertex = currentVertex.getPosition();
             // A partir del vertice actual se obtiene el indice de la coordenada de textura y a partir de ese indice se obtiene la coordenada de textura
             Vector2f textureCoord = textures.get(currentVertex.getTextureIndex());
             Vector3f normalVector = normals.get(currentVertex.getNormalIndex());
@@ -208,9 +202,9 @@ public class OBJFileLoader {
              * cambiar de posicion correctamente ya que es un vector 3D. Para la primera iteracion, la operacion "i * 3" da 0, ese
              * indice se usa para almacenar la coordenada x, despues se suma 1 al indice para alamacenar la coordenada y. Por
              * ultimo, se suma 2 al indice para almacenar la coordenada z en la posicion correcta del array. */
-            verticesArray[i * 3] = position.x;
-            verticesArray[i * 3 + 1] = position.y;
-            verticesArray[i * 3 + 2] = position.z;
+            verticesArray[i * 3] = vertex.x;
+            verticesArray[i * 3 + 1] = vertex.y;
+            verticesArray[i * 3 + 2] = vertex.z;
             // El indice de textureArray se multiplica por 2 ya que es un vector 2D
             texturesArray[i * 2] = textureCoord.x;
             texturesArray[i * 2 + 1] = 1 - textureCoord.y; // Le resta 1 a la coordenada y de la textura porque OpenGL comienza desde la esquina superior izquierda de una textura
