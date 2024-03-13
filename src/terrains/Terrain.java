@@ -54,19 +54,19 @@ public class Terrain {
                 vertexPointer++;
             }
         }
-        int pointer = 0;
+        int i = 0;
         for (int gz = 0; gz < VERTEX_COUNT - 1; gz++) {
             for (int gx = 0; gx < VERTEX_COUNT - 1; gx++) {
                 int topLeft = (gz * VERTEX_COUNT) + gx;
                 int topRight = topLeft + 1;
                 int bottomLeft = ((gz + 1) * VERTEX_COUNT) + gx;
                 int bottomRight = bottomLeft + 1;
-                indices[pointer++] = topLeft;
-                indices[pointer++] = bottomLeft;
-                indices[pointer++] = topRight;
-                indices[pointer++] = topRight;
-                indices[pointer++] = bottomLeft;
-                indices[pointer++] = bottomRight;
+                indices[i++] = topLeft;
+                indices[i++] = bottomLeft;
+                indices[i++] = topRight;
+                indices[i++] = topRight;
+                indices[i++] = bottomLeft;
+                indices[i++] = bottomRight;
             }
         }
         return loader.loadToVAO(vertices, textureCoords, normals, indices);

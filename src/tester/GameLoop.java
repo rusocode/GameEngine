@@ -44,17 +44,16 @@ public class GameLoop {
         TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("dirt"));
         TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("grassFlowers"));
         TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("path"));
-
+        TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
         TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
         TerrainTexturePack texturePack2 = new TerrainTexturePack(backgroundTexture2, rTexture, gTexture, bTexture);
-        TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
         // *** TERRAIN TEXTURE
 
         // Ahora el modelo en crudo y la textura se "juntan" para crear el modelo texturizado
-        TexturedModel tree = new TexturedModel(OldOBJLoader.loadOBJ("tree", loader), new ModelTexture(loader.loadTexture("tree")));
-        TexturedModel fern = new TexturedModel(OldOBJLoader.loadOBJ("fern", loader), new ModelTexture(loader.loadTexture("fern")));
-        TexturedModel herb = new TexturedModel(OldOBJLoader.loadOBJ("herb", loader), new ModelTexture(loader.loadTexture("herb")));
-        TexturedModel flower = new TexturedModel(OldOBJLoader.loadOBJ("herb", loader), new ModelTexture(loader.loadTexture("flower")));
+        TexturedModel tree = getTexturedModel(loader, "tree", "tree");
+        TexturedModel fern = getTexturedModel(loader, "fern", "fern");
+        TexturedModel herb = getTexturedModel(loader, "herb", "herb");
+        TexturedModel flower = getTexturedModel(loader, "herb", "flower");
 
         fern.getTexture().setHasTransparency(true);
         herb.getTexture().setHasTransparency(true);
@@ -66,21 +65,26 @@ public class GameLoop {
 
         for (int i = 0; i < 400; i++) {
             if (i % 7 == 0) {
-                entities.add(getEntity(herb, random.nextFloat() * 800, 0, random.nextFloat() * 800, 0, 0, 0, 1.8f));
-                entities.add(getEntity(flower, random.nextFloat() * 800, 0, random.nextFloat() * 800, 0, 0, 0, 2.3f));
+                entities.add(getEntity(herb, random.nextFloat() * 400 - 200, 0, random.nextFloat() * -400, 0, 0, 0, 1.8f));
+                entities.add(getEntity(flower, random.nextFloat() * 400 - 200, 0, random.nextFloat() * -400, 0, 0, 0, 2.3f));
             }
             if (i % 3 == 0) {
-                entities.add(getEntity(tree, random.nextFloat() * 800, 0, random.nextFloat() * 800, 0, 0, 0, random.nextFloat() + 4));
-                entities.add(getEntity(fern, random.nextFloat() * 800, 0, random.nextFloat() * 800, 0, random.nextFloat() * 360, 0, 0.9f));
+                entities.add(getEntity(tree, random.nextFloat() * 800 - 400, 0, random.nextFloat() * -600, 0, 0, 0, random.nextFloat() + 4));
+                entities.add(getEntity(fern, random.nextFloat() * 400 - 200, 0, random.nextFloat() * -400, 0, random.nextFloat() * 360, 0, 0.9f));
             }
         }
 
         // Crea dos cuadriculas de terreno con diferentes texturas
-        Terrain terrain = new Terrain(0, 0, loader, texturePack, blendMap); // 0, -1
-        Terrain terrain2 = new Terrain(0, 1, loader, texturePack2, blendMap); // -1, -1
+        Terrain terrain = new Terrain(0, -1, loader, texturePack, blendMap); // 0, 0
+        Terrain terrain2 = new Terrain(-1, -1, loader, texturePack2, blendMap); // 0, 1
+
+        Player player = new Player(getTexturedModel(loader, "stanfordBunny", "white"), new Vector3f(100, 0, -50), 0, 0, 0, new Vector3f(1, 1, 1));
 
         while (!Display.isCloseRequested()) {
             camera.move();
+
+            player.move();
+            renderer.processEntity(player);
 
             renderer.processTerrain(terrain);
             renderer.processTerrain(terrain2);
@@ -95,6 +99,11 @@ public class GameLoop {
         renderer.clean();
         loader.clean();
         DisplayManager.close();
+    }
+
+
+    private static TexturedModel getTexturedModel(Loader loader, String obj, String texture) {
+        return new TexturedModel(OldOBJLoader.loadOBJ(obj, loader), new ModelTexture(loader.loadTexture(texture)));
     }
 
     /**

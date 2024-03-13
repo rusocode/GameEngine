@@ -91,7 +91,7 @@ public class EntityRenderer {
      * @param entity entidad.
      */
     private void loadModelMatrix(Entity entity) {
-        Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getTranslation(), entity.getRotX(), entity.getRotY(), entity.getRotZ(), entity.getScale());
+        Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), entity.getRotX(), entity.getRotY(), entity.getRotZ(), entity.getScale());
         shader.loadTransformationMatrix(transformationMatrix);
     }
 

@@ -10,13 +10,13 @@ import org.lwjgl.util.vector.Vector3f;
 public class Entity {
 
     private TexturedModel model;
-    private Vector3f translation;
+    private Vector3f position;
     private float rotX, rotY, rotZ;
     private final Vector3f scale;
 
-    public Entity(TexturedModel model, Vector3f translation, float rotX, float rotY, float rotZ, Vector3f scale) {
+    public Entity(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, Vector3f scale) {
         this.model = model;
-        this.translation = translation;
+        this.position = position;
         this.rotX = rotX;
         this.rotY = rotY;
         this.rotZ = rotZ;
@@ -24,9 +24,9 @@ public class Entity {
     }
 
     public void increaseTranslation(float dx, float dy, float dz) {
-        translation.x += dx;
-        translation.y += dy;
-        translation.z += dz;
+        position.x += dx;
+        position.y += dy;
+        position.z += dz;
     }
 
     public void increaseRotation(float dx, float dy, float dz) {
@@ -43,12 +43,12 @@ public class Entity {
         this.model = model;
     }
 
-    public Vector3f getTranslation() {
-        return translation;
+    public Vector3f getPosition() {
+        return position;
     }
 
-    public void setTranslation(Vector3f translation) {
-        this.translation = translation;
+    public void setPosition(Vector3f position) {
+        this.position = position;
     }
 
     public float getRotX() {
