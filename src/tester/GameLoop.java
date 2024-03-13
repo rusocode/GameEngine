@@ -78,7 +78,7 @@ public class GameLoop {
         Terrain terrain = new Terrain(0, -1, loader, texturePack, blendMap); // 0, 0
         Terrain terrain2 = new Terrain(-1, -1, loader, texturePack2, blendMap); // 0, 1
 
-        Player player = new Player(getTexturedModel(loader, "stanfordBunny", "white"), new Vector3f(100, 0, -50), 0, 0, 0, new Vector3f(1, 1, 1));
+        Player player = new Player(getTexturedModel(loader, "goblin_draft", "material6"), new Vector3f(100, 0, -50), 0, 0, 0, new Vector3f(7, 7, 7));
 
         while (!Display.isCloseRequested()) {
             camera.move();
