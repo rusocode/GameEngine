@@ -58,12 +58,12 @@ public class Loader {
     private final List<Integer> textures = new ArrayList<>();
 
     /**
-     * Carga las propiedades del modelo en el VAO.
+     * Carga el modelo en el VAO.
      *
      * @param positions     posicion de los vertices. TODO Aunque se podria llamar vertex o vertexPosition
      * @param textureCoords coordenadas de texturas.
      * @param indices       indices.
-     * @return modelo sin procesar.
+     * @return el modelo sin procesar.
      */
     public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, int[] indices) {
         int vaoID = createVAO();

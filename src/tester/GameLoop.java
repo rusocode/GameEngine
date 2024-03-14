@@ -34,7 +34,6 @@ public class GameLoop {
         DisplayManager.create();
 
         Loader loader = new Loader();
-        Camera camera = new Camera();
         Light light = new Light(new Vector3f(20000, 40000, 20000), new Vector3f(1, 1, 1));
         MasterRenderer renderer = new MasterRenderer();
 
@@ -78,7 +77,8 @@ public class GameLoop {
         Terrain terrain = new Terrain(0, -1, loader, texturePack, blendMap); // 0, 0
         Terrain terrain2 = new Terrain(-1, -1, loader, texturePack2, blendMap); // 0, 1
 
-        Player player = new Player(getTexturedModel(loader, "goblin_draft", "material6"), new Vector3f(100, 0, -50), 0, 0, 0, new Vector3f(7, 7, 7));
+        Player player = new Player(getTexturedModel(loader, "player", "player"), new Vector3f(100, 0, -50), 0, 0, 0, new Vector3f(1, 1, 1));
+        Camera camera = new Camera(player);
 
         while (!Display.isCloseRequested()) {
             camera.move();

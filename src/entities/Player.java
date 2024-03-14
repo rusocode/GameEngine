@@ -1,9 +1,10 @@
 package entities;
 
 import models.TexturedModel;
+import render.DisplayManager;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
-import render.DisplayManager;
 
 /**
  * <a href="https://www.youtube.com/watch?v=F21S9Wpi0y8">Basic Trigonometry</a>
@@ -51,21 +52,22 @@ public class Player extends Entity {
         }
     }
 
-    private void jump() {
-        if (!isInAir) {
-            upwardsSpeed = JUMP_POWER;
-            isInAir = true;
-        }
-    }
-
     private void checkInputs() {
         if (Keyboard.isKeyDown(Keyboard.KEY_W)) currentSpeed = RUN_SPEED;
         else if (Keyboard.isKeyDown(Keyboard.KEY_S)) currentSpeed = -RUN_SPEED;
+        else currentSpeed = 0;
         if (Keyboard.isKeyDown(Keyboard.KEY_D)) currentTurnSpeed = -TURN_SPEED;
         else if (Keyboard.isKeyDown(Keyboard.KEY_A)) currentTurnSpeed = TURN_SPEED;
         else currentTurnSpeed = 0;
 
         if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) jump();
+    }
+
+    private void jump() {
+        if (!isInAir) {
+            upwardsSpeed = JUMP_POWER;
+            isInAir = true;
+        }
     }
 
 }
