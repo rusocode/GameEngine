@@ -4,19 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import converter.ModelData;
-import converter.OBJLoader;
 import converter.OldOBJLoader;
 import entities.*;
 import models.*;
 import render.*;
 import terrains.Terrain;
-import textures.ModelTexture;
+import textures.*;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
-import textures.TerrainTexture;
-import textures.TerrainTexturePack;
 
 /**
  * Bucle principal del juego.
