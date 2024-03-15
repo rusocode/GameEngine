@@ -3,6 +3,7 @@ package tester;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 import converter.OldOBJLoader;
 import entities.*;
@@ -38,7 +39,7 @@ public class GameLoop {
         TerrainTexture backgroundTexture2 = new TerrainTexture(loader.loadTexture("grass2"));
         TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("dirt"));
         TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("grassFlowers"));
-        TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("path"));
+        TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("moss_path"));
         TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
         TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
         TerrainTexturePack texturePack2 = new TerrainTexturePack(backgroundTexture2, rTexture, gTexture, bTexture);
@@ -49,6 +50,7 @@ public class GameLoop {
         TexturedModel fern = getTexturedModel(loader, "fern", "fern");
         TexturedModel herb = getTexturedModel(loader, "herb", "herb");
         TexturedModel flower = getTexturedModel(loader, "herb", "flower");
+        TexturedModel box = getTexturedModel(loader, "box", "box");
 
         fern.getTexture().setHasTransparency(true);
         herb.getTexture().setHasTransparency(true);
@@ -58,14 +60,19 @@ public class GameLoop {
 
         Random random = new Random(676452);
 
+        entities.add(getEntity(box, new Vector3f(100, 0, -60), new Vector3f(0, 0, 0), new Vector3f(5, 8, 5)));
+        entities.add(getEntity(box, new Vector3f(100, 0, -240), new Vector3f(0, 0, 0), new Vector3f(5, 8, 5)));
+        entities.add(getEntity(box, new Vector3f(120, 0, -360), new Vector3f(0, 0, 0), new Vector3f(5, 8, 5)));
+
         for (int i = 0; i < 400; i++) {
             if (i % 7 == 0) {
-                entities.add(getEntity(herb, random.nextFloat() * 400 - 200, 0, random.nextFloat() * -400, 0, 0, 0, 1.8f));
-                entities.add(getEntity(flower, random.nextFloat() * 400 - 200, 0, random.nextFloat() * -400, 0, 0, 0, 2.3f));
+                entities.add(getEntity(herb, new Vector3f(random.nextFloat() * 400 - 200, 0, random.nextFloat() * -400), new Vector3f(0, 0, 0), new Vector3f(1.8f, 1.8f, 1.8f)));
+                entities.add(getEntity(flower, new Vector3f(random.nextFloat() * 400 - 200, 0, random.nextFloat() * -400), new Vector3f(0, 0, 0), new Vector3f(2.3f, 2.3f, 2.3f)));
             }
             if (i % 3 == 0) {
-                entities.add(getEntity(tree, random.nextFloat() * 800 - 400, 0, random.nextFloat() * -600, 0, 0, 0, random.nextFloat() + 4));
-                entities.add(getEntity(fern, random.nextFloat() * 400 - 200, 0, random.nextFloat() * -400, 0, random.nextFloat() * 360, 0, 0.9f));
+                float scaleTree = random.nextFloat() + 4;
+                entities.add(getEntity(tree, new Vector3f(random.nextFloat() * 800 - 400, 0, random.nextFloat() * -600), new Vector3f(0, 0, 0), new Vector3f(scaleTree, scaleTree, scaleTree)));
+                entities.add(getEntity(fern, new Vector3f(random.nextFloat() * 400 - 200, 0, random.nextFloat() * -400), new Vector3f(0, random.nextFloat() * 360, 0), new Vector3f(0.9f, 0.9f, 0.9f)));
             }
         }
 
@@ -73,7 +80,8 @@ public class GameLoop {
         Terrain terrain = new Terrain(0, -1, loader, texturePack, blendMap); // 0, 0
         Terrain terrain2 = new Terrain(-1, -1, loader, texturePack2, blendMap); // 0, 1
 
-        Player player = new Player(getTexturedModel(loader, "player", "player"), new Vector3f(100, 0, -50), 0, 0, 0, new Vector3f(1, 1, 1));
+        // Especifica el angulo de y a 180 grados para que el player mire el terreno y no a la nada
+        Player player = new Player(getTexturedModel(loader, "player", "player"), new Vector3f(100, 0, -100), new Vector3f(0, 180, 0), new Vector3f(1, 1, 1));
         Camera camera = new Camera(player);
 
         while (!Display.isCloseRequested()) {
@@ -108,17 +116,12 @@ public class GameLoop {
      * @param texturedModel modelo texturizado.
      * @return la entidad texturizada con iluminacion especular y transformacion.
      */
-    private static Entity getEntity(TexturedModel texturedModel, float posX, float posY, float posZ, float angleX, float angleY, float angleZ, float scaleValue) {
+    private static Entity getEntity(TexturedModel texturedModel, Vector3f position, Vector3f angle, Vector3f scale) {
         // Aplica iluminacion especular a la textura
         ModelTexture texture = texturedModel.getTexture();
         // texture.setShineDamper(10);
         // texture.setReflectivity(1);
-
-        // Operaciones de transformacion
-        Vector3f translation = new Vector3f(posX, posY, posZ); // Vector de traslacion
-        Vector3f scale = new Vector3f(scaleValue, scaleValue, scaleValue); // Vector de escala
-
-        return new Entity(texturedModel, translation, angleX, angleY, angleZ, scale);
+        return new Entity(texturedModel, position, angle, scale);
     }
 
 }

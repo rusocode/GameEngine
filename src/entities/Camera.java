@@ -5,11 +5,12 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class Camera {
 
-    private float distanceFromPlayer = 50; // Zoom
-    private float angleAroundPlayer;
+    private float distanceFromPlayer = 70; // Distancia de la camara al player
+    private float angleAroundPlayer; // Angulo alrededor del player
 
+    // No es necesario especificar la posicion de la camara ya que esta depende de la posicion del player
     private final Vector3f position = new Vector3f(100, 35, 50);
-    private float pitch = 10; // Rotacion alrededor de los ejes XYZ, tambien conocido como la inclinacion de la camara
+    private float pitch = 20; // Rotacion alrededor de los ejes XYZ, tambien conocido como la inclinacion de la camara
     private float yaw = 0; // Rotacion
     private float roll;
 
@@ -20,7 +21,7 @@ public class Camera {
     }
 
     /**
-     * Mueve la camara dependiendo la tecla pulsada.
+     * Mueve la camara dependiendo de la entrada del usuario.
      */
     public void move() {
         calculateZoom();
@@ -30,11 +31,11 @@ public class Camera {
         /* Usando lo que sabemos sobre angulos en lineas paralelas, sabemos que el angulo de la camara (yaw) debe ser igual a
          * theta. Por lo que tu angulo es igual a todo ese angulo que es 180 grados menos theta. Asi puedes rotar la camara
          * alrededor del player y cuando el player gira, la camara tambien gira correctamente. */
-        yaw = 180 - (player.getRotY() + angleAroundPlayer);
+        yaw = 180 - (player.getAngle().y + angleAroundPlayer);
     }
 
     /**
-     * Calcula la posicion real de la camara.
+     * Calcula la posicion de la camara.
      *
      * @param horizontalDistance distancia horizontal.
      * @param verticalDistance   distancia vertical.
@@ -45,16 +46,16 @@ public class Camera {
          * la esquina superior izquierda, el eje z apunta hacia abajo. Esto contrasta con la vista tradicional, donde el eje x
          * apunta hacia la derecha, el eje y hacia arriba y el eje z hacia nosotros. El jugador esta orientado por su rotacion en
          * y (rotY), y la camara se coloca detras de el. La distancia entre la camara y el jugador es la distancia horizontal,
-         * aunque la camara puede moverse alrededor del jugador alterando el angulo (angleAroundPlayer). El angulo total se
-         * calcula sumando la rotacion y el angulo del jugador, y se utiliza para determinar los desplazamientos en x e z mediante
-         * funciones trigonometricas (seno y coseno). */
-        float theta = player.getRotY() + angleAroundPlayer;
+         * aunque la camara puede moverse alrededor del jugador alterando el angulo (angleAroundPlayer). El angulo total (theta)
+         * se calcula sumando la rotacion y el angulo del jugador, y se utiliza para determinar los desplazamientos en x e z
+         * mediante funciones trigonometricas (seno y coseno). */
+        float theta = player.getAngle().y + angleAroundPlayer;
         float offsetX = (float) (horizontalDistance * Math.sin(Math.toRadians(theta)));
         float offsetZ = (float) (horizontalDistance * Math.cos(Math.toRadians(theta)));
         /* Resta los desplazamientos a la posicion del player para obtener la posicion correcta de la camara por detras de este.
-         * ¿Por que se restan los desplazamientos de la posicion del player en vez de sumarlos? Si miras bien, el desplazamiento
-         * x de la camara desde la vista desde arriba esta en la direccion x negativa y el desplazamiento z de la camara desde el
-         * player tambien esta en la direccion z negativa. */
+         * ¿Por que se restan los desplazamientos a la posicion del player en vez de sumarlos? Si miras bien en el grafico del
+         * video, el desplazamiento x de la camara desde la vista desde arriba esta en la direccion x negativa y el desplazamiento
+         * z de la camara desde el player tambien esta en la direccion z negativa. */
         position.x = player.getPosition().x - offsetX;
         position.z = player.getPosition().z - offsetZ;
         /* Como ya conocemos la distancia vertical de la camara al player y la posicion y del player, entonces se suman para
@@ -91,6 +92,8 @@ public class Camera {
             // Calcula cuanto se a movido la camara hacia arriba o abajo
             float pitchChange = Mouse.getDY() * 0.1f;
             pitch -= pitchChange;
+            if (pitch < 1) pitch = 1; // Evita que la camara pase por debajo del piso
+            else if (pitch > 90) pitch = 90; // Evita que la camara pase por encima del player
         }
     }
 
@@ -98,7 +101,7 @@ public class Camera {
         // Si se presiono el boton izquierdo del mouse
         if (Mouse.isButtonDown(0)) {
             // Calcula cuanto se a movido la camara hacia la izquierda o derecha
-            float angleChange = Mouse.getDX() * 0.3f;
+            float angleChange = Mouse.getDX() * 0.07f;
             angleAroundPlayer -= angleChange;
         }
     }

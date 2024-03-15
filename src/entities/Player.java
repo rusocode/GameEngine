@@ -27,8 +27,8 @@ public class Player extends Entity {
 
     private boolean isInAir;
 
-    public Player(TexturedModel model, Vector3f translation, float rotX, float rotY, float rotZ, Vector3f scale) {
-        super(model, translation, rotX, rotY, rotZ, scale);
+    public Player(TexturedModel model, Vector3f position, Vector3f angle, Vector3f scale) {
+        super(model, position, angle, scale);
     }
 
     public void move() {
@@ -39,11 +39,11 @@ public class Player extends Entity {
          * jugador en los ejes x y z. Se calcula el desplazamiento en estas direcciones mediante las funciones seno y coseno del
          * angulo y, multiplicadas por la distancia. La nueva posicion del jugador se obtiene sumando estos desplazamientos a las
          * posiciones actuales en los ejes x y z. Este proceso se conoce como "trazar el punto" a lo largo y hacia arriba. */
-        float dx = (float) (distance * Math.sin(Math.toRadians(getRotY()))); // sin(θ) = x / distance
-        float dz = (float) (distance * Math.cos(Math.toRadians(getRotY()))); // cos(θ) = z / distance
-        increaseTranslation(dx, 0, dz);
+        float dx = (float) (distance * Math.sin(Math.toRadians(getAngle().y))); // sin(θ) = x / distance
+        float dz = (float) (distance * Math.cos(Math.toRadians(getAngle().y))); // cos(θ) = z / distance
+        increasePosition(dx, 0, dz);
         upwardsSpeed += GRAVITY * DisplayManager.getFrameTimeSeconds();
-        increaseTranslation(0, upwardsSpeed * DisplayManager.getFrameTimeSeconds(), 0);
+        increasePosition(0, upwardsSpeed * DisplayManager.getFrameTimeSeconds(), 0);
         // Si la posicion del player es menor a 0, entonces toco tierra
         if (getPosition().y < TERRAIN_HEIGH) {
             upwardsSpeed = 0;

@@ -11,28 +11,26 @@ public class Entity {
 
     private TexturedModel model;
     private Vector3f position;
-    private float rotX, rotY, rotZ;
+    private Vector3f angle;
     private final Vector3f scale;
 
-    public Entity(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, Vector3f scale) {
+    public Entity(TexturedModel model, Vector3f position, Vector3f angle, Vector3f scale) {
         this.model = model;
         this.position = position;
-        this.rotX = rotX;
-        this.rotY = rotY;
-        this.rotZ = rotZ;
+        this.angle = angle;
         this.scale = scale;
     }
 
-    public void increaseTranslation(float dx, float dy, float dz) {
+    public void increasePosition(float dx, float dy, float dz) {
         position.x += dx;
         position.y += dy;
         position.z += dz;
     }
 
     public void increaseRotation(float dx, float dy, float dz) {
-        rotX += dx;
-        rotY += dy;
-        rotZ += dz;
+        angle.x += dx;
+        angle.y += dy;
+        angle.z += dz;
     }
 
     public TexturedModel getModel() {
@@ -51,28 +49,12 @@ public class Entity {
         this.position = position;
     }
 
-    public float getRotX() {
-        return rotX;
+    public Vector3f getAngle() {
+        return angle;
     }
 
-    public void setRotX(float rotX) {
-        this.rotX = rotX;
-    }
-
-    public float getRotY() {
-        return rotY;
-    }
-
-    public void setRotY(float rotY) {
-        this.rotY = rotY;
-    }
-
-    public float getRotZ() {
-        return rotZ;
-    }
-
-    public void setRotZ(float rotZ) {
-        this.rotZ = rotZ;
+    public void setAngle(Vector3f angle) {
+        this.angle = angle;
     }
 
     public Vector3f getScale() {
