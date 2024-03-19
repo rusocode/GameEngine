@@ -5,6 +5,7 @@ import render.DisplayManager;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
+import terrains.Terrain;
 
 /**
  * <a href="https://www.youtube.com/watch?v=F21S9Wpi0y8">Basic Trigonometry</a>
@@ -31,7 +32,10 @@ public class Player extends Entity {
         super(model, position, angle, scale);
     }
 
-    public void move() {
+    /**
+     * @param terrain terreno en el que esta actualmente el player.
+     */
+    public void move(Terrain terrain) {
         checkInputs();
         increaseRotation(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0);
         float distance = currentSpeed * DisplayManager.getFrameTimeSeconds(); // Hipotenusa
@@ -44,11 +48,12 @@ public class Player extends Entity {
         increasePosition(dx, 0, dz);
         upwardsSpeed += GRAVITY * DisplayManager.getFrameTimeSeconds();
         increasePosition(0, upwardsSpeed * DisplayManager.getFrameTimeSeconds(), 0);
+        float terrainHeight = terrain.getHeightOfTerrain(getPosition().x, getPosition().z);
         // Si la posicion del player es menor a 0, entonces toco tierra
-        if (getPosition().y < TERRAIN_HEIGH) {
+        if (getPosition().y < terrainHeight) {
             upwardsSpeed = 0; // TODO Parece que no hace falta volver a 0 aca
             isInAir = false;
-            getPosition().y = TERRAIN_HEIGH;
+            getPosition().y = terrainHeight;
         }
     }
 

@@ -58,6 +58,9 @@ public class GameLoop {
         flower.getTexture().setHasTransparency(true);
         flower.getTexture().setUseFakeLighting(true);
 
+        // Crea dos cuadriculas de terreno con diferentes texturas
+        Terrain terrain = new Terrain(0, -1, loader, texturePack, blendMap, "heightmap");
+
         Random random = new Random(676452);
 
         entities.add(getEntity(box, new Vector3f(100, 0, -60), new Vector3f(0, 0, 0), new Vector3f(5, 8, 5)));
@@ -65,38 +68,32 @@ public class GameLoop {
         entities.add(getEntity(box, new Vector3f(120, 0, -360), new Vector3f(0, 0, 0), new Vector3f(5, 8, 5)));
 
         for (int i = 0; i < 400; i++) {
-            if (i % 7 == 0) {
-                entities.add(getEntity(herb, new Vector3f(random.nextFloat() * 400 - 200, 0, random.nextFloat() * -400), new Vector3f(0, 0, 0), new Vector3f(1.8f, 1.8f, 1.8f)));
-                entities.add(getEntity(flower, new Vector3f(random.nextFloat() * 400 - 200, 0, random.nextFloat() * -400), new Vector3f(0, 0, 0), new Vector3f(2.3f, 2.3f, 2.3f)));
+            if (i % 20 == 0) {
+                float x = random.nextFloat() * 800 - 400;
+                float z = random.nextFloat() * -600;
+                float y = terrain.getHeightOfTerrain(x, z);
+                entities.add(getEntity(fern, new Vector3f(x, y, z), new Vector3f(0, random.nextFloat() * 360, 0), new Vector3f(0.9f, 0.9f, 0.9f)));
             }
-            if (i % 3 == 0) {
+            if (i % 5 == 0) {
+                float x = random.nextFloat() * 800 - 400;
+                float z = random.nextFloat() * -600;
+                float y = terrain.getHeightOfTerrain(x, z);
                 float scaleTree = random.nextFloat() + 4;
-                entities.add(getEntity(tree, new Vector3f(random.nextFloat() * 800 - 400, 0, random.nextFloat() * -600), new Vector3f(0, 0, 0), new Vector3f(scaleTree, scaleTree, scaleTree)));
-                entities.add(getEntity(fern, new Vector3f(random.nextFloat() * 400 - 200, 0, random.nextFloat() * -400), new Vector3f(0, random.nextFloat() * 360, 0), new Vector3f(0.9f, 0.9f, 0.9f)));
+                entities.add(getEntity(tree, new Vector3f(x, y, z), new Vector3f(0, 0, 0), new Vector3f(scaleTree, scaleTree, scaleTree)));
             }
         }
-
-        // Crea dos cuadriculas de terreno con diferentes texturas
-        Terrain terrain = new Terrain(0, -1, loader, texturePack, blendMap, "heightmap");
-        Terrain terrain2 = new Terrain(-1, -1, loader, texturePack2, blendMap, "heightmap");
 
         // Especifica el angulo de y a 180 grados para que el player mire al terreno y no a la nada
         Player player = new Player(getTexturedModel(loader, "player", "player"), new Vector3f(100, 0, -100), new Vector3f(0, 180, 0), new Vector3f(1, 1, 1));
         Camera camera = new Camera(player);
 
         while (!Display.isCloseRequested()) {
+            player.move(terrain);
             camera.move();
-
-            player.move();
             renderer.processEntity(player);
-
             renderer.processTerrain(terrain);
-            renderer.processTerrain(terrain2);
-
             for (Entity entity : entities) renderer.processEntity(entity);
-
             renderer.render(light, camera);
-
             DisplayManager.update();
         }
 

@@ -1,8 +1,10 @@
 package toolBox;
 
 import entities.Camera;
+
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector2f;
 
 /**
  * En LWJGL (Lightweight Java Game Library), la clase Matrix4f es parte de la biblioteca de algebra lineal que proporciona
@@ -14,6 +16,20 @@ import org.lwjgl.util.vector.Vector3f;
  */
 
 public class Maths {
+
+    /**
+     * Este metodo toma tres vectores 3D que son los tres puntos del triangulo, y tambien un vector 2D que es la coordenada (x,z)
+     * del player.
+     *
+     * @return la altura del triangulo en la posicion del player.
+     */
+    public static float barryCentric(Vector3f p1, Vector3f p2, Vector3f p3, Vector2f pos) {
+        float det = (p2.z - p3.z) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.z - p3.z);
+        float l1 = ((p2.z - p3.z) * (pos.x - p3.x) + (p3.x - p2.x) * (pos.y - p3.z)) / det;
+        float l2 = ((p3.z - p1.z) * (pos.x - p3.x) + (p1.x - p3.x) * (pos.y - p3.z)) / det;
+        float l3 = 1.0f - l1 - l2;
+        return l1 * p1.y + l2 * p2.y + l3 * p3.y;
+    }
 
     public static Matrix4f createTransformationMatrix(Vector3f translation, Vector3f angle, Vector3f scale) {
         // Crear una matriz de identidad
