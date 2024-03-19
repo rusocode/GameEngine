@@ -77,10 +77,10 @@ public class GameLoop {
         }
 
         // Crea dos cuadriculas de terreno con diferentes texturas
-        Terrain terrain = new Terrain(0, -1, loader, texturePack, blendMap); // 0, 0
-        Terrain terrain2 = new Terrain(-1, -1, loader, texturePack2, blendMap); // 0, 1
+        Terrain terrain = new Terrain(0, -1, loader, texturePack, blendMap, "heightmap");
+        Terrain terrain2 = new Terrain(-1, -1, loader, texturePack2, blendMap, "heightmap");
 
-        // Especifica el angulo de y a 180 grados para que el player mire el terreno y no a la nada
+        // Especifica el angulo de y a 180 grados para que el player mire al terreno y no a la nada
         Player player = new Player(getTexturedModel(loader, "player", "player"), new Vector3f(100, 0, -100), new Vector3f(0, 180, 0), new Vector3f(1, 1, 1));
         Camera camera = new Camera(player);
 
