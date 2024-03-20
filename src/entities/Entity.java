@@ -19,7 +19,7 @@ public class Entity {
      * coordenadas de texturas originales usando la variable numberOfRows. Luego se agrega un desplazamiento [x] e [y] a cada
      * coordenada de textura dependiendo de que textura se use en el atlas. Es importante aclarar que los texture atlas deben
      * ser potencia de 2 y la cantidad de filas tiene que ser igual a la cantidad de columnas. */
-    private int textureIndex; // Indica que texture atlas usa esta entidad
+    private int textureIndex = 0; // Indica que texture atlas usa esta entidad
 
     public Entity(TexturedModel model, Vector3f position, Vector3f angle, Vector3f scale) {
         this.model = model;
@@ -42,7 +42,7 @@ public class Entity {
     }
 
     public float getTextureYOffset() {
-        int row = textureIndex % model.getTexture().getNumberOfRows();
+        int row = textureIndex / model.getTexture().getNumberOfRows();
         return (float) row / model.getTexture().getNumberOfRows();
     }
 
