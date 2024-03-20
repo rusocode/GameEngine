@@ -3,6 +3,7 @@ package shaders;
 import entities.Camera;
 import entities.Light;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import toolBox.Maths;
 
@@ -20,6 +21,8 @@ public class EntityShader extends ShaderProgram {
     private int location_reflectivity;
     private int location_useFakeLighting;
     private int location_skyColor;
+    private int location_numberOfRows;
+    private int location_offset;
 
     public EntityShader() {
         super(VERTEX_FILE, FRAGMENT_FILE);
@@ -45,6 +48,8 @@ public class EntityShader extends ShaderProgram {
         location_reflectivity = getUniformLocation("reflectivity");
         location_useFakeLighting = getUniformLocation("useFakeLighting");
         location_skyColor = getUniformLocation("skyColor");
+        location_numberOfRows = getUniformLocation("numberOfRows");
+        location_offset = getUniformLocation("offset");
     }
 
     /**
@@ -114,6 +119,14 @@ public class EntityShader extends ShaderProgram {
      */
     public void loadSkyColor(float r, float g, float b) {
         loadVector(location_skyColor, new Vector3f(r, g, b));
+    }
+
+    public void loadNumberOfRows(int numberOfRows) {
+        loadFloat(location_numberOfRows, numberOfRows);
+    }
+
+    public void loadOffset(float x, float y) {
+        load2DVector(location_offset, new Vector2f(x, y));
     }
 
 }

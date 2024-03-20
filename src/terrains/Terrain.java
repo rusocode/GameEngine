@@ -104,8 +104,7 @@ public class Terrain {
             System.err.println(e.getMessage());
         }
 
-        /* Obtiene el tamaño del terreno basado en la altura de la imagen. La altura de la imagen (VERTEX_COUNT) determina el
-         * numero de vertices a lo largo de un lado del terreno. */
+        // Obtiene la altura de la imagen, siendo esta el numero de vertices a lo largo de un lado del terreno
         int VERTEX_COUNT = image.getHeight();
         heights = new float[VERTEX_COUNT][VERTEX_COUNT];
         // Calcula la potencia de VERTEX_COUNT para obtener el numero total de vertices

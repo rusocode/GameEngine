@@ -67,6 +67,7 @@ public class EntityRenderer {
         GL20.glEnableVertexAttribArray(1);
         GL20.glEnableVertexAttribArray(2);
         ModelTexture texture = model.getTexture();
+        shader.loadNumberOfRows(texture.getNumberOfRows());
         // Deshabilita la seleccion de caras posteriores cada vez que renderiza una textura con transparencia
         if (texture.isHasTransparency()) MasterRenderer.disableCulling();
         shader.loadFakeLighting(texture.isUseFakeLighting());
@@ -93,6 +94,7 @@ public class EntityRenderer {
     private void loadModelMatrix(Entity entity) {
         Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), entity.getAngle(), entity.getScale());
         shader.loadTransformationMatrix(transformationMatrix);
+        shader.loadOffset(entity.getTextureXOffset(), entity.getTextureYOffset());
     }
 
     /**

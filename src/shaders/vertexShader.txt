@@ -19,6 +19,9 @@ uniform vec3 lightPosition;
 // El valor sera 0 si no debemos usar iluminacion falsa y 1 en caso contrario
 uniform float useFakeLighting;
 
+uniform float numberOfRows;
+uniform vec2 offset;
+
 const float density = 0.0025; // Determina el espesor de la niebla, y aumentar este valor disminuye la visibilidad general de la escena
 const float gradient = 5.0; // Determina que tan rapido disminuye la visibilidad con la distancia, y aumentar este valor hace que la transicion de visibilidad total a visibilidad 0 sea mucho mas pequenia
 
@@ -31,7 +34,7 @@ void main(void) {
     // Le dice a la GPU donde representar este vertice en la pantalla
     gl_Position = projectionMatrix * positionRelativeToCam;
     // Pasa (pass_) las coordendas de texturas al Fragment Shader
-    pass_textureCoords = textureCoords;
+    pass_textureCoords = (textureCoords / numberOfRows) + offset;
 
     vec3 actualNormal = normal;
     if (useFakeLighting > 0.5) {

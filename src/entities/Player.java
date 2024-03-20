@@ -46,9 +46,9 @@ public class Player extends Entity {
         upwardsSpeed += GRAVITY * DisplayManager.getFrameTimeSeconds();
         increasePosition(0, upwardsSpeed * DisplayManager.getFrameTimeSeconds(), 0);
         float terrainHeight = terrain.getHeightOfTerrain(getPosition().x, getPosition().z);
-        // Si la posicion del player es menor a 0, entonces toco tierra
+        // Si la posicion [y] del player es menor a terrainHeight, entonces toco tierra
         if (getPosition().y < terrainHeight) {
-            upwardsSpeed = 0; // TODO Parece que no hace falta volver a 0 aca
+            upwardsSpeed = 0; // TODO Parece que no es necesaria esta linea
             isInAir = false;
             getPosition().y = terrainHeight;
         }

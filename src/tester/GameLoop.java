@@ -45,12 +45,14 @@ public class GameLoop {
         TerrainTexturePack texturePack2 = new TerrainTexturePack(backgroundTexture2, rTexture, gTexture, bTexture);
         // *** TERRAIN TEXTURE
 
-        // Ahora el modelo en crudo y la textura se "juntan" para crear el modelo texturizado
         TexturedModel tree = getTexturedModel(loader, "tree", "tree");
-        TexturedModel fern = getTexturedModel(loader, "fern", "fern");
         TexturedModel herb = getTexturedModel(loader, "herb", "herb");
         TexturedModel flower = getTexturedModel(loader, "herb", "flower");
-        TexturedModel box = getTexturedModel(loader, "box", "box");
+
+        ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture("fern"));
+        fernTextureAtlas.setNumberOfRows(2); // Especifica la cantidad de filas para el texture atlas
+
+        TexturedModel fern = new TexturedModel(OldOBJLoader.loadOBJ("fern", loader), fernTextureAtlas);
 
         fern.getTexture().setHasTransparency(true);
         herb.getTexture().setHasTransparency(true);
@@ -63,23 +65,19 @@ public class GameLoop {
 
         Random random = new Random(676452);
 
-        entities.add(getEntity(box, new Vector3f(100, 0, -60), new Vector3f(0, 0, 0), new Vector3f(5, 8, 5)));
-        entities.add(getEntity(box, new Vector3f(100, 0, -240), new Vector3f(0, 0, 0), new Vector3f(5, 8, 5)));
-        entities.add(getEntity(box, new Vector3f(120, 0, -360), new Vector3f(0, 0, 0), new Vector3f(5, 8, 5)));
-
         for (int i = 0; i < 400; i++) {
-            if (i % 20 == 0) {
+            if (i % 2 == 0) {
                 float x = random.nextFloat() * 800 - 400;
                 float z = random.nextFloat() * -600;
-                //float y = terrain.getHeightOfTerrain(x, z);
-                entities.add(getEntity(fern, new Vector3f(x, 0, z), new Vector3f(0, random.nextFloat() * 360, 0), new Vector3f(0.9f, 0.9f, 0.9f)));
+                float y = terrain.getHeightOfTerrain(x, z);
+                entities.add(new Entity(fern, random.nextInt(4), new Vector3f(x, y, z), new Vector3f(0, random.nextFloat() * 360, 0), new Vector3f(0.9f, 0.9f, 0.9f)));
             }
             if (i % 5 == 0) {
                 float x = random.nextFloat() * 800 - 400;
                 float z = random.nextFloat() * -600;
-                // float y = terrain.getHeightOfTerrain(x, z);
+                float y = terrain.getHeightOfTerrain(x, z);
                 float scaleTree = random.nextFloat() + 4;
-                entities.add(getEntity(tree, new Vector3f(x, 0, z), new Vector3f(0, 0, 0), new Vector3f(scaleTree, scaleTree, scaleTree)));
+                entities.add(getEntity(tree, new Vector3f(x, y, z), new Vector3f(0, 0, 0), new Vector3f(scaleTree, scaleTree, scaleTree)));
             }
         }
 
@@ -104,6 +102,7 @@ public class GameLoop {
 
 
     private static TexturedModel getTexturedModel(Loader loader, String obj, String texture) {
+        // Ahora el modelo en crudo y la textura se "juntan" para crear el modelo texturizado
         return new TexturedModel(OldOBJLoader.loadOBJ(obj, loader), new ModelTexture(loader.loadTexture(texture)));
     }
 
