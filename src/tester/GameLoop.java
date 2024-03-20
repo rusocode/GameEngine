@@ -71,15 +71,15 @@ public class GameLoop {
             if (i % 20 == 0) {
                 float x = random.nextFloat() * 800 - 400;
                 float z = random.nextFloat() * -600;
-                float y = terrain.getHeightOfTerrain(x, z);
-                entities.add(getEntity(fern, new Vector3f(x, y, z), new Vector3f(0, random.nextFloat() * 360, 0), new Vector3f(0.9f, 0.9f, 0.9f)));
+                //float y = terrain.getHeightOfTerrain(x, z);
+                entities.add(getEntity(fern, new Vector3f(x, 0, z), new Vector3f(0, random.nextFloat() * 360, 0), new Vector3f(0.9f, 0.9f, 0.9f)));
             }
             if (i % 5 == 0) {
                 float x = random.nextFloat() * 800 - 400;
                 float z = random.nextFloat() * -600;
-                float y = terrain.getHeightOfTerrain(x, z);
+                // float y = terrain.getHeightOfTerrain(x, z);
                 float scaleTree = random.nextFloat() + 4;
-                entities.add(getEntity(tree, new Vector3f(x, y, z), new Vector3f(0, 0, 0), new Vector3f(scaleTree, scaleTree, scaleTree)));
+                entities.add(getEntity(tree, new Vector3f(x, 0, z), new Vector3f(0, 0, 0), new Vector3f(scaleTree, scaleTree, scaleTree)));
             }
         }
 

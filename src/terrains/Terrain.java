@@ -26,9 +26,8 @@ public class Terrain {
 
     private static final float SIZE = 800; // Tamaño del terreno
     private static final float MAX_HEIGHT = 40; // Altura maxima del terreno
-    private static final float MAX_PIXEL_COLOUR = 256 * 256 * 256; // Representa los colores de los canales RGB
+    private static final float MAX_PIXEL_COLOUR = 256 * 256 * 256; // Color maximo de pixeles
 
-    // El eje y no es necesario ya que el terreno permanece en la misma altura
     private final float x, z;
     private final RawModel model;
     private final TerrainTexturePack texturePack;
@@ -57,7 +56,7 @@ public class Terrain {
         float terrainX = worldX - this.x;
         float terrainZ = worldZ - this.z;
         // Calcula el tamanio de cada cuadrado de la cuadricula del terreno
-        float gridSquareSize = SIZE / ((float) heights.length - 1);
+        float gridSquareSize = SIZE / ((float) heights.length - 1); // 800 / 255 = 3.137255
         /* Averigua en que cuadrado de la cuadricula esta la coordenada (x,z). Por ejemplo, si cada cuadrado de la cuadricula es
          * de 5x5 y estamos en la posicion del terreno (13,8), al dividir esta posicion por la longitud del cuadrado de la
          * cuadricula y calcular el floor de la division, el resultado dara que estamos en la posicion (2,1). */
@@ -105,10 +104,14 @@ public class Terrain {
             System.err.println(e.getMessage());
         }
 
+        /* Obtiene el tamaño del terreno basado en la altura de la imagen. La altura de la imagen (VERTEX_COUNT) determina el
+         * numero de vertices a lo largo de un lado del terreno. */
         int VERTEX_COUNT = image.getHeight();
         heights = new float[VERTEX_COUNT][VERTEX_COUNT];
         // Calcula la potencia de VERTEX_COUNT para obtener el numero total de vertices
         int count = VERTEX_COUNT * VERTEX_COUNT;
+        /* Inicializa varias matrices para almacenar los datos del terreno, incluyendo las coordenadas de los vertices, las
+         * normales de los vertices y las coordenadas de textura con los tamaños adecuados para cada uno. */
         float[] vertices = new float[count * 3];
         float[] normals = new float[count * 3];
         float[] textureCoords = new float[count * 2];
@@ -148,19 +151,64 @@ public class Terrain {
         return loader.loadToVAO(vertices, textureCoords, normals, indices);
     }
 
+    /**
+     * Calcula la normal de un vertice en el terreno utilizando las alturas de los vertices adyacentes en una imagen de altura
+     * como referencia. Esto es util para calcular la iluminacion y el sombreado en el terreno durante el renderizado.
+     *
+     * @param x     coordenada horizontal de la imagen.
+     * @param z     coordenada vertical de la imagen.
+     * @param image imagen de altura.
+     * @return el vector normalizado que representa la normal del vertice en la posicion (x, z) del terreno.
+     */
     private Vector3f calculateNormal(int x, int z, BufferedImage image) {
+        /* Obtiene las alturas de los vertices adyacentes al vertice en la posicion (x, z) en las direcciones izquierda (heightL),
+         * derecha (heightR), abajo (heightD) y arriba (heightU) llamando al metodo getHeight con las coordenadas
+         * correspondientes.
+         * La razon de restar 1 a la coordenada x es porque se esta buscando la altura del vertice que esta a la izquierda en la
+         * imagen de altura. Al moverse hacia la izquierda en una matriz bidimensional (como la representacion de una imagen), se
+         * disminuye el valor de la coordenada x. Por lo tanto, se resta 1 a la coordenada x para acceder al vertice adyacente
+         * situado a la izquierda.
+         * De manera similar, se suman 1 y se restan 1 respectivamente a las coordenadas x y z para acceder a los vertices
+         * adyacentes en otras direcciones (derecha, arriba y abajo) en la imagen de altura. Esto garantiza que se obtengan las
+         * alturas de los vertices adyacentes correctos para calcular la normal del vertice en la posicion (x, z) del terreno de
+         * manera adecuada. */
         float heightL = getHeight(x - 1, z, image);
         float heightR = getHeight(x + 1, z, image);
         float heightD = getHeight(x, z - 1, image);
         float heightU = getHeight(x, z + 1, image);
+        /* Calcula la diferencia de altura entre los vertices adyacentes en las direcciones horizontal (izquierda y derecha) y
+         * vertical (abajo y arriba) y crea un vector con estas diferencias. Esto se hace restando la altura de los vertices
+         * adyacentes al vertice en la posicion (x, z). */
         Vector3f normal = new Vector3f(heightL - heightR, 2f, heightD - heightU);
+        /* Normaliza el vector resultante llamando al metodo normalise() de la clase Vector3f. Esto ajusta la magnitud del vector
+         * para que tenga una longitud de 1 y lo convierte en una normal unitaria. */
         normal.normalise();
         return normal;
     }
 
+    /**
+     * Utiliza el color de un pixel en una imagen de altura para determinar la altura del terreno en una posicion especifica.
+     * Luego ajusta y normaliza este valor para que este dentro del rango de alturas deseado para el terreno.
+     *
+     * @param x     coordenada horizontal de la imagen.
+     * @param z     coordenada vertical de la imagen.
+     * @param image imagen de altura.
+     * @return la altura calculada.
+     */
     private float getHeight(int x, int z, BufferedImage image) {
+        // Verifica que las coordenadas esten dentro de los limites de la imagen de altura
         if (x < 0 || x >= image.getHeight() || z < 0 || z >= image.getHeight()) return 0;
-        float height = image.getRGB(x, z); // Devuelve un valor que representa el color del pixel
+        /* Obtiene el valor del color del pixel en las coordenadas (x, z) de la imagen utilizando el metodo getRGB(x, z) de la
+         * clase BufferedImage. Este valor representa la altura del terreno en ese punto de la imagen. */
+        float height = image.getRGB(x, z);
+        /* Ajusta el valor de altura para que este en el rango deseado:
+         * a. Se suma la mitad del valor maximo de color de un pixel (MAX_PIXEL_COLOUR / 2f) al valor del color del pixel. Esto se
+         * hace para centrar los valores de color alrededor de cero, ya que los valores de color normalmente van desde 0 hasta
+         * MAX_PIXEL_COLOUR, y se desea que el rango de altura vaya desde -MAX_HEIGHT hasta MAX_HEIGHT.
+         * b. Se divide el valor de altura por la mitad del valor maximo de color de un pixel (MAX_PIXEL_COLOUR / 2f). Esto
+         * normaliza el valor de altura para que este en el rango [-1, 1].
+         * c. Se multiplica el valor de altura por la altura maxima deseada del terreno (MAX_HEIGHT). Esto escala el valor de
+         * altura normalizado al rango deseado de alturas del terreno. */
         height += MAX_PIXEL_COLOUR / 2f;
         height /= MAX_PIXEL_COLOUR / 2f;
         height *= MAX_HEIGHT;

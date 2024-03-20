@@ -19,9 +19,6 @@ public class Player extends Entity {
     private static final float GRAVITY = -50;
     private static final float JUMP_POWER = 30; // Que tan alto salta
 
-    // Limite minimo del terreno
-    private static final float TERRAIN_HEIGH = 0;
-
     private float currentSpeed;
     private float currentTurnSpeed;
     private float upwardsSpeed; // Velocidad hacia arriba
