@@ -3,11 +3,13 @@ package tester;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 
 import converter.OldOBJLoader;
 import entities.*;
+import guis.GuiRenderer;
+import guis.GuiTexture;
 import models.*;
+import org.lwjgl.util.vector.Vector2f;
 import render.*;
 import terrains.Terrain;
 import textures.*;
@@ -35,17 +37,17 @@ public class GameLoop {
         MasterRenderer renderer = new MasterRenderer();
 
         // *** TERRAIN TEXTURE
-        TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grass"));
+        TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grass4"));
         TerrainTexture backgroundTexture2 = new TerrainTexture(loader.loadTexture("grass2"));
         TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("dirt"));
         TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("grassFlowers"));
-        TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("moss_path"));
+        TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("path"));
         TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
         TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
         TerrainTexturePack texturePack2 = new TerrainTexturePack(backgroundTexture2, rTexture, gTexture, bTexture);
         // *** TERRAIN TEXTURE
 
-        TexturedModel tree = getTexturedModel(loader, "tree", "tree");
+        TexturedModel tree = getTexturedModel(loader, "pine", "pine");
         TexturedModel herb = getTexturedModel(loader, "herb", "herb");
         TexturedModel flower = getTexturedModel(loader, "herb", "flower");
 
@@ -82,8 +84,16 @@ public class GameLoop {
         }
 
         // Especifica el angulo de y a 180 grados para que el player mire al terreno y no a la nada
-        Player player = new Player(getTexturedModel(loader, "player", "player"), new Vector3f(100, 0, -100), new Vector3f(0, 180, 0), new Vector3f(1, 1, 1));
+        Player player = new Player(getTexturedModel(loader, "player", "player"), new Vector3f(100, 0, -100), new Vector3f(0, 180, 0), new Vector3f(0.6f, 0.6f, 0.6f));
         Camera camera = new Camera(player);
+
+        List<GuiTexture> guis = new ArrayList<>();
+        GuiTexture gui = new GuiTexture(loader.loadTexture("ao"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
+        GuiTexture gui2 = new GuiTexture(loader.loadTexture("logo"), new Vector2f(0.4f, 0.6f), new Vector2f(0.25f, 0.25f));
+        guis.add(gui);
+        guis.add(gui2);
+
+        GuiRenderer guiRenderer = new GuiRenderer(loader);
 
         while (!Display.isCloseRequested()) {
             player.move(terrain);
@@ -92,9 +102,11 @@ public class GameLoop {
             renderer.processTerrain(terrain);
             for (Entity entity : entities) renderer.processEntity(entity);
             renderer.render(light, camera);
+            guiRenderer.render(guis);
             DisplayManager.update();
         }
 
+        guiRenderer.clean();
         renderer.clean();
         loader.clean();
         DisplayManager.close();
