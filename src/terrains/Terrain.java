@@ -99,7 +99,7 @@ public class Terrain {
 
         BufferedImage image = null;
         try {
-            image = ImageIO.read(new File("res/" + heightMap + ".png"));
+            image = ImageIO.read(new File("res/" + (heightMap.equals("heightmap perlin") ? "heightmap perlin.jpg" : heightMap + ".png")));
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }

@@ -18,6 +18,7 @@ public class GuiRenderer {
     private final GuiShader shader;
 
     public GuiRenderer(Loader loader) {
+        // Como la interfaz de usuario siempre es cuadrada, la posicion de los vertices suelen ser las mismas
         float[] positions = {-1, 1, -1, -1, 1, 1, 1, -1};
         quad = loader.loadToVAO(positions);
         shader = new GuiShader();
@@ -30,7 +31,7 @@ public class GuiRenderer {
         // Le saca la transparencia a la gui
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        // Deshabilita las pruebas de profundidad para que se vean las guis que estan por debajo de otra
+        // Deshabilita las pruebas de profundidad para que se vean las guis que estan por debajo de esta
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         for (GuiTexture gui : guis) {
             GL13.glActiveTexture(GL13.GL_TEXTURE0);

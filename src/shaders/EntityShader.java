@@ -7,7 +7,11 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import toolBox.Maths;
 
+import java.util.List;
+
 public class EntityShader extends ShaderProgram {
+
+    private static final int MAX_LIGHTS = 4;
 
     private static final String VERTEX_FILE = "src/shaders/vertexShader.txt";
     private static final String FRAGMENT_FILE = "src/shaders/fragmentShader.txt";
@@ -15,8 +19,8 @@ public class EntityShader extends ShaderProgram {
     private int location_projectionMatrix;
     private int location_viewMatrix;
     private int location_transformationMatrix;
-    private int location_lightPosition;
-    private int location_lightColour;
+    private int location_lightPosition[];
+    private int location_lightColour[];
     private int location_shineDamper;
     private int location_reflectivity;
     private int location_useFakeLighting;
@@ -42,14 +46,20 @@ public class EntityShader extends ShaderProgram {
         location_projectionMatrix = getUniformLocation("projectionMatrix");
         location_viewMatrix = getUniformLocation("viewMatrix");
         location_transformationMatrix = getUniformLocation("transformationMatrix");
-        location_lightPosition = getUniformLocation("lightPosition");
-        location_lightColour = getUniformLocation("lightColour");
         location_shineDamper = getUniformLocation("shineDamper");
         location_reflectivity = getUniformLocation("reflectivity");
         location_useFakeLighting = getUniformLocation("useFakeLighting");
         location_skyColor = getUniformLocation("skyColor");
         location_numberOfRows = getUniformLocation("numberOfRows");
         location_offset = getUniformLocation("offset");
+
+        location_lightPosition = new int[MAX_LIGHTS];
+        location_lightColour = new int[MAX_LIGHTS];
+
+        for (int i = 0; i < MAX_LIGHTS; i++) {
+            location_lightPosition[i] = getUniformLocation("lightPosition[" + i + "]");
+            location_lightColour[i] = getUniformLocation("lightColour[" + i + "]");
+        }
     }
 
     /**
@@ -81,13 +91,22 @@ public class EntityShader extends ShaderProgram {
     }
 
     /**
-     * Carga la fuente de luz.
+     * Carga las fuentes de luz.
      *
-     * @param light fuente de luz.
+     * @param lights fuentes de luz.
      */
-    public void loadLight(Light light) {
-        loadVector(location_lightPosition, light.getPosition());
-        loadVector(location_lightColour, light.getColour());
+    public void loadLights(List<Light> lights) {
+        /* Carga las primeras cuatro luces de la lista en las variables uniformes del shader y si hay menos de 4 luces en la lista,
+         * carga una lista de ceros para llenar esos espacios adicionales en las matrices uniformes. */
+        for (int i = 0; i < MAX_LIGHTS; i++) {
+            if (i < lights.size()) {
+                loadVector(location_lightPosition[i], lights.get(i).getPosition());
+                loadVector(location_lightColour[i], lights.get(i).getColour());
+            } else {
+                loadVector(location_lightPosition[i], new Vector3f(0, 0, 0));
+                loadVector(location_lightColour[i], new Vector3f(0, 0, 0));
+            }
+        }
     }
 
     /**

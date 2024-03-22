@@ -33,7 +33,6 @@ public class GameLoop {
         DisplayManager.create();
 
         Loader loader = new Loader();
-        Light light = new Light(new Vector3f(20000, 40000, 20000), new Vector3f(1, 1, 1));
         MasterRenderer renderer = new MasterRenderer();
 
         // *** TERRAIN TEXTURE
@@ -69,19 +68,26 @@ public class GameLoop {
 
         for (int i = 0; i < 400; i++) {
             if (i % 2 == 0) {
-                float x = random.nextFloat() * 800 - 400;
-                float z = random.nextFloat() * -600;
+                float x = random.nextFloat() * 800;
+                float z = random.nextFloat() * -800;
                 float y = terrain.getHeightOfTerrain(x, z);
                 entities.add(new Entity(fern, random.nextInt(4), new Vector3f(x, y, z), new Vector3f(0, random.nextFloat() * 360, 0), new Vector3f(0.9f, 0.9f, 0.9f)));
             }
             if (i % 5 == 0) {
-                float x = random.nextFloat() * 800 - 400;
-                float z = random.nextFloat() * -600;
+                float x = random.nextFloat() * 800;
+                float z = random.nextFloat() * -800;
                 float y = terrain.getHeightOfTerrain(x, z);
                 float scaleTree = random.nextFloat() + 4;
                 entities.add(getEntity(tree, new Vector3f(x, y, z), new Vector3f(0, 0, 0), new Vector3f(scaleTree, scaleTree, scaleTree)));
             }
         }
+
+        List<Light> lights = new ArrayList<>();
+        Light sun = new Light(new Vector3f(20000, 40000, 20000), new Vector3f(1, 1, 1)); // Sun
+        lights.add(sun);
+        // lights.add(new Light(new Vector3f(0, 10000, -7000), new Vector3f(1, 1, 1)));
+        // lights.add(new Light(new Vector3f(-200, 10, -200), new Vector3f(10, 0, 0)));
+        // lights.add(new Light(new Vector3f(200, 10, 200), new Vector3f(0, 0, 10)));
 
         // Especifica el angulo de y a 180 grados para que el player mire al terreno y no a la nada
         Player player = new Player(getTexturedModel(loader, "player", "player"), new Vector3f(100, 0, -100), new Vector3f(0, 180, 0), new Vector3f(0.6f, 0.6f, 0.6f));
@@ -101,7 +107,7 @@ public class GameLoop {
             renderer.processEntity(player);
             renderer.processTerrain(terrain);
             for (Entity entity : entities) renderer.processEntity(entity);
-            renderer.render(light, camera);
+            renderer.render(lights, camera);
             guiRenderer.render(guis);
             DisplayManager.update();
         }

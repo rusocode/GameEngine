@@ -3,12 +3,12 @@
 // La entrada al Fragment Shader es la salida del Vertex Shader
 in vec2 pass_textureCoords;
 in vec3 surfaceNormal;
-in vec3 toLightVector;
+in vec3 toLightVector[4];
 in vec3 toCameraVector;
 in float visibility;
 
 uniform sampler2D modelTexture; // Textura
-uniform vec3 lightColour;
+uniform vec3 lightColour[4];
 uniform float shineDamper;
 uniform float reflectivity;
 uniform vec3 skyColor;
@@ -21,37 +21,44 @@ void main(void) {
     /* Normaliza los dos vectores para asegurarse de que el tamanio de los dos vectores sea uno. Asi la direccion del
      * vector permanece exactamente igual, de modo que solo importa la direccion y la magnitud del vector es irrelevante. */
     vec3 unitNormal = normalize(surfaceNormal);
-    vec3 unitLightVector = normalize(toLightVector);
-
-    // CALCULA LA ILUMINACION DEL PIXEL
-    /* Calcula el producto escalar de los dos vectores normales. El resultado representa que tan correcto debe ser el pixel.
-     * Lo que es importante tener en cuenta es que el producto escalar de dos vectores unitarios que apuntan exactamente en
-     * la misma direccion es uno y el producto escalar de dos vectores perpendiculares que apuntan en direcciones totalmente
-     * diferentes es 0 y todo lo demas esta en algun punto intermedio (0.6, 0.3, etc.). Esto nos da una representacion
-     * perfecta de que tan similares son dos vectores y, por lo tanto, una representacion perfecta de que tan brillante debe
-     * ser un cierto punto en el objeto. */
-    float nDotl = dot(unitNormal, unitLightVector);
-    // Se asegura de que el resultado se encuentre entre 0 y 1, porque a veces el producto escalar devolvera valores menores a 0
-    float brightness = max(nDotl, 0.2); // Aplica iluminacion ambiental pasandole un minimo de 0.2 para que los pixeles totalmente oscuros sean ligeramente menos oscuros
-    // Multiplica el brillo por el color de la luz para obtener la iluminacion final
-    vec3 diffuse = brightness * lightColour;
-
-    // CALCULA LA LUZ ESPECULAR DEL PIXEL
     // Normaliza el vector de la camara para asegurarnos que el tamanio de este sea solo 1
     vec3 unitVectorToCamera = normalize(toCameraVector);
-    // Crea el vector con los puntos en la direccion de donde proviene la luz, esto es justo lo opuesto al vector que apunta hacia la luz, por lo tanto lo convierte a negativo
-    vec3 lightDirection = -unitLightVector;
-    // Esta funcion toma el vector de luz entrante y la normal de la superficie con la que desea reflejar la luz y devuele la luz reflejada
-    vec3 reflectedLightDirection = reflect(lightDirection, unitNormal);
-    // Indica que tan brillante debe ser la luz especular sin ninguna amortiguacion (shineDamper)
-    float specularFactor = dot(reflectedLightDirection, unitVectorToCamera);
-    // Se asegura de que el factor especular sea mayor que cero porque obviamente no podemos tener un brillo negativo
-    specularFactor = max(specularFactor, 0.0);
-    /* Aplica la amortiguacion elevando el factor especular a la potencia del valor de amortiguacion, lo que hace que
-     * los factores especulares bajos sean aun mas bajos, pero no afecta tanto a los valores mas altos. */
-    float dampedFactor = pow(specularFactor, shineDamper);
-    // Multiplica el factor amortiguado por la reflectividad por el color de la luz que la luz especular sea el color de la fuente de luz
-    vec3 finalSpecular = dampedFactor * reflectivity * lightColour;
+
+    vec3 totalDiffuse = vec3(0.0);
+    vec3 totalSpecular = vec3(0.0);
+
+    // Calcula la iluminacion del pixel para cada una de las fuentes de luz
+    for (int i = 0; i < 4; i++) {
+        vec3 unitLightVector = normalize(toLightVector[i]);
+        /* Calcula el producto escalar de los dos vectores normales. El resultado representa que tan correcto debe ser el pixel.
+         * Lo que es importante tener en cuenta es que el producto escalar de dos vectores unitarios que apuntan exactamente en
+         * la misma direccion es uno y el producto escalar de dos vectores perpendiculares que apuntan en direcciones totalmente
+         * diferentes es 0 y todo lo demas esta en algun punto intermedio (0.6, 0.3, etc.). Esto nos da una representacion
+         * perfecta de que tan similares son dos vectores y, por lo tanto, una representacion perfecta de que tan brillante debe
+         * ser un cierto punto en el objeto. */
+        float nDotl = dot(unitNormal, unitLightVector);
+        // Se asegura de que el resultado se encuentre entre 0 y 1, porque a veces el producto escalar devolvera valores menores a 0
+        float brightness = max(nDotl, 0.0);
+        // CALCULA LA LUZ ESPECULAR DEL PIXEL
+        // Crea el vector con los puntos en la direccion de donde proviene la luz, esto es justo lo opuesto al vector que apunta hacia la luz, por lo tanto lo convierte a negativo
+        vec3 lightDirection = -unitLightVector;
+        // Esta funcion toma el vector de luz entrante y la normal de la superficie con la que desea reflejar la luz y devuele la luz reflejada
+        vec3 reflectedLightDirection = reflect(lightDirection, unitNormal);
+        // Indica que tan brillante debe ser la luz especular sin ninguna amortiguacion (shineDamper)
+        float specularFactor = dot(reflectedLightDirection, unitVectorToCamera);
+        // Se asegura de que el factor especular sea mayor que cero porque obviamente no podemos tener un brillo negativo
+        specularFactor = max(specularFactor, 0.0);
+        /* Aplica la amortiguacion elevando el factor especular a la potencia del valor de amortiguacion, lo que hace que
+         * los factores especulares bajos sean aun mas bajos, pero no afecta tanto a los valores mas altos. */
+        float dampedFactor = pow(specularFactor, shineDamper);
+        // Multiplica el brillo por el color de la luz actual (i) para obtener la iluminacion final y acumularlo en totalDiffuse
+        totalDiffuse = totalDiffuse + brightness * lightColour[i];
+        // Multiplica el factor amortiguado por la reflectividad por el color de la luz actual (i) y lo acumula en totalSpecular
+        totalSpecular = totalSpecular + dampedFactor * reflectivity * lightColour[i];
+    }
+
+    // Se asegura que ninguna parte del modelo se oscurece por completo
+    totalDiffuse = max(totalDiffuse, 0.2);
 
     vec4 textureColor = texture(modelTexture, pass_textureCoords);
     // Verifica si el color alpha (transparente) de la textura es menor a 0.5
@@ -66,7 +73,7 @@ void main(void) {
      * color del pixel que encuentre en esas coordenadas de textura y lo envia al pixel que se esta procesando
      * actualmente. Luego el color del pixel se multiplica por la iluminacion y se suma la luz especular para obtener el
      * resultado final. */
-    out_Color = vec4(diffuse, 1.0) * textureColor + vec4(finalSpecular, 1.0);
+    out_Color = vec4(totalDiffuse, 1.0) * textureColor + vec4(totalSpecular, 1.0);
 
     // Mezcla el color final con el color del cielo
     out_Color = mix(vec4(skyColor, 1.0), out_Color, visibility);

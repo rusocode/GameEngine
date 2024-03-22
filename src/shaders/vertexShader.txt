@@ -7,14 +7,14 @@ in vec3 normal;
 
 out vec2 pass_textureCoords;
 out vec3 surfaceNormal; // Superficie normal del vector
-out vec3 toLightVector; // Vector que apunta hacia la fuente de luz
+out vec3 toLightVector[4]; // Vector que apunta hacia la fuente de luz
 out vec3 toCameraVector; // Vector que apunta hacia la camara
 out float visibility;
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 transformationMatrix;
-uniform vec3 lightPosition;
+uniform vec3 lightPosition[4];
 
 // El valor sera 0 si no debemos usar iluminacion falsa y 1 en caso contrario
 uniform float useFakeLighting;
@@ -48,8 +48,11 @@ void main(void) {
      * una matriz de transformacion multiplicada por la normal y tenemos que convertir la normal en un vector 4D para que
      * pueda multiplicarse por la matriz 4x4 de transformacion. */
     surfaceNormal = (transformationMatrix * vec4(actualNormal, 0.0)).xyz;
-    // Calcula la diferencia entre la posicion de la luz y la posicion mundial del vertice, y como la posicion mundial es un vector 4D y solo necesitamos que sea 3D, entonces obtiene los componentes xyz
-    toLightVector = lightPosition - worldPosition.xyz;
+
+    for (int i = 0; i < 4; i++) {
+        // Calcula la diferencia entre la posicion de la luz y la posicion mundial del vertice, y como la posicion mundial es un vector 4D y solo necesitamos que sea 3D, entonces obtiene los componentes xyz
+        toLightVector[i] = lightPosition[i] - worldPosition.xyz;
+    }
 
     /* Como no tenemos la camara en ningun lado del codigo del shader, utilizamos viewMatrix que contiene la version
      * negativa de la posicion de la camara. Por lo que toma la inversa de esa matriz y aplica esta transformacion a un
