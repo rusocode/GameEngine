@@ -21,6 +21,7 @@ public class EntityShader extends ShaderProgram {
     private int location_transformationMatrix;
     private int location_lightPosition[];
     private int location_lightColour[];
+    private int location_attenuation[];
     private int location_shineDamper;
     private int location_reflectivity;
     private int location_useFakeLighting;
@@ -55,10 +56,12 @@ public class EntityShader extends ShaderProgram {
 
         location_lightPosition = new int[MAX_LIGHTS];
         location_lightColour = new int[MAX_LIGHTS];
+        location_attenuation = new int[MAX_LIGHTS];
 
         for (int i = 0; i < MAX_LIGHTS; i++) {
             location_lightPosition[i] = getUniformLocation("lightPosition[" + i + "]");
             location_lightColour[i] = getUniformLocation("lightColour[" + i + "]");
+            location_attenuation[i] = getUniformLocation("attenuation[" + i + "]");
         }
     }
 
@@ -102,9 +105,11 @@ public class EntityShader extends ShaderProgram {
             if (i < lights.size()) {
                 loadVector(location_lightPosition[i], lights.get(i).getPosition());
                 loadVector(location_lightColour[i], lights.get(i).getColour());
+                loadVector(location_attenuation[i], lights.get(i).getAttenuation());
             } else {
                 loadVector(location_lightPosition[i], new Vector3f(0, 0, 0));
                 loadVector(location_lightColour[i], new Vector3f(0, 0, 0));
+                loadVector(location_attenuation[i], new Vector3f(1, 0, 0));
             }
         }
     }

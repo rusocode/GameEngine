@@ -9,6 +9,7 @@ in float visibility;
 
 uniform sampler2D modelTexture; // Textura
 uniform vec3 lightColour[4];
+uniform vec3 attenuation[4];
 uniform float shineDamper;
 uniform float reflectivity;
 uniform vec3 skyColor;
@@ -29,6 +30,9 @@ void main(void) {
 
     // Calcula la iluminacion del pixel para cada una de las fuentes de luz
     for (int i = 0; i < 4; i++) {
+        float distance = length(toLightVector[i]);
+        // Calcula el factor de atenuacion
+        float attFactor = attenuation[i].x + (attenuation[i].y * distance) + (attenuation[i].z * distance * distance);
         vec3 unitLightVector = normalize(toLightVector[i]);
         /* Calcula el producto escalar de los dos vectores normales. El resultado representa que tan correcto debe ser el pixel.
          * Lo que es importante tener en cuenta es que el producto escalar de dos vectores unitarios que apuntan exactamente en
@@ -52,9 +56,9 @@ void main(void) {
          * los factores especulares bajos sean aun mas bajos, pero no afecta tanto a los valores mas altos. */
         float dampedFactor = pow(specularFactor, shineDamper);
         // Multiplica el brillo por el color de la luz actual (i) para obtener la iluminacion final y acumularlo en totalDiffuse
-        totalDiffuse = totalDiffuse + brightness * lightColour[i];
+        totalDiffuse = totalDiffuse + (brightness * lightColour[i]) / attFactor;
         // Multiplica el factor amortiguado por la reflectividad por el color de la luz actual (i) y lo acumula en totalSpecular
-        totalSpecular = totalSpecular + dampedFactor * reflectivity * lightColour[i];
+        totalSpecular = totalSpecular + (dampedFactor * reflectivity * lightColour[i]) / attFactor;
     }
 
     // Se asegura que ninguna parte del modelo se oscurece por completo

@@ -49,6 +49,7 @@ public class GameLoop {
         TexturedModel tree = getTexturedModel(loader, "pine", "pine");
         TexturedModel herb = getTexturedModel(loader, "herb", "herb");
         TexturedModel flower = getTexturedModel(loader, "herb", "flower");
+        TexturedModel lamp = getTexturedModel(loader, "lamp", "lamp");
 
         ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture("fern"));
         fernTextureAtlas.setNumberOfRows(2); // Especifica la cantidad de filas para el texture atlas
@@ -60,6 +61,7 @@ public class GameLoop {
         herb.getTexture().setUseFakeLighting(true);
         flower.getTexture().setHasTransparency(true);
         flower.getTexture().setUseFakeLighting(true);
+        lamp.getTexture().setUseFakeLighting(true);
 
         // Crea dos cuadriculas de terreno con diferentes texturas
         Terrain terrain = new Terrain(0, -1, loader, texturePack, blendMap, "heightmap");
@@ -83,21 +85,25 @@ public class GameLoop {
         }
 
         List<Light> lights = new ArrayList<>();
-        Light sun = new Light(new Vector3f(20000, 40000, 20000), new Vector3f(1, 1, 1)); // Sun
-        lights.add(sun);
-        // lights.add(new Light(new Vector3f(0, 10000, -7000), new Vector3f(1, 1, 1)));
-        // lights.add(new Light(new Vector3f(-200, 10, -200), new Vector3f(10, 0, 0)));
-        // lights.add(new Light(new Vector3f(200, 10, 200), new Vector3f(0, 0, 10)));
+        lights.add(new Light(new Vector3f(0, 1000, -7000), new Vector3f(0.4f, 0.4f, 0.4f))); // Luz del sol sin atenuacion
+        // Luces para cada lampara
+        lights.add(new Light(new Vector3f(185, 10, -293), new Vector3f(2, 0, 0), new Vector3f(1, 0.01f, 0.002f)));
+        lights.add(new Light(new Vector3f(370, 17, -300), new Vector3f(0, 2, 2), new Vector3f(1, 0.01f, 0.002f)));
+        lights.add(new Light(new Vector3f(293, 7, -305), new Vector3f(2, 2, 0), new Vector3f(1, 0.01f, 0.002f)));
+        // Modelos de lampara con la misma ubicacion que las luces con la diferencia de que el eje y
+        entities.add(getEntity(lamp, new Vector3f(185, -4.7f, -293), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)));
+        entities.add(getEntity(lamp, new Vector3f(370, 4.2f, -300), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)));
+        entities.add(getEntity(lamp, new Vector3f(293, -6.8f, -305), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)));
 
         // Especifica el angulo de y a 180 grados para que el player mire al terreno y no a la nada
         Player player = new Player(getTexturedModel(loader, "player", "player"), new Vector3f(100, 0, -100), new Vector3f(0, 180, 0), new Vector3f(0.6f, 0.6f, 0.6f));
         Camera camera = new Camera(player);
 
         List<GuiTexture> guis = new ArrayList<>();
-        GuiTexture gui = new GuiTexture(loader.loadTexture("ao"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
+        /* GuiTexture gui = new GuiTexture(loader.loadTexture("ao"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
         GuiTexture gui2 = new GuiTexture(loader.loadTexture("logo"), new Vector2f(0.4f, 0.6f), new Vector2f(0.25f, 0.25f));
         guis.add(gui);
-        guis.add(gui2);
+        guis.add(gui2); */
 
         GuiRenderer guiRenderer = new GuiRenderer(loader);
 
@@ -108,7 +114,7 @@ public class GameLoop {
             renderer.processTerrain(terrain);
             for (Entity entity : entities) renderer.processEntity(entity);
             renderer.render(lights, camera);
-            guiRenderer.render(guis);
+            // guiRenderer.render(guis);
             DisplayManager.update();
         }
 
