@@ -19,9 +19,9 @@ public class MasterRenderer {
     private static final float FAR_PLANE = 1000; // Plano lejano
 
     // https://rgbcolorpicker.com/0-1 o usar los colores del skybox
-    private static final float RED = 0.592f; // 0.5444f
-    private static final float GREEN = 0.871f; // 0.62f
-    private static final float BLUE = 0.949f; // 0.69f
+    private static final float RED = 0.5444f; // 0.5444f / 0.592f
+    private static final float GREEN = 0.62f; // 0.62f / 0.871f
+    private static final float BLUE = 0.69f; // 0.69f / 0.949f
 
     private Matrix4f projectionMatrix;
 
@@ -67,7 +67,7 @@ public class MasterRenderer {
         terrainShader.loadViewMatrix(camera);
         terrainRenderer.render(terrains);
         terrainShader.stop();
-        skyboxRenderer.render(camera);
+        skyboxRenderer.render(camera, RED, GREEN, BLUE);
         terrains.clear();
         entities.clear(); // Limpia las entidades, de lo contrario se acumularan y se terminaran renderizando millones de entidades
     }
@@ -141,20 +141,20 @@ public class MasterRenderer {
     private void createProjectionMatrix() {
         // Obtiene la relacion de aspecto de la ventana de visualizacion
         float aspectRatio = (float) Display.getWidth() / Display.getHeight();
-        // Calcula la escala en Y (yScale) basada en el campo de vision (FOV)
+        // Calcula la escala en [y] basada en el campo de vision (FOV)
         float yScale = (float) (1f / Math.tan(Math.toRadians(FOV / 2f)) * aspectRatio);
-        // Calcula la escala en X (xScale) en funcion de la escala en Y y la relacion de aspecto
+        // Calcula la escala en [x] en funcion de la escala en [y] y la relacion de aspecto
         float xScale = yScale / aspectRatio;
-        // Calcula la longitud del frustum en el eje Z (profundidad del volumen de visualizacion)
+        // Calcula la longitud del frustum en el eje [z] (profundidad del volumen de visualizacion)
         float frustumLength = FAR_PLANE - NEAR_PLANE;
         // Crea una nueva matriz de 4x4 para almacenar la matriz de proyeccion
         projectionMatrix = new Matrix4f();
         // Configura los elementos especificos de la matriz de proyeccion
-        projectionMatrix.m00 = xScale; // Escala en X
-        projectionMatrix.m11 = yScale; // Escala en Y
-        projectionMatrix.m22 = -((FAR_PLANE + NEAR_PLANE) / frustumLength); // Proyeccion en el eje Z
-        projectionMatrix.m23 = -1; // Desplazamiento en el eje Z
-        projectionMatrix.m32 = -((2 * NEAR_PLANE * FAR_PLANE) / frustumLength); // Desplazamiento en el eje Z
+        projectionMatrix.m00 = xScale; // Escala en [x]
+        projectionMatrix.m11 = yScale; // Escala en [y]
+        projectionMatrix.m22 = -((FAR_PLANE + NEAR_PLANE) / frustumLength); // Proyeccion en el eje [z]
+        projectionMatrix.m23 = -1; // Desplazamiento en el eje [z]
+        projectionMatrix.m32 = -((2 * NEAR_PLANE * FAR_PLANE) / frustumLength); // Desplazamiento en el eje [z]
         projectionMatrix.m33 = 0; // Perspectiva
     }
 
