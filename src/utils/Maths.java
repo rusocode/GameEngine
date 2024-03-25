@@ -1,4 +1,4 @@
-package toolBox;
+package utils;
 
 import entities.Camera;
 

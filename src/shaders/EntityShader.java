@@ -5,7 +5,7 @@ import entities.Light;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
-import toolBox.Maths;
+import utils.Maths;
 
 import java.util.List;
 
@@ -80,8 +80,8 @@ public class EntityShader extends ShaderProgram {
      * @param camera camara.
      */
     public void loadViewMatrix(Camera camera) {
-        Matrix4f viewMatrix = Maths.createViewMatrix(camera);
-        loadMatrix(location_viewMatrix, viewMatrix);
+        Matrix4f matrix = Maths.createViewMatrix(camera);
+        loadMatrix(location_viewMatrix, matrix);
     }
 
     /**

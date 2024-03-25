@@ -6,7 +6,7 @@ import models.RawModel;
 import shaders.TerrainShader;
 import terrains.Terrain;
 import textures.TerrainTexturePack;
-import toolBox.Maths;
+import utils.Maths;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;

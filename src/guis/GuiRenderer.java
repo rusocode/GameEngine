@@ -10,7 +10,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import render.Loader;
 
 import org.lwjgl.opengl.GL30;
-import toolBox.Maths;
+import utils.Maths;
 
 public class GuiRenderer {
 
@@ -20,7 +20,7 @@ public class GuiRenderer {
     public GuiRenderer(Loader loader) {
         // Como la interfaz de usuario siempre es cuadrada, la posicion de los vertices suelen ser las mismas
         float[] positions = {-1, 1, -1, -1, 1, 1, 1, -1};
-        quad = loader.loadToVAO(positions);
+        quad = loader.loadToVAO(positions, 2);
         shader = new GuiShader();
     }
 

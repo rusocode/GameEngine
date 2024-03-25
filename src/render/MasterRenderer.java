@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
 import shaders.EntityShader;
 import shaders.TerrainShader;
+import skybox.SkyboxRenderer;
 import terrains.Terrain;
 
 public class MasterRenderer {
@@ -17,10 +18,10 @@ public class MasterRenderer {
     private static final float NEAR_PLANE = 0.1f; // Plano cercano
     private static final float FAR_PLANE = 1000; // Plano lejano
 
-    // https://rgbcolorpicker.com/0-1
-    private static final float RED = 0.592f;
-    private static final float GREEN = 0.871f;
-    private static final float BLUE = 0.949f;
+    // https://rgbcolorpicker.com/0-1 o usar los colores del skybox
+    private static final float RED = 0.592f; // 0.5444f
+    private static final float GREEN = 0.871f; // 0.62f
+    private static final float BLUE = 0.949f; // 0.69f
 
     private Matrix4f projectionMatrix;
 
@@ -28,15 +29,17 @@ public class MasterRenderer {
     private final EntityRenderer entityRenderer;
     private final TerrainShader terrainShader = new TerrainShader();
     private final TerrainRenderer terrainRenderer;
+    private final SkyboxRenderer skyboxRenderer;
 
     private final Map<TexturedModel, List<Entity>> entities = new HashMap<>();
     private final List<Terrain> terrains = new ArrayList<>();
 
-    public MasterRenderer() {
+    public MasterRenderer(Loader loader) {
         enableCulling();
         createProjectionMatrix();
         entityRenderer = new EntityRenderer(entityShader, projectionMatrix);
         terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
+        skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
     }
 
     public static void enableCulling() {
@@ -64,6 +67,7 @@ public class MasterRenderer {
         terrainShader.loadViewMatrix(camera);
         terrainRenderer.render(terrains);
         terrainShader.stop();
+        skyboxRenderer.render(camera);
         terrains.clear();
         entities.clear(); // Limpia las entidades, de lo contrario se acumularan y se terminaran renderizando millones de entidades
     }

@@ -5,7 +5,7 @@ import models.RawModel;
 import models.TexturedModel;
 import shaders.EntityShader;
 import textures.ModelTexture;
-import toolBox.Maths;
+import utils.Maths;
 
 import org.lwjgl.opengl.*;
 import org.lwjgl.util.vector.Matrix4f;

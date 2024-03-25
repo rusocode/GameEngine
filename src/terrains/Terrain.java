@@ -11,7 +11,7 @@ import org.lwjgl.util.vector.Vector3f;
 import render.Loader;
 import textures.TerrainTexture;
 import textures.TerrainTexturePack;
-import toolBox.Maths;
+import utils.Maths;
 
 /**
  * Un terreno es basicamente una entidad.

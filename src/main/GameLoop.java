@@ -1,4 +1,4 @@
-package tester;
+package main;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,6 @@ import entities.*;
 import guis.GuiRenderer;
 import guis.GuiTexture;
 import models.*;
-import org.lwjgl.util.vector.Vector2f;
 import render.*;
 import terrains.Terrain;
 import textures.*;
@@ -33,19 +32,18 @@ public class GameLoop {
         DisplayManager.create();
 
         Loader loader = new Loader();
-        MasterRenderer renderer = new MasterRenderer();
+        MasterRenderer renderer = new MasterRenderer(loader);
 
-        // *** TERRAIN TEXTURE
+        // TERRAIN TEXTURE
         TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grass4"));
-        TerrainTexture backgroundTexture2 = new TerrainTexture(loader.loadTexture("grass2"));
         TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("dirt"));
         TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("grassFlowers"));
         TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("path"));
-        TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
         TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
-        TerrainTexturePack texturePack2 = new TerrainTexturePack(backgroundTexture2, rTexture, gTexture, bTexture);
-        // *** TERRAIN TEXTURE
+        TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
+        // TERRAIN TEXTURE
 
+        TexturedModel playerModel =  getTexturedModel(loader, "player", "player");
         TexturedModel tree = getTexturedModel(loader, "pine", "pine");
         TexturedModel herb = getTexturedModel(loader, "herb", "herb");
         TexturedModel flower = getTexturedModel(loader, "herb", "flower");
@@ -63,29 +61,31 @@ public class GameLoop {
         flower.getTexture().setUseFakeLighting(true);
         lamp.getTexture().setUseFakeLighting(true);
 
-        // Crea dos cuadriculas de terreno con diferentes texturas
+        // Crea una cuadricula de terreno
         Terrain terrain = new Terrain(0, -1, loader, texturePack, blendMap, "heightmap");
 
         Random random = new Random(676452);
 
         for (int i = 0; i < 400; i++) {
-            if (i % 2 == 0) {
+            if (i % 3 == 0) {
                 float x = random.nextFloat() * 800;
                 float z = random.nextFloat() * -800;
                 float y = terrain.getHeightOfTerrain(x, z);
                 entities.add(new Entity(fern, random.nextInt(4), new Vector3f(x, y, z), new Vector3f(0, random.nextFloat() * 360, 0), new Vector3f(0.9f, 0.9f, 0.9f)));
             }
-            if (i % 5 == 0) {
+            if (i % 2 == 0) {
                 float x = random.nextFloat() * 800;
                 float z = random.nextFloat() * -800;
                 float y = terrain.getHeightOfTerrain(x, z);
-                float scaleTree = random.nextFloat() + 4;
+                float scaleTree = random.nextFloat() * 0.6f + 0.8f; // float scaleTree = random.nextFloat() + 4;
                 entities.add(getEntity(tree, new Vector3f(x, y, z), new Vector3f(0, 0, 0), new Vector3f(scaleTree, scaleTree, scaleTree)));
             }
         }
 
         List<Light> lights = new ArrayList<>();
-        lights.add(new Light(new Vector3f(0, 1000, -7000), new Vector3f(0.4f, 0.4f, 0.4f))); // Luz del sol sin atenuacion
+        // new Vector3f(20000, 40000, 20000), new Vector3f(1, 1, 1) // Dia
+        // new Vector3f(0, 1000, -7000), new Vector3f(0.4f, 0.4f, 0.4f) // Noche
+        lights.add(new Light(new Vector3f(20000, 40000, 20000), new Vector3f(1, 1, 1)));
         // Luces para cada lampara
         lights.add(new Light(new Vector3f(185, 10, -293), new Vector3f(2, 0, 0), new Vector3f(1, 0.01f, 0.002f)));
         lights.add(new Light(new Vector3f(370, 17, -300), new Vector3f(0, 2, 2), new Vector3f(1, 0.01f, 0.002f)));
@@ -96,7 +96,7 @@ public class GameLoop {
         entities.add(getEntity(lamp, new Vector3f(293, -6.8f, -305), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)));
 
         // Especifica el angulo de y a 180 grados para que el player mire al terreno y no a la nada
-        Player player = new Player(getTexturedModel(loader, "player", "player"), new Vector3f(100, 0, -100), new Vector3f(0, 180, 0), new Vector3f(0.6f, 0.6f, 0.6f));
+        Player player = new Player(playerModel, new Vector3f(100, 0, -100), new Vector3f(0, 180, 0), new Vector3f(0.6f, 0.6f, 0.6f));
         Camera camera = new Camera(player);
 
         List<GuiTexture> guis = new ArrayList<>();
