@@ -158,4 +158,8 @@ public class MasterRenderer {
         projectionMatrix.m33 = 0; // Perspectiva
     }
 
+    public Matrix4f getProjectionMatrix() {
+        return projectionMatrix;
+    }
+
 }

@@ -9,15 +9,30 @@ import entities.*;
 import guis.GuiRenderer;
 import guis.GuiTexture;
 import models.*;
+import org.lwjgl.util.vector.Vector4f;
 import render.*;
 import terrains.Terrain;
 import textures.*;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
+import utils.MousePicker;
 
 /**
  * Bucle principal del juego.
+ * <br><br>
+ * <h3>World Space</h3>
+ * Todos los vertices de un cubo o cualquier modelo 3D se especifican en coordenadas locales (local space) o en relacion con el
+ * origen del modelo [0,0,0]. Para colocar estos modelos en diferentes lugares del mundo 3D, se transforma cada vertice unsando
+ * una <b>matriz de transformacion</b> (model matrix transform) para que todos los vertices esten especificados en coordenadas
+ * mundiales, de modo que las posiciones de todos los vertices ahora esten en relacion con el origen del mundo. Luego se
+ * transforman todos los vertices usando una <b>matriz de vista</b> (view matrix transform) para que todos los vertices esten en
+ * relacion con la posicion de la camara, llamando a esto <b>eye space</b>. Finalmente se usa la <b>matriz de proyeccion</b>
+ * (projection matrix transform) para escalar objetos distantes para hacerlos parecer mas pequenios y, en general, para hacer que
+ * nuestra vista tenga una forma de frustum (view frustum’s shape). OpenGL luego lleva a cabo la <b>division de perspectiva</b> en
+ * todos los vertices para convertirlos en un <b>espacio de dispositivo normalizado</b> (normalised device space), lo que coloca
+ * todos los vertices en terminos del sistema de coordenadas de OpenGL. Finalmente, OpenGL convierte estas posiciones a
+ * coordenadas de pixeles 2D en la pantalla para que puedan ser renderizadas y este espacio se llama <b>viewport space</b>.
  * <p>
  * <a href="https://betterexplained.com/articles/vector-calculus-understanding-the-dot-product/">Dot product</a>
  * <a href="http://www.lighthouse3d.com/tutorials/view-frustum-culling/view-frustums-shape/">Frustum Culling</a>
@@ -43,11 +58,11 @@ public class GameLoop {
         TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
         // TERRAIN TEXTURE
 
-        TexturedModel playerModel =  getTexturedModel(loader, "player", "player");
-        TexturedModel tree = getTexturedModel(loader, "pine", "pine");
-        TexturedModel herb = getTexturedModel(loader, "herb", "herb");
-        TexturedModel flower = getTexturedModel(loader, "herb", "flower");
-        TexturedModel lamp = getTexturedModel(loader, "lamp", "lamp");
+        TexturedModel playerModel = getTexturedModel(loader, "player", "player");
+        TexturedModel treeModel = getTexturedModel(loader, "pine", "pine");
+        TexturedModel herbModel = getTexturedModel(loader, "herb", "herb");
+        TexturedModel flowerModel = getTexturedModel(loader, "herb", "flower");
+        TexturedModel lampModel = getTexturedModel(loader, "lamp", "lamp");
 
         ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture("fern"));
         fernTextureAtlas.setNumberOfRows(2); // Especifica la cantidad de filas para el texture atlas
@@ -55,11 +70,11 @@ public class GameLoop {
         TexturedModel fern = new TexturedModel(OldOBJLoader.loadOBJ("fern", loader), fernTextureAtlas);
 
         fern.getTexture().setHasTransparency(true);
-        herb.getTexture().setHasTransparency(true);
-        herb.getTexture().setUseFakeLighting(true);
-        flower.getTexture().setHasTransparency(true);
-        flower.getTexture().setUseFakeLighting(true);
-        lamp.getTexture().setUseFakeLighting(true);
+        herbModel.getTexture().setHasTransparency(true);
+        herbModel.getTexture().setUseFakeLighting(true);
+        flowerModel.getTexture().setHasTransparency(true);
+        flowerModel.getTexture().setUseFakeLighting(true);
+        lampModel.getTexture().setUseFakeLighting(true);
 
         // Crea una cuadricula de terreno
         Terrain terrain = new Terrain(0, -1, loader, texturePack, blendMap, "heightmap");
@@ -78,25 +93,22 @@ public class GameLoop {
                 float z = random.nextFloat() * -800;
                 float y = terrain.getHeightOfTerrain(x, z);
                 float scaleTree = random.nextFloat() * 0.6f + 0.8f; // float scaleTree = random.nextFloat() + 4;
-                entities.add(getEntity(tree, new Vector3f(x, y, z), new Vector3f(0, 0, 0), new Vector3f(scaleTree, scaleTree, scaleTree)));
+                entities.add(getEntity(treeModel, new Vector3f(x, y, z), new Vector3f(0, 0, 0), new Vector3f(scaleTree, scaleTree, scaleTree)));
             }
         }
 
         List<Light> lights = new ArrayList<>();
         // new Vector3f(20000, 40000, 20000), new Vector3f(1, 1, 1) // Dia
         // new Vector3f(0, 1000, -7000), new Vector3f(0.4f, 0.4f, 0.4f) // Noche
-        lights.add(new Light(new Vector3f(20000, 40000, 20000), new Vector3f(1, 1, 1)));
+        lights.add(new Light(new Vector3f(20000, 40000, 20000), new Vector3f(1, 1, 1))); // Fuente de luz principal
         // Luces para cada lampara
         lights.add(new Light(new Vector3f(185, 10, -293), new Vector3f(2, 0, 0), new Vector3f(1, 0.01f, 0.002f)));
         lights.add(new Light(new Vector3f(370, 17, -300), new Vector3f(0, 2, 2), new Vector3f(1, 0.01f, 0.002f)));
-        lights.add(new Light(new Vector3f(293, 7, -305), new Vector3f(2, 2, 0), new Vector3f(1, 0.01f, 0.002f)));
-        // Modelos de lampara con la misma ubicacion que las luces con la diferencia de que el eje y
-        entities.add(getEntity(lamp, new Vector3f(185, -4.7f, -293), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)));
-        entities.add(getEntity(lamp, new Vector3f(370, 4.2f, -300), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)));
-        entities.add(getEntity(lamp, new Vector3f(293, -6.8f, -305), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)));
+        // Lamparas con la misma ubicacion que las luces pero diferente posicion en [y]
+        entities.add(getEntity(lampModel, new Vector3f(185, -4.7f, -293), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)));
+        entities.add(getEntity(lampModel, new Vector3f(370, 4.2f, -300), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)));
 
-        // Especifica el angulo de y a 180 grados para que el player mire al terreno y no a la nada
-        Player player = new Player(playerModel, new Vector3f(100, 0, -100), new Vector3f(0, 180, 0), new Vector3f(0.6f, 0.6f, 0.6f));
+        Player player = new Player(playerModel, new Vector3f(100, 0, -100), new Vector3f(0, 180, 0), new Vector3f(0.7f, 0.7f, 0.7f));
         Camera camera = new Camera(player);
 
         List<GuiTexture> guis = new ArrayList<>();
@@ -107,9 +119,24 @@ public class GameLoop {
 
         GuiRenderer guiRenderer = new GuiRenderer(loader);
 
+        MousePicker picker = new MousePicker(camera, renderer.getProjectionMatrix(), terrain);
+
+        Entity lamp = new Entity(lampModel, new Vector3f(293, -6.8f, -305), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1));
+        entities.add(lamp);
+        Light light = new Light(new Vector3f(293, 7, -305), new Vector3f(0, 2, 2), new Vector3f(1, 0.01f, 0.002f));
+        lights.add(light);
+
         while (!Display.isCloseRequested()) {
             player.move(terrain);
             camera.move();
+
+            picker.update();
+            Vector3f terrainPoint = picker.getCurrentTerrainPoint();
+            if (terrainPoint != null) {
+                lamp.setPosition(terrainPoint);
+                light.setPosition(new Vector3f(terrainPoint.x, terrainPoint.y + 15, terrainPoint.z));
+            }
+
             renderer.processEntity(player);
             renderer.processTerrain(terrain);
             for (Entity entity : entities) renderer.processEntity(entity);
