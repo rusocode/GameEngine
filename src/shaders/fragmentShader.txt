@@ -14,6 +14,8 @@ uniform float shineDamper;
 uniform float reflectivity;
 uniform vec3 skyColor;
 
+const float levels = 3.0;
+
 // La salida es el color del pixel que esta procesando actualmente y que sera un vector de 4 colores con su respectivo brillo y luz especular
 out vec4 out_Color;
 
@@ -43,6 +45,8 @@ void main(void) {
         float nDotl = dot(unitNormal, unitLightVector);
         // Se asegura de que el resultado se encuentre entre 0 y 1, porque a veces el producto escalar devolvera valores menores a 0
         float brightness = max(nDotl, 0.0);
+        float level = floor(brightness * levels); // Averigua en que nivel de sombreado se encuentra este valor de brillo
+        brightness = level / levels; // Establece el brillo en el limite inferior de ese nivel
         // CALCULA LA LUZ ESPECULAR DEL PIXEL
         // Crea el vector con los puntos en la direccion de donde proviene la luz, esto es justo lo opuesto al vector que apunta hacia la luz, por lo tanto lo convierte a negativo
         vec3 lightDirection = -unitLightVector;
@@ -55,6 +59,8 @@ void main(void) {
         /* Aplica la amortiguacion elevando el factor especular a la potencia del valor de amortiguacion, lo que hace que
          * los factores especulares bajos sean aun mas bajos, pero no afecta tanto a los valores mas altos. */
         float dampedFactor = pow(specularFactor, shineDamper);
+        level = floor(dampedFactor * levels);
+        dampedFactor = level / levels;
         // Multiplica el brillo por el color de la luz actual (i) para obtener la iluminacion final y acumularlo en totalDiffuse
         totalDiffuse = totalDiffuse + (brightness * lightColour[i]) / attFactor;
         // Multiplica el factor amortiguado por la reflectividad por el color de la luz actual (i) y lo acumula en totalSpecular

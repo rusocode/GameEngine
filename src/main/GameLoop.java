@@ -60,6 +60,8 @@ public class GameLoop {
 
         TexturedModel playerModel = getTexturedModel(loader, "player", "player");
         TexturedModel treeModel = getTexturedModel(loader, "pine", "pine");
+        TexturedModel bobbleTreeModel = getTexturedModel(loader, "bobbleTree", "bobbleTree");
+        TexturedModel toonRockModel = getTexturedModel(loader, "toonRocks", "toonRocks");
         TexturedModel herbModel = getTexturedModel(loader, "herb", "herb");
         TexturedModel flowerModel = getTexturedModel(loader, "herb", "flower");
         TexturedModel lampModel = getTexturedModel(loader, "lamp", "lamp");
@@ -86,14 +88,14 @@ public class GameLoop {
                 float x = random.nextFloat() * 800;
                 float z = random.nextFloat() * -800;
                 float y = terrain.getHeightOfTerrain(x, z);
-                entities.add(new Entity(fern, random.nextInt(4), new Vector3f(x, y, z), new Vector3f(0, random.nextFloat() * 360, 0), new Vector3f(0.9f, 0.9f, 0.9f)));
+                entities.add(new Entity(toonRockModel, random.nextInt(4), new Vector3f(x, y, z), new Vector3f(0, random.nextFloat() * 360, 0), new Vector3f(1.9f, 1.9f, 1.9f)));
             }
             if (i % 2 == 0) {
                 float x = random.nextFloat() * 800;
                 float z = random.nextFloat() * -800;
                 float y = terrain.getHeightOfTerrain(x, z);
-                float scaleTree = random.nextFloat() * 0.6f + 0.8f; // float scaleTree = random.nextFloat() + 4;
-                entities.add(getEntity(treeModel, new Vector3f(x, y, z), new Vector3f(0, 0, 0), new Vector3f(scaleTree, scaleTree, scaleTree)));
+                float sacale = random.nextFloat() * 0.2f + 0.6f; // float scaleTree = random.nextFloat() + 4;
+                entities.add(getEntity(bobbleTreeModel, new Vector3f(x, y, z), new Vector3f(0, 0, 0), new Vector3f(sacale, sacale, sacale)));
             }
         }
 
@@ -130,12 +132,12 @@ public class GameLoop {
             player.move(terrain);
             camera.move();
 
-            picker.update();
+            /* picker.update();
             Vector3f terrainPoint = picker.getCurrentTerrainPoint();
             if (terrainPoint != null) {
                 lamp.setPosition(terrainPoint);
                 light.setPosition(new Vector3f(terrainPoint.x, terrainPoint.y + 15, terrainPoint.z));
-            }
+            } */
 
             renderer.processEntity(player);
             renderer.processTerrain(terrain);

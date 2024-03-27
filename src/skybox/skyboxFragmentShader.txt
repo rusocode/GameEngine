@@ -19,10 +19,16 @@ uniform vec3 fogColour;
 const float lowerLimit = 0.0;
 const float upperLimit = 30.0;
 
+// const float levels = 10.0;
+
 void main(void) {
     vec4 texture1 = texture(cubeMap, textureCoords);
     vec4 texture2 = texture(cubeMap2, textureCoords);
     vec4 finalColour = mix(texture1, texture2, blendFactor); // Mezcla las dos texturas usando el factor de mezcla
+
+    // float amount = (finalColour.r - finalColour.g + finalColour.b) / 3.0;
+    // amount = floor(amount * levels) / levels;
+    // finalColour.rgb = amount * fogColour;
 
     // Representa la visibilidad del skybox donde un factor 0 significa que esta por debajo del limite inferior (color de la niebla) y un factor 1 significa que este fragmento esta por encima de los limites superiores (color de la textura del skybox)
     float factor = (textureCoords.y - lowerLimit) / (upperLimit - lowerLimit);
