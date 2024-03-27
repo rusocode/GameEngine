@@ -16,6 +16,7 @@ import terrains.Terrain;
 
 public class MousePicker {
 
+    // Cantidad de veces que comprueba la busqueda del punto de interseccion del rayo, mientras mas alto sea este valor mas precisa sera la interseccion
     private static final int RECURSION_COUNT = 200;
     private static final float RAY_RANGE = 600; // Rango del rayo
 
@@ -100,41 +101,97 @@ public class MousePicker {
         return new Vector2f(x, y);
     }
 
-    // ***
-
-    private Vector3f getPointOnRay(Vector3f ray, float distance) {
-        Vector3f camPos = camera.getPosition();
-        Vector3f start = new Vector3f(camPos.x, camPos.y, camPos.z);
-        Vector3f scaledRay = new Vector3f(ray.x * distance, ray.y * distance, ray.z * distance);
-        return Vector3f.add(start, scaledRay, null);
-    }
-
+    /**
+     * Basicamente en cada frame intenta encontrar el punto de interseccion del rayo con el terrreno en algun lugar entre su punto
+     * inicial en la camara y dentro de un cierto rango. Intenta encontrar el punto de interseccion usando una busqueda binaria,
+     * por lo que primero verifica el punto medio del rango del rayo y descubre si este punto esta por encima o por debajo del
+     * terreno. Si el punto esta por debajo del terreno, entonces la interseccion debe estar en la mitad superior del rango del
+     * rayo, pero si el punto esta sobre el terreno entonces la interseccion debe estar en la mitad inferior del rango del rayo.
+     * Entonces toma la mitad del rango del rayo en la que esta la interseccion y repite el proceso. Esto se repite una cantidad
+     * de veces determinada por RECURSION_COUNT y una vez que haya terminado devuelve el punto medio de la seccion del rayo
+     * sobrante, que en ese momento sera muy pequenio y dara una posicion bastante precisa para la interseccion.
+     *
+     * @param count  contador de busquedas (iterador).
+     * @param start  inicio del rango del rayo.
+     * @param finish final del rango del rayo.
+     * @param ray    rayo.
+     * @return el punto de interseccion del rayo con el terreno.
+     */
     private Vector3f binarySearch(int count, float start, float finish, Vector3f ray) {
-        float half = start + ((finish - start) / 2f);
+        float half = start + ((finish - start) / 2);
+        // Si se termino de buscar el punto de interseccion del rayo
         if (count >= RECURSION_COUNT) {
             Vector3f endPoint = getPointOnRay(ray, half);
             Terrain terrain = getTerrain(endPoint.getX(), endPoint.getZ());
+            // Si el terreno es distinto a nulo, devuelve el punto de interseccion
             if (terrain != null) return endPoint;
             else return null;
         }
-        if (intersectionInRange(start, half, ray)) return binarySearch(count + 1, start, half, ray);
-        else return binarySearch(count + 1, half, finish, ray);
+        // Si la interseccion esta en la mitad superior del rango del rayo
+        if (intersectionInRange(start, half, ray))
+            return binarySearch(count + 1, start, half, ray); // Mitad superior del rango del rayo
+        else
+            return binarySearch(count + 1, half, finish, ray); // Mitad inferior del rango del rayo
     }
 
+    /**
+     * Verifica la interseccion en el rango del rayo.
+     *
+     * @param start  punto inicial del rayo.
+     * @param finish punto final del rayo.
+     * @param ray    rayo.
+     * @return si el punto inicial no esta bajo tierra y si el punto final esta bajo tierra.
+     */
     private boolean intersectionInRange(float start, float finish, Vector3f ray) {
+        // Obtiene el punto del rayo de inicio y final
         Vector3f startPoint = getPointOnRay(ray, start);
         Vector3f endPoint = getPointOnRay(ray, finish);
         return !isUnderGround(startPoint) && isUnderGround(endPoint);
     }
 
+    /**
+     * Obtiene el punto en el rayo.
+     *
+     * @param ray      rayo.
+     * @param distance distancia del rayo.
+     * @return el punto en el rayo.
+     */
+    private Vector3f getPointOnRay(Vector3f ray, float distance) {
+        Vector3f camPos = camera.getPosition();
+        // Posicion de la camara
+        Vector3f start = new Vector3f(camPos.x, camPos.y, camPos.z);
+        /* Escala el rayo (que inicia desde la posicion de la camara) a la distancia especificada (la distancia es el rango
+         * especificado que esta entre el inicio y final del rango del rayo). */
+        Vector3f scaledRay = new Vector3f(ray.x * distance, ray.y * distance, ray.z * distance);
+        return Vector3f.add(start, scaledRay, null);
+    }
+
+    /**
+     * Verifica si el punto esta bajo tierra.
+     *
+     * @param testPoint punto.
+     * @return si el punto esta bajo tierra.
+     */
     private boolean isUnderGround(Vector3f testPoint) {
         Terrain terrain = getTerrain(testPoint.getX(), testPoint.getZ());
         float height = 0;
+        // Almacena el alto del terreno en ese punto
         if (terrain != null) height = terrain.getHeightOfTerrain(testPoint.getX(), testPoint.getZ());
+        // Verifica si el alto del punto es menor al alto del terreno
         return testPoint.y < height;
     }
 
+    /**
+     * Obtiene el terreno actual.
+     *
+     * @param worldX grilla x del terreno.
+     * @param worldZ grilla z del terreno.
+     * @return el terreno actual.
+     */
     private Terrain getTerrain(float worldX, float worldZ) {
+        // int x = (int) (worldX / Terrain.SIZE);
+        // int z = (int) (worldZ / Terrain.SIZE);
+        // return terrains[x][z];
         return terrain;
     }
 
