@@ -19,9 +19,9 @@ public class MasterRenderer {
     private static final float FAR_PLANE = 1000; // Plano lejano
 
     // https://rgbcolorpicker.com/0-1 o usar los colores del skybox
-    private static final float RED = 0.5444f; // 0.5444f / 0.592f
-    private static final float GREEN = 0.62f; // 0.62f / 0.871f
-    private static final float BLUE = 0.69f; // 0.69f / 0.949f
+    private static final float RED = 0.592f; // 0.5444f | 0.592f
+    private static final float GREEN = 0.871f; // 0.62f | 0.871f
+    private static final float BLUE = 0.949f; // 0.69f | 0.949f
 
     private Matrix4f projectionMatrix;
 
@@ -53,16 +53,22 @@ public class MasterRenderer {
         GL11.glDisable(GL11.GL_CULL_FACE);
     }
 
+    public void renderScene(List<Entity> entities, List<Terrain> terrains, List<Light> lights, Camera camera) {
+        for (Terrain terrain : terrains) processTerrain(terrain);
+        for (Entity entity : entities) processEntity(entity);
+        render(lights, camera);
+    }
+
     public void render(List<Light> lights, Camera camera) {
         prepare();
         entityShader.start();
-        entityShader.loadSkyColor(RED, GREEN, BLUE); // Lo carga en cada frame para el ciclo dia/noche
+        // entityShader.loadSkyColor(RED, GREEN, BLUE); // Lo carga en cada frame para el ciclo dia/noche
         entityShader.loadLights(lights);
         entityShader.loadViewMatrix(camera);
         entityRenderer.render(entities);
         entityShader.stop();
         terrainShader.start();
-        terrainShader.loadSkyColor(RED, GREEN, BLUE);
+        // terrainShader.loadSkyColor(RED, GREEN, BLUE);
         terrainShader.loadLights(lights);
         terrainShader.loadViewMatrix(camera);
         terrainRenderer.render(terrains);

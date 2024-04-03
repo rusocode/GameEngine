@@ -26,6 +26,7 @@ void main(void) {
     vec4 texture2 = texture(cubeMap2, textureCoords);
     vec4 finalColour = mix(texture1, texture2, blendFactor); // Mezcla las dos texturas usando el factor de mezcla
 
+    // Cel Shading
     // float amount = (finalColour.r - finalColour.g + finalColour.b) / 3.0;
     // amount = floor(amount * levels) / levels;
     // finalColour.rgb = amount * fogColour;
@@ -34,5 +35,9 @@ void main(void) {
     float factor = (textureCoords.y - lowerLimit) / (upperLimit - lowerLimit);
     factor = clamp(factor, 0.0, 1.0); // Fija el valor del factor entre 0 y 1
     // Mezcla el color de la niebla y el color de la textura del skybox usando el valor del factor y decidir cuanto de cada color se debe representar
-    out_Color = mix(vec4(fogColour, 1.0), finalColour, factor);
+    // out_Color = mix(vec4(fogColour, 1.0), finalColour, factor);
+
+    // Solo utiliza el color de la textura del skybox
+    out_Color = finalColour;
+
 }

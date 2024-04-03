@@ -28,7 +28,6 @@ public class SkyboxShader extends ShaderProgram {
         super(VERTEX_FILE, FRAGMENT_FILE);
     }
 
-
     @Override
     protected void bindAttributes() {
         bindAttribute(0, "position");

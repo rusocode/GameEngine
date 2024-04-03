@@ -9,14 +9,16 @@ import entities.*;
 import guis.GuiRenderer;
 import guis.GuiTexture;
 import models.*;
-import org.lwjgl.util.vector.Vector4f;
 import render.*;
 import terrains.Terrain;
 import textures.*;
+import water.WaterRenderer;
+import water.WaterShader;
+import water.WaterTile;
+import utils.MousePicker;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
-import utils.MousePicker;
 
 /**
  * Bucle principal del juego.
@@ -39,8 +41,6 @@ import utils.MousePicker;
  */
 
 public class GameLoop {
-
-    private static final List<Entity> entities = new ArrayList<>();
 
     public static void main(String[] args) {
 
@@ -78,39 +78,44 @@ public class GameLoop {
         flowerModel.getTexture().setUseFakeLighting(true);
         lampModel.getTexture().setUseFakeLighting(true);
 
+        List<Terrain> terrains = new ArrayList<>();
+        List<Entity> entities = new ArrayList<>();
+        List<Light> lights = new ArrayList<>();
+
         // Crea una cuadricula de terreno
-        Terrain terrain = new Terrain(0, -1, loader, texturePack, blendMap, "heightmap");
+        Terrain terrain = new Terrain(0, -1, loader, texturePack, blendMap, "heightmap water");
+        terrains.add(terrain);
 
         Random random = new Random(676452);
 
-        for (int i = 0; i < 400; i++) {
+        for (int i = 0; i < 12; i++) {
             if (i % 3 == 0) {
-                float x = random.nextFloat() * 800;
-                float z = random.nextFloat() * -800;
+                float x = random.nextFloat() * Terrain.SIZE;
+                float z = random.nextFloat() * -Terrain.SIZE;
                 float y = terrain.getHeightOfTerrain(x, z);
-                entities.add(new Entity(toonRockModel, random.nextInt(4), new Vector3f(x, y, z), new Vector3f(0, random.nextFloat() * 360, 0), new Vector3f(1.9f, 1.9f, 1.9f)));
+                entities.add(new Entity(fern, random.nextInt(4), new Vector3f(x, y, z), new Vector3f(0, random.nextFloat() * 360, 0), new Vector3f(0.9f, 0.9f, 0.9f)));
             }
             if (i % 2 == 0) {
-                float x = random.nextFloat() * 800;
-                float z = random.nextFloat() * -800;
+                float x = random.nextFloat() * Terrain.SIZE;
+                float z = random.nextFloat() * -Terrain.SIZE;
                 float y = terrain.getHeightOfTerrain(x, z);
-                float sacale = random.nextFloat() * 0.2f + 0.6f; // float scaleTree = random.nextFloat() + 4;
-                entities.add(getEntity(bobbleTreeModel, new Vector3f(x, y, z), new Vector3f(0, 0, 0), new Vector3f(sacale, sacale, sacale)));
+                float sacale = random.nextFloat() * 0.6f + 0.8f; // float scaleTree = random.nextFloat() + 4;
+                entities.add(getEntity(treeModel, new Vector3f(x, y, z), new Vector3f(0, 0, 0), new Vector3f(sacale, sacale, sacale)));
             }
         }
 
-        List<Light> lights = new ArrayList<>();
         // new Vector3f(20000, 40000, 20000), new Vector3f(1, 1, 1) // Dia
         // new Vector3f(0, 1000, -7000), new Vector3f(0.4f, 0.4f, 0.4f) // Noche
         lights.add(new Light(new Vector3f(20000, 40000, 20000), new Vector3f(1, 1, 1))); // Fuente de luz principal
         // Luces para cada lampara
-        lights.add(new Light(new Vector3f(185, 10, -293), new Vector3f(2, 0, 0), new Vector3f(1, 0.01f, 0.002f)));
-        lights.add(new Light(new Vector3f(370, 17, -300), new Vector3f(0, 2, 2), new Vector3f(1, 0.01f, 0.002f)));
+        // lights.add(new Light(new Vector3f(185, 10, -293), new Vector3f(2, 0, 0), new Vector3f(1, 0.01f, 0.002f)));
+        // lights.add(new Light(new Vector3f(370, 17, -300), new Vector3f(0, 2, 2), new Vector3f(1, 0.01f, 0.002f)));
         // Lamparas con la misma ubicacion que las luces pero diferente posicion en [y]
-        entities.add(getEntity(lampModel, new Vector3f(185, -4.7f, -293), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)));
-        entities.add(getEntity(lampModel, new Vector3f(370, 4.2f, -300), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)));
+        // entities.add(getEntity(lampModel, new Vector3f(185, -4.7f, -293), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)));
+        // entities.add(getEntity(lampModel, new Vector3f(370, 4.2f, -300), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)));
 
         Player player = new Player(playerModel, new Vector3f(100, 0, -100), new Vector3f(0, 180, 0), new Vector3f(0.7f, 0.7f, 0.7f));
+        entities.add(player);
         Camera camera = new Camera(player);
 
         List<GuiTexture> guis = new ArrayList<>();
@@ -122,11 +127,15 @@ public class GameLoop {
         GuiRenderer guiRenderer = new GuiRenderer(loader);
 
         MousePicker picker = new MousePicker(camera, renderer.getProjectionMatrix(), terrain);
+        // Entity lamp = new Entity(lampModel, new Vector3f(293, -6.8f, -305), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1));
+        // entities.add(lamp);
+        // Light light = new Light(new Vector3f(293, 7, -305), new Vector3f(0, 2, 2), new Vector3f(1, 0.01f, 0.002f));
+        // lights.add(light);
 
-        Entity lamp = new Entity(lampModel, new Vector3f(293, -6.8f, -305), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1));
-        entities.add(lamp);
-        Light light = new Light(new Vector3f(293, 7, -305), new Vector3f(0, 2, 2), new Vector3f(1, 0.01f, 0.002f));
-        lights.add(light);
+        WaterShader waterShader = new WaterShader();
+        WaterRenderer waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix());
+        List<WaterTile> waters = new ArrayList<>();
+        waters.add(new WaterTile(75, -75, 0));
 
         while (!Display.isCloseRequested()) {
             player.move(terrain);
@@ -139,20 +148,19 @@ public class GameLoop {
                 light.setPosition(new Vector3f(terrainPoint.x, terrainPoint.y + 15, terrainPoint.z));
             } */
 
-            renderer.processEntity(player);
-            renderer.processTerrain(terrain);
-            for (Entity entity : entities) renderer.processEntity(entity);
-            renderer.render(lights, camera);
+            renderer.renderScene(entities, terrains, lights, camera);
+            waterRenderer.render(waters, camera);
+
             // guiRenderer.render(guis);
             DisplayManager.update();
         }
 
+        waterShader.clean();
         guiRenderer.clean();
         renderer.clean();
         loader.clean();
         DisplayManager.close();
     }
-
 
     private static TexturedModel getTexturedModel(Loader loader, String obj, String texture) {
         // Ahora el modelo en crudo y la textura se "juntan" para crear el modelo texturizado

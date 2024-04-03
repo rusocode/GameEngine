@@ -70,5 +70,6 @@ void main(void) {
 
     out_Color = vec4(totalDiffuse, 1.0) * totalColor + vec4(totalSpecular, 1.0);
 
-    out_Color = mix(vec4(skyColor, 1.0), out_Color, visibility);
+    // Se comenta esta linea en caso de mantener la visibilidad del terreno y no se oscurezca cuando se aleja la camara
+    // out_Color = mix(vec4(skyColor, 1.0), out_Color, visibility);
 }

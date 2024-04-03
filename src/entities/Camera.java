@@ -1,5 +1,6 @@
 package entities;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -82,7 +83,10 @@ public class Camera {
     }
 
     private void calculateZoom() {
-        float zoomLevel = Mouse.getDWheel() * 0.1f; // Lo multiplica por 0.1 para evitar que se aleje o acerque rapidamente
+        float zoomLevel = 0;
+        if (Keyboard.isKeyDown(Keyboard.KEY_P)) zoomLevel--;
+        if (Keyboard.isKeyDown(Keyboard.KEY_O)) zoomLevel++;
+        // float zoomLevel = Mouse.getDWheel() * 0.1f; // Lo multiplica por 0.1 para evitar que se aleje o acerque rapidamente
         distanceFromPlayer -= zoomLevel;
     }
 

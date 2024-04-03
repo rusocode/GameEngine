@@ -24,7 +24,7 @@ import utils.Maths;
 
 public class Terrain {
 
-    public static final float SIZE = 800; // Tamaño del terreno
+    public static final float SIZE = 150; // Tamaño del terreno
     private static final float MAX_HEIGHT = 40; // Altura maxima del terreno
     private static final float MAX_PIXEL_COLOUR = 256 * 256 * 256; // Color maximo de pixeles
 
