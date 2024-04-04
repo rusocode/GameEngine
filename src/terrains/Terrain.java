@@ -31,7 +31,7 @@ public class Terrain {
     private final float x, z;
     private final RawModel model;
     private final TerrainTexturePack texturePack;
-    private final TerrainTexture blendMap;
+    private final TerrainTexture blendMap; // Mapa de mezcla
 
     // Almacena las alturas de cada vertice del terreno
     private float[][] heights;
@@ -99,7 +99,7 @@ public class Terrain {
 
         BufferedImage image = null;
         try {
-            image = ImageIO.read(new File("res/" + (heightMap.equals("heightmap perlin") ? "heightmap perlin.jpg" : heightMap + ".png")));
+            image = ImageIO.read(new File("res/" + heightMap + ".png"));
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
@@ -161,8 +161,7 @@ public class Terrain {
      */
     private Vector3f calculateNormal(int x, int z, BufferedImage image) {
         /* Obtiene las alturas de los vertices adyacentes al vertice en la posicion (x, z) en las direcciones izquierda (heightL),
-         * derecha (heightR), abajo (heightD) y arriba (heightU) llamando al metodo getHeight con las coordenadas
-         * correspondientes.
+         * derecha (heightR), abajo (heightD) y arriba (heightU) llamando al metodo getHeight con las coordenadas correspondientes.
          * La razon de restar 1 a la coordenada x es porque se esta buscando la altura del vertice que esta a la izquierda en la
          * imagen de altura. Al moverse hacia la izquierda en una matriz bidimensional (como la representacion de una imagen), se
          * disminuye el valor de la coordenada x. Por lo tanto, se resta 1 a la coordenada x para acceder al vertice adyacente
@@ -198,7 +197,8 @@ public class Terrain {
         // Verifica que las coordenadas esten dentro de los limites de la imagen de altura
         if (x < 0 || x >= image.getHeight() || z < 0 || z >= image.getHeight()) return 0;
         /* Obtiene el valor del color del pixel en las coordenadas (x, z) de la imagen utilizando el metodo getRGB(x, z) de la
-         * clase BufferedImage. Este valor representa la altura del terreno en ese punto de la imagen. */
+         * clase BufferedImage. Este valor representa la altura del terreno en ese punto de la imagen. Mientras mas oscuro sea
+         * el color del pixel (dentro de la escala de grises), mas bajo se representa en altura. */
         float height = image.getRGB(x, z);
         /* Ajusta el valor de altura para que este en el rango deseado:
          * a. Se suma la mitad del valor maximo de color de un pixel (MAX_PIXEL_COLOUR / 2f) al valor del color del pixel. Esto se

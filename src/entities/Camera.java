@@ -6,12 +6,13 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class Camera {
 
+    // TODO O zoom?
     private float distanceFromPlayer = 70; // Distancia de la camara al player
     private float angleAroundPlayer; // Angulo alrededor del player
 
     // No es necesario especificar la posicion de la camara ya que esta depende de la posicion del player
     private final Vector3f position = new Vector3f(100, 35, 50);
-    private float pitch = 20; // Rotacion alrededor de los ejes XYZ, tambien conocido como la inclinacion de la camara
+    private float pitch = 20; // Rotacion alrededor de los ejes [x,y,z], tambien conocido como la inclinacion de la camara
     private float yaw = 0; // Rotacion
     private float roll;
 
@@ -48,7 +49,7 @@ public class Camera {
          * apunta hacia la derecha, el eje y hacia arriba y el eje z hacia nosotros. El jugador esta orientado por su rotacion en
          * y (rotY), y la camara se coloca detras de el. La distancia entre la camara y el jugador es la distancia horizontal,
          * aunque la camara puede moverse alrededor del jugador alterando el angulo (angleAroundPlayer). El angulo total (theta)
-         * se calcula sumando la rotacion y el angulo del jugador, y se utiliza para determinar los desplazamientos en x e z
+         * se calcula sumando la rotacion y el angulo del jugador, y se utiliza para determinar los desplazamientos en [x] e [z]
          * mediante funciones trigonometricas (seno y coseno). */
         float theta = player.getAngle().y + angleAroundPlayer;
         float offsetX = (float) (horizontalDistance * Math.sin(Math.toRadians(theta)));
@@ -59,8 +60,8 @@ public class Camera {
          * z de la camara desde el player tambien esta en la direccion z negativa. */
         position.x = player.getPosition().x - offsetX;
         position.z = player.getPosition().z - offsetZ;
-        /* Como ya conocemos la distancia vertical de la camara al player y la posicion y del player, entonces se suman para
-         * obtener la posicion y de la camara. */
+        /* Como ya conocemos la distancia vertical de la camara al player y la posicion [y] del player, entonces se suman para
+         * obtener la posicion [y] de la camara. */
         position.y = player.getPosition().y + verticalDistance;
     }
 
@@ -96,7 +97,7 @@ public class Camera {
             // Calcula cuanto se a movido la camara hacia arriba o abajo
             float pitchChange = Mouse.getDY() * 0.1f;
             pitch -= pitchChange;
-            if (pitch < 1) pitch = 1; // Evita que la camara pase por debajo del piso
+            if (pitch < 1) pitch = 1; // Evita que la camara pase por debajo del terreno
             else if (pitch > 90) pitch = 90; // Evita que la camara pase por encima del player
         }
     }

@@ -3,14 +3,14 @@ package guis;
 import java.util.List;
 
 import models.RawModel;
+import render.Loader;
+import utils.Maths;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.util.vector.Matrix4f;
-import render.Loader;
-
 import org.lwjgl.opengl.GL30;
-import utils.Maths;
+import org.lwjgl.util.vector.Matrix4f;
 
 public class GuiRenderer {
 

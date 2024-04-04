@@ -118,9 +118,9 @@ public class OBJLoader {
      */
     private static void processVertex(String[] vertex, List<Vertex> vertices, List<Integer> indices) {
         /* Tomando como ejemplo el bloque "1/3/3", obtiene la primera cadena del array vertex (vertex[0]) que es 1 y le resta 1
-         * porque los archivos .obj comienzan en 1 y los arrays en 0. Por lo tanto se almacena 0 en la variable index. */
+         * porque los archivos .obj comienzan en 1 y los arrays en 0. Por lo tanto se almacena 0 en la variable i. */
         int i = Integer.parseInt(vertex[0]) - 1;
-        // Obtiene el objeto Vertex pasandole el index 0, es decir, el primer objeto Vertex creado anteriormente
+        // Obtiene el objeto Vertex pasandole el indice (i) 0, es decir, el primer objeto Vertex creado anteriormente
         Vertex currentVertex = vertices.get(i);
         // Hace lo mismo para el indice de la coordenada de textura y la normal
         int textureIndex = Integer.parseInt(vertex[1]) - 1;
@@ -179,9 +179,7 @@ public class OBJLoader {
      * @param normalsArray  array para la lista de normales.
      * @return el punto mas lejano.
      */
-    private static float convertDataListToArrays(List<Vertex> vertices, List<Vector2f> textures,
-                                                 List<Vector3f> normals, float[] verticesArray, float[] texturesArray,
-                                                 float[] normalsArray) {
+    private static float convertDataListToArrays(List<Vertex> vertices, List<Vector2f> textures, List<Vector3f> normals, float[] verticesArray, float[] texturesArray, float[] normalsArray) {
         float furthestPoint = 0;
 
         for (int i = 0; i < vertices.size(); i++) {
@@ -194,8 +192,8 @@ public class OBJLoader {
             // A partir del vertice actual se obtiene la posicion
             Vector3f vertex = currentVertex.getPosition();
             // A partir del vertice actual se obtiene el indice de la coordenada de textura y a partir de ese indice se obtiene la coordenada de textura
-            Vector2f textureCoord = textures.get(currentVertex.getTextureIndex());
-            Vector3f normalVector = normals.get(currentVertex.getNormalIndex());
+            Vector2f texture = textures.get(currentVertex.getTextureIndex());
+            Vector3f normal = normals.get(currentVertex.getNormalIndex());
 
             /* Desde los vectores se obtienen los ejes correspondientes que se usaran para llenar los arrays con los datos del
              * .obj. Es importante aclarar que el indice del verticesArray se multiplica por 3 en cada iteracion del for para
@@ -206,11 +204,11 @@ public class OBJLoader {
             verticesArray[i * 3 + 1] = vertex.y;
             verticesArray[i * 3 + 2] = vertex.z;
             // El indice de textureArray se multiplica por 2 ya que es un vector 2D
-            texturesArray[i * 2] = textureCoord.x;
-            texturesArray[i * 2 + 1] = 1 - textureCoord.y; // Le resta 1 a la coordenada y de la textura porque OpenGL comienza desde la esquina superior izquierda de una textura
-            normalsArray[i * 3] = normalVector.x;
-            normalsArray[i * 3 + 1] = normalVector.y;
-            normalsArray[i * 3 + 2] = normalVector.z;
+            texturesArray[i * 2] = texture.x;
+            texturesArray[i * 2 + 1] = 1 - texture.y; // Le resta 1 a la coordenada y de la textura porque OpenGL comienza desde la esquina superior izquierda de una textura
+            normalsArray[i * 3] = normal.x;
+            normalsArray[i * 3 + 1] = normal.y;
+            normalsArray[i * 3 + 2] = normal.z;
         }
         return furthestPoint;
     }

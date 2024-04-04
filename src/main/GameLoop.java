@@ -9,9 +9,11 @@ import entities.*;
 import guis.GuiRenderer;
 import guis.GuiTexture;
 import models.*;
+import org.lwjgl.util.vector.Vector2f;
 import render.*;
 import terrains.Terrain;
 import textures.*;
+import water.WaterFrameBuffers;
 import water.WaterRenderer;
 import water.WaterShader;
 import water.WaterTile;
@@ -137,6 +139,10 @@ public class GameLoop {
         List<WaterTile> waters = new ArrayList<>();
         waters.add(new WaterTile(75, -75, 0));
 
+        WaterFrameBuffers fbos = new WaterFrameBuffers();
+        GuiTexture gui = new GuiTexture(fbos.getReflectionTexture(), new Vector2f(-0.5f, 0.5f), new Vector2f(0.5f, 0.5f));
+        guis.add(gui);
+
         while (!Display.isCloseRequested()) {
             player.move(terrain);
             camera.move();
@@ -148,13 +154,19 @@ public class GameLoop {
                 light.setPosition(new Vector3f(terrainPoint.x, terrainPoint.y + 15, terrainPoint.z));
             } */
 
+            // Actualiza la textura de reflexion en cada frame
+            fbos.bindReflectionFrameBuffer();
+            renderer.renderScene(entities, terrains, lights, camera);
+            fbos.unbindCurrentFrameBuffer();
+
             renderer.renderScene(entities, terrains, lights, camera);
             waterRenderer.render(waters, camera);
+            guiRenderer.render(guis);
 
-            // guiRenderer.render(guis);
             DisplayManager.update();
         }
 
+        fbos.clean();
         waterShader.clean();
         guiRenderer.clean();
         renderer.clean();

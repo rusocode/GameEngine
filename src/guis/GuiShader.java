@@ -1,8 +1,8 @@
 package guis;
 
-import org.lwjgl.util.vector.Matrix4f;
-
 import shaders.ShaderProgram;
+
+import org.lwjgl.util.vector.Matrix4f;
 
 public class GuiShader extends ShaderProgram {
 

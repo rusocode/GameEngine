@@ -2,10 +2,10 @@ package entities;
 
 import models.TexturedModel;
 import render.DisplayManager;
+import terrains.Terrain;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
-import terrains.Terrain;
 
 /**
  * <a href="https://www.youtube.com/watch?v=F21S9Wpi0y8">Basic Trigonometry</a>
@@ -36,10 +36,11 @@ public class Player extends Entity {
         checkInputs();
         increaseRotation(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0);
         float distance = currentSpeed * DisplayManager.getFrameTimeSeconds(); // Hipotenusa
-        /* Una vez que se conoce la distancia y la rotacion en el eje y (angulo) del jugador, se determina la proxima posicion del
-         * jugador en los ejes x y z. Se calcula el desplazamiento en estas direcciones mediante las funciones seno y coseno del
-         * angulo y, multiplicadas por la distancia. La nueva posicion del jugador se obtiene sumando estos desplazamientos a las
-         * posiciones actuales en los ejes x y z. Este proceso se conoce como "trazar el punto" a lo largo y hacia arriba. */
+        /* Una vez que se conoce la distancia y la rotacion en el eje [y] (angulo) del jugador, se determina la proxima posicion
+         * del jugador en los ejes [x] y [z]. Se calcula el desplazamiento en estas direcciones mediante las funciones seno y
+         * coseno del angulo [y] multiplicadas por la distancia. La nueva posicion del jugador se obtiene sumando estos
+         * desplazamientos a las posiciones actuales en los ejes [x] y [z]. Este proceso se conoce como "trazar el punto" a lo
+         * largo y hacia arriba. */
         float dx = (float) (distance * Math.sin(Math.toRadians(getAngle().y))); // sin(θ) = x / distance
         float dz = (float) (distance * Math.cos(Math.toRadians(getAngle().y))); // cos(θ) = z / distance
         increasePosition(dx, 0, dz);
@@ -66,6 +67,7 @@ public class Player extends Entity {
     }
 
     private void jump() {
+        // Evita que salte mientras esta en el aire
         if (!isInAir) {
             upwardsSpeed = JUMP_POWER;
             isInAir = true;
