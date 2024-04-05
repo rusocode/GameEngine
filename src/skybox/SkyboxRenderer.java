@@ -15,6 +15,7 @@ public class SkyboxRenderer {
 
     private static final float SIZE = 500f;
 
+    // Caras del SkyBox
     private static final float[] VERTICES = {
             -SIZE, SIZE, -SIZE,
             -SIZE, -SIZE, -SIZE,
@@ -69,11 +70,14 @@ public class SkyboxRenderer {
     private float time;
 
     public SkyboxRenderer(Loader loader, Matrix4f projectionMatrix) {
+        /* Carga los vertices del SkyBox en el VAO y lo alamacena el modelo en crudo. Luego ese modelo en crudo se utiliza para
+         * enlazar el VAO al contexto de renderizado actual a travez del ID. */
         cube = loader.loadToVAO(VERTICES, 3);
+        // Carga las texturas que forman al skybox
         dayTexture = loader.loadCubeMap(DAY_TEXTURE_FILES);
         nightTexture = loader.loadCubeMap(NIGHT_TEXTURE_FILES);
-        shader = new SkyboxShader();
-        shader.start();
+        shader = new SkyboxShader(); // Crea el programa shader para el skybox
+        shader.start(); // Inicia el programa del shader
         shader.connectTextureUnits();
         shader.loadProjectionMatrix(projectionMatrix);
         shader.stop();

@@ -56,7 +56,7 @@ void main(void) {
 
     /* Como no tenemos la camara en ningun lado del codigo del shader, utilizamos viewMatrix que contiene la version
      * negativa de la posicion de la camara. Por lo que toma la inversa de esa matriz y aplica esta transformacion a un
-     * vector 0,0,0 para convertirlo en un vector 4D, siendo esta la posicion de la camara. Ahora podemos obtener el
+     * vector (0,0,0) para convertirlo en un vector 4D, siendo esta la posicion de la camara. Ahora podemos obtener el
      * el vector desde el vertice a la camara restando la posicion de los vertices de la posicion de la camara. */
     toCameraVector = (inverse(viewMatrix) * vec4(0.0, 0.0, 0.0, 1.0)).xyz - worldPosition.xyz;
 

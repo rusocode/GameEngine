@@ -6,12 +6,9 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class Camera {
 
-    // TODO O zoom?
-    private float distanceFromPlayer = 70; // Distancia de la camara al player
+    private float zoom = 70; // Distancia de la camara al player
     private float angleAroundPlayer; // Angulo alrededor del player
-
-    // No es necesario especificar la posicion de la camara ya que esta depende de la posicion del player
-    private final Vector3f position = new Vector3f(100, 35, 50);
+    private final Vector3f position = new Vector3f(0, 0, 0); // No es necesario especificar la posicion de la camara ya que esta depende de la posicion del player
     private float pitch = 20; // Rotacion alrededor de los ejes [x,y,z], tambien conocido como la inclinacion de la camara
     private float yaw = 0; // Rotacion
     private float roll;
@@ -71,7 +68,7 @@ public class Camera {
      * @return la distancia horizontal.
      */
     private float calculateHorizontalDistance() {
-        return (float) (distanceFromPlayer * Math.cos(Math.toRadians(pitch)));
+        return (float) (zoom * Math.cos(Math.toRadians(pitch)));
     }
 
     /**
@@ -80,7 +77,7 @@ public class Camera {
      * @return la distancia vertical.
      */
     private float calculateVerticalDistance() {
-        return (float) (distanceFromPlayer * Math.sin(Math.toRadians(pitch)));
+        return (float) (zoom * Math.sin(Math.toRadians(pitch)));
     }
 
     private void calculateZoom() {
@@ -88,7 +85,7 @@ public class Camera {
         if (Keyboard.isKeyDown(Keyboard.KEY_P)) zoomLevel--;
         if (Keyboard.isKeyDown(Keyboard.KEY_O)) zoomLevel++;
         // float zoomLevel = Mouse.getDWheel() * 0.1f; // Lo multiplica por 0.1 para evitar que se aleje o acerque rapidamente
-        distanceFromPlayer -= zoomLevel;
+        zoom -= zoomLevel;
     }
 
     private void calculatePitch() {

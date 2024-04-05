@@ -6,20 +6,16 @@ import java.util.Random;
 
 import converter.OldOBJLoader;
 import entities.*;
-import guis.GuiRenderer;
-import guis.GuiTexture;
+import guis.*;
 import models.*;
-import org.lwjgl.util.vector.Vector2f;
 import render.*;
 import terrains.Terrain;
 import textures.*;
-import water.WaterFrameBuffers;
-import water.WaterRenderer;
-import water.WaterShader;
-import water.WaterTile;
+import water.*;
 import utils.MousePicker;
 
 import org.lwjgl.opengl.Display;
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 /**
@@ -129,9 +125,9 @@ public class GameLoop {
         GuiRenderer guiRenderer = new GuiRenderer(loader);
 
         MousePicker picker = new MousePicker(camera, renderer.getProjectionMatrix(), terrain);
-        // Entity lamp = new Entity(lampModel, new Vector3f(293, -6.8f, -305), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1));
+        Entity lamp = new Entity(lampModel, new Vector3f(293, -6.8f, -305), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1));
         // entities.add(lamp);
-        // Light light = new Light(new Vector3f(293, 7, -305), new Vector3f(0, 2, 2), new Vector3f(1, 0.01f, 0.002f));
+        Light light = new Light(new Vector3f(293, 7, -305), new Vector3f(0, 2, 2), new Vector3f(1, 0.01f, 0.002f));
         // lights.add(light);
 
         WaterShader waterShader = new WaterShader();
@@ -141,23 +137,18 @@ public class GameLoop {
 
         WaterFrameBuffers fbos = new WaterFrameBuffers();
         GuiTexture gui = new GuiTexture(fbos.getReflectionTexture(), new Vector2f(-0.5f, 0.5f), new Vector2f(0.5f, 0.5f));
-        guis.add(gui);
+        // guis.add(gui);
 
         while (!Display.isCloseRequested()) {
             player.move(terrain);
             camera.move();
 
-            /* picker.update();
-            Vector3f terrainPoint = picker.getCurrentTerrainPoint();
-            if (terrainPoint != null) {
-                lamp.setPosition(terrainPoint);
-                light.setPosition(new Vector3f(terrainPoint.x, terrainPoint.y + 15, terrainPoint.z));
-            } */
+            // updatePicker(picker, lamp, light);
 
             // Actualiza la textura de reflexion en cada frame
-            fbos.bindReflectionFrameBuffer();
-            renderer.renderScene(entities, terrains, lights, camera);
-            fbos.unbindCurrentFrameBuffer();
+            // fbos.bindReflectionFrameBuffer();
+            // renderer.renderScene(entities, terrains, lights, camera);
+            // fbos.unbindCurrentFrameBuffer();
 
             renderer.renderScene(entities, terrains, lights, camera);
             waterRenderer.render(waters, camera);
@@ -191,6 +182,15 @@ public class GameLoop {
         // texture.setShineDamper(10);
         // texture.setReflectivity(1);
         return new Entity(texturedModel, position, angle, scale);
+    }
+
+    private static void updatePicker(MousePicker picker, Entity lamp, Light light) {
+        picker.update();
+        Vector3f terrainPoint = picker.getCurrentTerrainPoint();
+        if (terrainPoint != null) {
+            lamp.setPosition(terrainPoint);
+            light.setPosition(new Vector3f(terrainPoint.x, terrainPoint.y + 15, terrainPoint.z));
+        }
     }
 
 }

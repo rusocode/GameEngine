@@ -1,6 +1,7 @@
 package utils;
 
 import entities.Camera;
+import terrains.Terrain;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -8,7 +9,6 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
-import terrains.Terrain;
 
 /**
  * <a href="https://antongerdelan.net/opengl/raycasting.html">Mouse Picking with Ray Casting</a>
@@ -51,9 +51,7 @@ public class MousePicker {
      * @return el rayo en el espacio mundial.
      */
     private Vector3f calculateMouseRay() {
-        float mouseX = Mouse.getX();
-        float mouseY = Mouse.getY();
-        Vector2f normalizedCoords = getNormalizedDeviceCoords(mouseX, mouseY);
+        Vector2f normalizedCoords = getNormalizedDeviceCoords(Mouse.getX(), Mouse.getY());
         // Resta -1 al eje [z] para que apunte hacia la pantalla y agrega un componente w para convertirlo en un vector 4D
         Vector4f clipCoords = new Vector4f(normalizedCoords.x, normalizedCoords.y, -1f, -1f);
         Vector4f eyeCoords = toEyeCoords(clipCoords);
@@ -77,7 +75,7 @@ public class MousePicker {
     }
 
     /**
-     * Convierte el espacio de clip al espacion ocular.
+     * Convierte el espacio de clip al espacio ocular.
      *
      * @param clipCoords coordenadas del espacio de clip.
      * @return las coordenadas 4D en el espacio ocular.

@@ -62,7 +62,7 @@ void main(void) {
         // level = floor(dampedFactor * levels);
         // dampedFactor = level / levels;
         // Multiplica el brillo por el color de la luz actual (i) para obtener la iluminacion final y acumularlo en totalDiffuse
-        totalDiffuse = totalDiffuse + (brightness * lightColour[i]) / attFactor;
+        totalDiffuse = totalDiffuse + (brightness * lightColour[i]) / attFactor; // TODO No es mejor usar +=?
         // Multiplica el factor amortiguado por la reflectividad por el color de la luz actual (i) y lo acumula en totalSpecular
         totalSpecular = totalSpecular + (dampedFactor * reflectivity * lightColour[i]) / attFactor;
     }

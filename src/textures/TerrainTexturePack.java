@@ -1,5 +1,9 @@
 package textures;
 
+/**
+ * Pack de textura de terreno para combinar varias texturas.
+ */
+
 public class TerrainTexturePack {
 
     private final TerrainTexture backgroundTexture;

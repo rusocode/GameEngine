@@ -1,5 +1,9 @@
 package textures;
 
+/**
+ * Textura de terreno.
+ */
+
 public class TerrainTexture {
 
     private final int id;
