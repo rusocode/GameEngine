@@ -6,8 +6,10 @@ out vec4 out_Color;
 
 uniform sampler2D guiTexture;
 
-void main(void){
+void main(void) {
 
+    /* El metodo texture se utiliza para muestrear una textura en una coordenada especifica. Tomo como argumentos una
+     * textura y coordenadas de textura, y devuelve el color de la textura en esas coordenadas. */
 	out_Color = texture(guiTexture, textureCoords);
 
 }

@@ -8,14 +8,13 @@ import java.nio.ByteBuffer;
 
 public class TextureData {
 
-    private final int width;
-    private final int height;
+    private final int width, height;
     private final ByteBuffer buffer; // Bytes decodificados de una imagen
 
-    public TextureData(ByteBuffer buffer, int width, int height) {
-        this.buffer = buffer;
+    public TextureData(int width, int height, ByteBuffer buffer) {
         this.width = width;
         this.height = height;
+        this.buffer = buffer;
     }
 
     public int getWidth() {

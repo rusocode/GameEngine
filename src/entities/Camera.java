@@ -10,7 +10,7 @@ public class Camera {
     private float angleAroundPlayer; // Angulo alrededor del player
     private final Vector3f position = new Vector3f(0, 0, 0); // No es necesario especificar la posicion de la camara ya que esta depende de la posicion del player
     private float pitch = 20; // Rotacion alrededor de los ejes [x,y,z], tambien conocido como la inclinacion de la camara
-    private float yaw = 0; // Rotacion
+    private float yaw = 0; // Rotacion?
     private float roll;
 
     private final Player player;
@@ -30,7 +30,7 @@ public class Camera {
         /* Usando lo que sabemos sobre angulos en lineas paralelas, sabemos que el angulo de la camara (yaw) debe ser igual a
          * theta. Por lo que tu angulo es igual a todo ese angulo que es 180 grados menos theta. Asi puedes rotar la camara
          * alrededor del player y cuando el player gira, la camara tambien gira correctamente. */
-        yaw = 180 - (player.getAngle().y + angleAroundPlayer);
+        yaw = 180 - (player.getAngle().y + angleAroundPlayer); // Ver de nuevo
     }
 
     /**

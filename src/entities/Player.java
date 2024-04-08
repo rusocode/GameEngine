@@ -14,13 +14,13 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class Player extends Entity {
 
-    private static final float RUN_SPEED = 50;
-    private static final float TURN_SPEED = 160;
+    private static final float RUN_SPEED = 50; // Velocidad
+    private static final float TURN_SPEED = 130;
     private static final float GRAVITY = -50;
     private static final float JUMP_POWER = 30; // Que tan alto salta
 
-    private float currentSpeed;
-    private float currentTurnSpeed;
+    private float currentSpeed; // Distancia
+    private float currentTurnSpeed; // Angulo de giro
     private float upwardsSpeed; // Velocidad hacia arriba
 
     private boolean isInAir;
@@ -30,6 +30,8 @@ public class Player extends Entity {
     }
 
     /**
+     * Mueve el player en distancia y rotacion.
+     *
      * @param terrain terreno en el que esta actualmente el player.
      */
     public void move(Terrain terrain) {
@@ -39,7 +41,7 @@ public class Player extends Entity {
         /* Una vez que se conoce la distancia y la rotacion en el eje [y] (angulo) del jugador, se determina la proxima posicion
          * del jugador en los ejes [x] y [z]. Se calcula el desplazamiento en estas direcciones mediante las funciones seno y
          * coseno del angulo [y] multiplicadas por la distancia. La nueva posicion del jugador se obtiene sumando estos
-         * desplazamientos a las posiciones actuales en los ejes [x] y [z]. Este proceso se conoce como "trazar el punto" a lo
+         * desplazamientos a la posicion actual de los ejes [x] y [z]. Este proceso se conoce como "trazar el punto" a lo
          * largo y hacia arriba. */
         float dx = (float) (distance * Math.sin(Math.toRadians(getAngle().y))); // sin(θ) = x / distance
         float dz = (float) (distance * Math.cos(Math.toRadians(getAngle().y))); // cos(θ) = z / distance

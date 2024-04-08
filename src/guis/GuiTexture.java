@@ -2,11 +2,14 @@ package guis;
 
 import org.lwjgl.util.vector.Vector2f;
 
+/**
+ * Las GUI solo tiene posicion y escala.
+ */
+
 public class GuiTexture {
 
     private final int texture;
-    private final Vector2f position;
-    private final Vector2f scale;
+    private final Vector2f position, scale;
 
     public GuiTexture(int texture, Vector2f position, Vector2f scale) {
         this.texture = texture;

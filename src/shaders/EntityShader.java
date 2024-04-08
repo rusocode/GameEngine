@@ -16,14 +16,9 @@ public class EntityShader extends ShaderProgram {
     private static final String VERTEX_FILE = "src/shaders/vertexShader.txt";
     private static final String FRAGMENT_FILE = "src/shaders/fragmentShader.txt";
 
-    private int location_projectionMatrix;
-    private int location_viewMatrix;
-    private int location_transformationMatrix;
-    private int[] location_lightPosition;
-    private int[] location_lightColour;
-    private int[] location_attenuation;
-    private int location_shineDamper;
-    private int location_reflectivity;
+    private int location_transformationMatrix, location_viewMatrix, location_projectionMatrix;
+    private int[] location_lightPosition, location_lightColour, location_attenuation;
+    private int location_shineDamper, location_reflectivity;
     private int location_useFakeLighting;
     private int location_skyColor;
     private int location_numberOfRows;
@@ -44,9 +39,9 @@ public class EntityShader extends ShaderProgram {
     @Override
     protected void getAllUniformLocations() {
         // Obtiene la ubicacion de la variable uniforme en el shader y la almacena en la variable local
-        location_projectionMatrix = getUniformLocation("projectionMatrix");
-        location_viewMatrix = getUniformLocation("viewMatrix");
         location_transformationMatrix = getUniformLocation("transformationMatrix");
+        location_viewMatrix = getUniformLocation("viewMatrix");
+        location_projectionMatrix = getUniformLocation("projectionMatrix");
         location_shineDamper = getUniformLocation("shineDamper");
         location_reflectivity = getUniformLocation("reflectivity");
         location_useFakeLighting = getUniformLocation("useFakeLighting");

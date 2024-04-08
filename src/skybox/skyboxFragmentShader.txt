@@ -3,8 +3,7 @@
 in vec3 textureCoords;
 out vec4 out_Color;
 
-uniform samplerCube cubeMap;
-uniform samplerCube cubeMap2;
+uniform samplerCube cubeMap, cubeMap2;
 uniform float blendFactor;
 uniform vec3 fogColour;
 

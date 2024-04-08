@@ -50,10 +50,7 @@ import org.newdawn.slick.opengl.TextureLoader;
 
 public class Loader {
 
-    // Lista de seguimiento de los VAO y VBO para poder eliminarlos cuando se cierre el juego
-    private final List<Integer> vaos = new ArrayList<>();
-    private final List<Integer> vbos = new ArrayList<>();
-    private final List<Integer> textures = new ArrayList<>();
+    private final List<Integer> vaos = new ArrayList<>(), vbos = new ArrayList<>(), textures = new ArrayList<>();
 
     /**
      * Carga el modelo en el VAO.
@@ -73,6 +70,9 @@ public class Loader {
         return new RawModel(vaoID, indices.length);
     }
 
+    /**
+     * Este metodo carga los objetos que estan compuestos solo por vertices, como guis, skybox y water.
+     */
     public RawModel loadToVAO(float[] positions, int dimensions) {
         int vaoID = createVAO();
         storeDataInAttributeList(0, dimensions, positions);
@@ -141,7 +141,7 @@ public class Loader {
     }
 
     /**
-     * Almacena los datos en un bufer.
+     * Almacena los datos en un bufer de floats.
      *
      * @param data datos.
      * @return bufer de datos.
@@ -154,7 +154,7 @@ public class Loader {
     }
 
     /**
-     * Almacena los indices en un bufer.
+     * Almacena los indices en un bufer de enteros.
      *
      * @param indices indices.
      * @return bufer de indices.
@@ -239,8 +239,7 @@ public class Loader {
      * @return los datos de la textura.
      */
     private TextureData decodeTextureFile(String fileName) {
-        int width = 0;
-        int height = 0;
+        int width = 0, height = 0;
         ByteBuffer buffer = null;
         try {
             FileInputStream in = new FileInputStream(fileName);
@@ -255,7 +254,7 @@ public class Loader {
             System.err.println("Tried to load texture " + fileName + ", didn't work");
             System.exit(-1);
         }
-        return new TextureData(buffer, width, height);
+        return new TextureData(width, height, buffer);
     }
 
 }

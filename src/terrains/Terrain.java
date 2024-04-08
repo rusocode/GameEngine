@@ -59,30 +59,31 @@ public class Terrain {
         float gridSquareSize = SIZE / ((float) heights.length - 1); // 800 / 255 = 3.137255
         /* Averigua en que cuadrado de la cuadricula esta la coordenada (x,z). Por ejemplo, si cada cuadrado de la cuadricula es
          * de 5x5 y estamos en la posicion del terreno (13,8), al dividir esta posicion por la longitud del cuadrado de la
-         * cuadricula y calcular el floor de la division, el resultado dara que estamos en la posicion (2,1). */
+         * cuadricula y calcular el floor de la division, el resultado dara que estamos en la posicion (2,1). Es decir, convierte
+         * la posicion mundial a la cuadricula. */
         int gridX = (int) Math.floor(terrainX / gridSquareSize);
         int gridZ = (int) Math.floor(terrainZ / gridSquareSize);
         // Verifica si la posicion esta dentro de los limites del terreno
         if (gridX >= heights.length - 1 || gridZ >= heights.length - 1 || gridX < 0 || gridZ < 0) return 0;
-        /* Averigua en que lugar de la cuadricula esta el jugador usando el operador de modulo para averiguar la distancia del
-         * jugador desde la esquina superior izquierda del cuadrado de la cuadricula para encontrar la distancia x y la distancia
-         * z. Luego las divide por el tamaño del cuadrado de la cuadricula que dara una coordenada x y una coordenada z entre 0 y
-         * 1. */
+        /* Averigua en que lugar del cuadrado esta el jugador usando el operador de modulo para averiguar la distancia del jugador
+         * desde la esquina superior izquierda del cuadrado de la cuadricula para encontrar la distancia [x] y la distancia [z].
+         * Luego las divide por el tamaño del cuadrado de la cuadricula que dara una coordenada [x] y una coordenada [z] entre 0
+         * y 1. */
         float xCoord = (terrainX % gridSquareSize) / gridSquareSize;
         float zCoord = (terrainZ % gridSquareSize) / gridSquareSize;
-        /* Por lo que si este es el cuadrado de la cuadricula en el que estamos actualmente, la parte superior izquierda es (0,0)
-         * y la parte inferior derecha es (1,1), y acabamos de calcular la coordenada (x,z) del jugador en este cuadrado, que
-         * seria algo como (0.75,0.25). Como sabes, todo esta hecho de triangulos en el mundo 3D, por lo que cada cuadrado de la
+        /* Por lo que si este es el cuadrado de la cuadricula en el que estamos actualmente, la parte superior izquierda es [0,0]
+         * y la parte inferior derecha es [1,1], y acabamos de calcular la coordenada [x,z] del jugador en este cuadrado, que
+         * seria algo como [0.75,0.25]. Como sabes, todo esta hecho de triangulos en el mundo 3D, por lo que cada cuadrado de la
          * cuadricula es en realidad dos triangulos. Entonces, ¿como podemos encontrar en que triangulo el player esta ubicado?.
          * La linea que separa los dos triangulos, es la linea x, que es igual a (x = 1 - z). Todo en esa linea tendra una
          * coordenada x que es iugal a 1 menos la coordenada z. En el lado inferior del triangulo, la coordenada x es (x > 1 - z)
          * y en el lado superior es lo contrario (x < 1 - z). Al probar si la coordenda x es mayor que uno menos la coordenada z,
          * podemos determinar en que triangulo esta parado el player. */
         float answer;
-        /* Ahora que sabemos en que triangulo esta el jugador y sabemos su posicion (x,z) en el triangulo. Tambien sabemos la
-         * altura de cada punto en el triangulo porque hemos almacenado las alturas de todos los vertices del terreno en la matriz
-         * de alturas (heights). Todo lo que necesitamos ahora es encontrar la altura del triangulo en la posicion (x,z) del
-         * player. Una forma de hacerlo es la interpolacion centrada en bary. */
+        /* Sabiendo en que triangulo esta el jugador y su posicion [x,z] en este, y sabiendo la altura de cada punto en el
+         * triangulo (porque hemos almacenado las alturas de todos los vertices del terreno en la matriz de alturas heights), todo
+         * lo que necesitamos ahora es encontrar la altura del triangulo en la posicion [x,z] del player. Una forma de hacerlo es
+         * la interpolacion centrada en bary. */
         if (xCoord <= (1 - zCoord)) {
             answer = Maths.barryCentric(new Vector3f(0, heights[gridX][gridZ], 0), new Vector3f(1,
                     heights[gridX + 1][gridZ], 0), new Vector3f(0,

@@ -3,14 +3,12 @@ package entities;
 import org.lwjgl.util.vector.Vector3f;
 
 /**
- * Fuente de luz que ilumina los modelos.
+ * Fuente de luz que ilumina los modelos en donde usa una posicion, color y atenuacion.
  */
 
 public class Light {
 
-    private Vector3f position;
-    private Vector3f colour;
-    private Vector3f attenuation = new Vector3f(1, 0, 0);
+    private Vector3f position, colour, attenuation = new Vector3f(1, 0, 0);
 
     public Light(Vector3f position, Vector3f colour) {
         this.position = position;

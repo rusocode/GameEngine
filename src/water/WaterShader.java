@@ -26,9 +26,9 @@ public class WaterShader extends ShaderProgram {
 
     @Override
     protected void getAllUniformLocations() {
-        location_projectionMatrix = getUniformLocation("projectionMatrix");
-        location_viewMatrix = getUniformLocation("viewMatrix");
         location_modelMatrix = getUniformLocation("modelMatrix");
+        location_viewMatrix = getUniformLocation("viewMatrix");
+        location_projectionMatrix = getUniformLocation("projectionMatrix");
     }
 
     public void loadProjectionMatrix(Matrix4f projection) {

@@ -15,11 +15,8 @@ import org.lwjgl.opengl.GL32;
 
 public class WaterFrameBuffers {
 
-    protected static final int REFLECTION_WIDTH = 320;
-    private static final int REFLECTION_HEIGHT = 180;
-
-    protected static final int REFRACTION_WIDTH = 1280;
-    private static final int REFRACTION_HEIGHT = 720;
+    protected static final int REFLECTION_WIDTH = 320, REFLECTION_HEIGHT = 180;
+    protected static final int REFRACTION_WIDTH = 1280, REFRACTION_HEIGHT = 720;
 
     private int reflectionFrameBuffer, reflectionTexture, reflectionDepthBuffer;
     private int refractionFrameBuffer, refractionTexture, refractionDepthTexture;

@@ -8,10 +8,8 @@ in vec3 toCameraVector;
 in float visibility;
 
 uniform sampler2D modelTexture; // Textura
-uniform vec3 lightColour[4];
-uniform vec3 attenuation[4];
-uniform float shineDamper;
-uniform float reflectivity;
+uniform vec3 lightColour[4], attenuation[4];
+uniform float shineDamper, reflectivity;
 uniform vec3 skyColor;
 
 const float levels = 3.0;

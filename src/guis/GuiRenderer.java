@@ -28,7 +28,7 @@ public class GuiRenderer {
         shader.start();
         GL30.glBindVertexArray(quad.getVaoID());
         GL20.glEnableVertexAttribArray(0);
-        // Le saca la transparencia a la gui
+        // Le saca la transparencia a la gui (fondo negro de la imagen)
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         // Deshabilita las pruebas de profundidad para que se vean las guis que estan por debajo de esta

@@ -117,9 +117,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 public abstract class ShaderProgram {
 
-    private final int programID;
-    private final int vertexShaderID;
-    private final int fragmentShaderID;
+    private final int programID, vertexShaderID, fragmentShaderID;
 
     private static final FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(16);
 
@@ -220,6 +218,8 @@ public abstract class ShaderProgram {
     }
 
     /**
+     * Despues de configurar el programa de shader, lo inicia.
+     * <p>
      * Activa un programa de shader especifico en el pipeline grafico. Este programa consta de shaders individuales (como Vertex
      * Shader y Fragment Shader) que definen el procesamiento de vertices y fragmentos en la GPU. Durante la activacion, los
      * shaders adjuntos se utilizan segun la configuracion para procesar vertices o fragmentos. Esta funcion es esencial para
@@ -281,7 +281,7 @@ public abstract class ShaderProgram {
          * durante la compilacion del shader. */
         if (GL20.glGetShaderi(shaderID, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
             System.out.println(GL20.glGetShaderInfoLog(shaderID, 500));
-            System.err.println("Could not compile shader.");
+            System.err.println("Could not compile shader!");
             System.exit(-1);
         }
 

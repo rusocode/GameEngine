@@ -1,12 +1,13 @@
 package shaders;
 
+import java.util.List;
+
 import entities.Camera;
 import entities.Light;
-import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector3f;
 import utils.Maths;
 
-import java.util.List;
+import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
 
 public class TerrainShader extends ShaderProgram {
 
@@ -15,19 +16,11 @@ public class TerrainShader extends ShaderProgram {
     private static final String VERTEX_FILE = "src/shaders/terrainVertexShader.txt";
     private static final String FRAGMENT_FILE = "src/shaders/terrainFragmentShader.txt";
 
-    private int location_projectionMatrix;
-    private int location_viewMatrix;
-    private int location_transformationMatrix;
-    private int[] location_lightPosition;
-    private int[] location_lightColour;
-    private int[] location_attenuation;
-    private int location_shineDamper;
-    private int location_reflectivity;
+    private int location_projectionMatrix, location_viewMatrix, location_transformationMatrix;
+    private int[] location_lightPosition, location_lightColour, location_attenuation;
+    private int location_shineDamper, location_reflectivity;
     private int location_skyColor;
-    private int location_backgroundTexture;
-    private int location_rTexture;
-    private int location_gTexture;
-    private int location_bTexture;
+    private int location_background, location_r, location_g, location_b;
     private int location_blendMap;
 
     public TerrainShader() {
@@ -49,10 +42,10 @@ public class TerrainShader extends ShaderProgram {
         location_shineDamper = getUniformLocation("shineDamper");
         location_reflectivity = getUniformLocation("reflectivity");
         location_skyColor = getUniformLocation("skyColor");
-        location_backgroundTexture = getUniformLocation("backgroundTexture");
-        location_rTexture = getUniformLocation("rTexture");
-        location_gTexture = getUniformLocation("gTexture");
-        location_bTexture = getUniformLocation("bTexture");
+        location_background = getUniformLocation("background");
+        location_r = getUniformLocation("r");
+        location_g = getUniformLocation("g");
+        location_b = getUniformLocation("b");
         location_blendMap = getUniformLocation("blendMap");
 
         location_lightPosition = new int[MAX_LIGHTS];
@@ -68,13 +61,13 @@ public class TerrainShader extends ShaderProgram {
     }
 
     /**
-     * Conecta los samplers del shader a cada unidad de textura.
+     * Conecta los variables del shader a cada unidad de textura antes de renderizarlas.
      */
     public void connectTextureUnits() {
-        loadInt(location_backgroundTexture, 0);
-        loadInt(location_rTexture, 1);
-        loadInt(location_gTexture, 2);
-        loadInt(location_bTexture, 3);
+        loadInt(location_background, 0);
+        loadInt(location_r, 1);
+        loadInt(location_g, 2);
+        loadInt(location_b, 3);
         loadInt(location_blendMap, 4);
     }
 

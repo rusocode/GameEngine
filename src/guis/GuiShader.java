@@ -20,7 +20,6 @@ public class GuiShader extends ShaderProgram {
         bindAttribute(0, "position");
     }
 
-
     @Override
     protected void getAllUniformLocations() {
         location_transformationMatrix = getUniformLocation("transformationMatrix");

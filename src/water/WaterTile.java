@@ -4,9 +4,7 @@ public class WaterTile {
 
     public static final float TILE_SIZE = 60;
 
-    private final float x;
-    private final float z;
-    private final float height;
+    private final float x, z, height;
 
     public WaterTile(float centerX, float centerZ, float height) {
         this.x = centerX;

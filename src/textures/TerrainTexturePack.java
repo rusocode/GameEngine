@@ -6,32 +6,30 @@ package textures;
 
 public class TerrainTexturePack {
 
-    private final TerrainTexture backgroundTexture;
-    private final TerrainTexture rTexture;
-    private final TerrainTexture gTexture;
-    private final TerrainTexture bTexture;
+    // Estas texturas estan relacionadas con el blendMap
+    private final TerrainTexture background, r, g, b;
 
-    public TerrainTexturePack(TerrainTexture backgroundTexture, TerrainTexture rTexture, TerrainTexture gTexture, TerrainTexture bTexture) {
-        this.backgroundTexture = backgroundTexture;
-        this.rTexture = rTexture;
-        this.gTexture = gTexture;
-        this.bTexture = bTexture;
+    public TerrainTexturePack(TerrainTexture background, TerrainTexture r, TerrainTexture g, TerrainTexture b) {
+        this.background = background;
+        this.r = r;
+        this.g = g;
+        this.b = b;
     }
 
-    public TerrainTexture getBackgroundTexture() {
-        return backgroundTexture;
+    public TerrainTexture getBackground() {
+        return background;
     }
 
-    public TerrainTexture getrTexture() {
-        return rTexture;
+    public TerrainTexture getR() {
+        return r;
     }
 
-    public TerrainTexture getgTexture() {
-        return gTexture;
+    public TerrainTexture getG() {
+        return g;
     }
 
-    public TerrainTexture getbTexture() {
-        return bTexture;
+    public TerrainTexture getB() {
+        return b;
     }
 
 }

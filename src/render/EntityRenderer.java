@@ -63,7 +63,7 @@ public class EntityRenderer {
         GL30.glBindVertexArray(rawModel.getVaoID());
         /* Despues de vincular los atributos en el VAO, los habilita especificando el indice correspondiente al atributo en el
          * Vertex Shader. Al habilitar un atributo, se indica a OpenGL que utilice esos datos durante el renderizado. */
-        GL20.glEnableVertexAttribArray(0);
+        GL20.glEnableVertexAttribArray(0); // Despues de vincular los atributos del shader de entidades con bindAttribute(0, "position"), los habilita especificando el indice correspondiente al atributo en el Vertex Shader
         GL20.glEnableVertexAttribArray(1);
         GL20.glEnableVertexAttribArray(2);
         ModelTexture texture = model.getTexture();
@@ -92,8 +92,8 @@ public class EntityRenderer {
      * @param entity entidad.
      */
     private void loadModelMatrix(Entity entity) {
-        Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), entity.getAngle(), entity.getScale());
-        shader.loadTransformationMatrix(transformationMatrix);
+        Matrix4f matrix = Maths.createTransformationMatrix(entity.getPosition(), entity.getAngle(), entity.getScale());
+        shader.loadTransformationMatrix(matrix);
         shader.loadOffset(entity.getTextureXOffset(), entity.getTextureYOffset());
     }
 
