@@ -26,28 +26,6 @@ public class WaterFrameBuffers {
         initialiseRefractionFrameBuffer();
     }
 
-    public void clean() {
-        GL30.glDeleteFramebuffers(reflectionFrameBuffer);
-        GL11.glDeleteTextures(reflectionTexture);
-        GL30.glDeleteRenderbuffers(reflectionDepthBuffer);
-        GL30.glDeleteFramebuffers(refractionFrameBuffer);
-        GL11.glDeleteTextures(refractionTexture);
-        GL11.glDeleteTextures(refractionDepthTexture);
-    }
-
-    public void bindReflectionFrameBuffer() { // Se llama antes de renderizar a este FBO
-        bindFrameBuffer(reflectionFrameBuffer, REFLECTION_WIDTH, REFLECTION_HEIGHT);
-    }
-
-    public void bindRefractionFrameBuffer() { // Se llama antes de renderizar a este FBO
-        bindFrameBuffer(refractionFrameBuffer, REFRACTION_WIDTH, REFRACTION_HEIGHT);
-    }
-
-    public void unbindCurrentFrameBuffer() { // Se llama para cambiar al bufer de cuadros predeterminado
-        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
-        GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
-    }
-
     private void initialiseReflectionFrameBuffer() {
         reflectionFrameBuffer = createFrameBuffer();
         reflectionTexture = createTextureAttachment(REFLECTION_WIDTH, REFLECTION_HEIGHT);
@@ -60,6 +38,19 @@ public class WaterFrameBuffers {
         refractionTexture = createTextureAttachment(REFRACTION_WIDTH, REFRACTION_HEIGHT);
         refractionDepthTexture = createDepthTextureAttachment(REFRACTION_WIDTH, REFRACTION_HEIGHT);
         unbindCurrentFrameBuffer();
+    }
+
+    public void unbindCurrentFrameBuffer() { // Se llama para cambiar al bufer de cuadros predeterminado
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+        GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
+    }
+
+    public void bindReflectionFrameBuffer() { // Se llama antes de renderizar a este FBO
+        bindFrameBuffer(reflectionFrameBuffer, REFLECTION_WIDTH, REFLECTION_HEIGHT);
+    }
+
+    public void bindRefractionFrameBuffer() { // Se llama antes de renderizar a este FBO
+        bindFrameBuffer(refractionFrameBuffer, REFRACTION_WIDTH, REFRACTION_HEIGHT);
     }
 
     private void bindFrameBuffer(int frameBuffer, int width, int height) {
@@ -104,6 +95,15 @@ public class WaterFrameBuffers {
         GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL11.GL_DEPTH_COMPONENT, width, height);
         GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL30.GL_RENDERBUFFER, depthBuffer);
         return depthBuffer;
+    }
+
+    public void clean() {
+        GL30.glDeleteFramebuffers(reflectionFrameBuffer);
+        GL11.glDeleteTextures(reflectionTexture);
+        GL30.glDeleteRenderbuffers(reflectionDepthBuffer);
+        GL30.glDeleteFramebuffers(refractionFrameBuffer);
+        GL11.glDeleteTextures(refractionTexture);
+        GL11.glDeleteTextures(refractionDepthTexture);
     }
 
     public int getReflectionTexture() {

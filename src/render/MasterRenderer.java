@@ -4,13 +4,18 @@ import java.util.*;
 
 import entities.*;
 import models.TexturedModel;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Matrix4f;
 import shaders.EntityShader;
 import shaders.TerrainShader;
 import skybox.SkyboxRenderer;
 import terrains.Terrain;
+
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Matrix4f;
+
+/**
+ * Renderiza la escena creando los shader y renders de cada textura.
+ */
 
 public class MasterRenderer {
 

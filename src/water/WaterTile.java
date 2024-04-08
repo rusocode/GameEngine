@@ -6,9 +6,9 @@ public class WaterTile {
 
     private final float x, z, height;
 
-    public WaterTile(float centerX, float centerZ, float height) {
-        this.x = centerX;
-        this.z = centerZ;
+    public WaterTile(float x, float z, float height) {
+        this.x = x;
+        this.z = z;
         this.height = height;
     }
 

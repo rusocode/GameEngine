@@ -73,7 +73,7 @@ public class Game {
 
         List<GuiTexture> guis = new ArrayList<>();
         // guis.add(new GuiTexture(loader.loadTexture("gui/ao"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f)));
-        guis.add(new GuiTexture(loader.loadTexture("gui/logo"), new Vector2f(0.4f, 0.6f), new Vector2f(0.25f, 0.25f)));
+        // guis.add(new GuiTexture(loader.loadTexture("gui/logo"), new Vector2f(0.4f, 0.6f), new Vector2f(0.25f, 0.25f)));
 
         GuiRenderer guiRenderer = new GuiRenderer(loader);
 

@@ -66,6 +66,7 @@ public class EntityRenderer {
         GL20.glEnableVertexAttribArray(0); // Despues de vincular los atributos del shader de entidades con bindAttribute(0, "position"), los habilita especificando el indice correspondiente al atributo en el Vertex Shader
         GL20.glEnableVertexAttribArray(1);
         GL20.glEnableVertexAttribArray(2);
+        // Obtiene la textura del modelo para poder cargar los datos especificos en el shader
         ModelTexture texture = model.getTexture();
         shader.loadNumberOfRows(texture.getNumberOfRows());
         // Deshabilita la seleccion de caras posteriores cada vez que renderiza una textura con transparencia
