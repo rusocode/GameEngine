@@ -5,6 +5,7 @@ import entities.Light;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 import utils.Maths;
 
 import java.util.List;
@@ -17,12 +18,13 @@ public class EntityShader extends ShaderProgram {
     private static final String FRAGMENT_FILE = "src/shaders/fragmentShader.txt";
 
     private int location_transformationMatrix, location_viewMatrix, location_projectionMatrix;
-    private int[] location_lightPosition, location_lightColour, location_attenuation;
     private int location_shineDamper, location_reflectivity;
     private int location_useFakeLighting;
     private int location_skyColor;
     private int location_numberOfRows;
     private int location_offset;
+    private int location_plane;
+    private int[] location_lightPosition, location_lightColour, location_attenuation;
 
     public EntityShader() {
         super(VERTEX_FILE, FRAGMENT_FILE);
@@ -48,6 +50,7 @@ public class EntityShader extends ShaderProgram {
         location_skyColor = getUniformLocation("skyColor");
         location_numberOfRows = getUniformLocation("numberOfRows");
         location_offset = getUniformLocation("offset");
+        location_plane = getUniformLocation("plane");
 
         location_lightPosition = new int[MAX_LIGHTS];
         location_lightColour = new int[MAX_LIGHTS];
@@ -89,27 +92,6 @@ public class EntityShader extends ShaderProgram {
     }
 
     /**
-     * Carga las fuentes de luz.
-     *
-     * @param lights fuentes de luz.
-     */
-    public void loadLights(List<Light> lights) {
-        /* Carga las primeras cuatro luces de la lista en las variables uniformes del shader y si hay menos de 4 luces en la lista,
-         * carga una lista de ceros para llenar esos espacios adicionales en las matrices uniformes. */
-        for (int i = 0; i < MAX_LIGHTS; i++) {
-            if (i < lights.size()) {
-                loadVector(location_lightPosition[i], lights.get(i).getPosition());
-                loadVector(location_lightColour[i], lights.get(i).getColour());
-                loadVector(location_attenuation[i], lights.get(i).getAttenuation());
-            } else {
-                loadVector(location_lightPosition[i], new Vector3f(0, 0, 0));
-                loadVector(location_lightColour[i], new Vector3f(0, 0, 0));
-                loadVector(location_attenuation[i], new Vector3f(1, 0, 0));
-            }
-        }
-    }
-
-    /**
      * Carga la luz especular.
      *
      * @param damper       factor de amortiguacion.
@@ -146,6 +128,31 @@ public class EntityShader extends ShaderProgram {
 
     public void loadOffset(float x, float y) {
         load2DVector(location_offset, new Vector2f(x, y));
+    }
+
+    public void loadClipPlane(Vector4f plane) {
+        loadVector(location_plane, plane);
+    }
+
+    /**
+     * Carga las fuentes de luz.
+     *
+     * @param lights fuentes de luz.
+     */
+    public void loadLights(List<Light> lights) {
+        /* Carga las primeras cuatro luces de la lista en las variables uniformes del shader y si hay menos de 4 luces en la lista,
+         * carga una lista de ceros para llenar esos espacios adicionales en las matrices uniformes. */
+        for (int i = 0; i < MAX_LIGHTS; i++) {
+            if (i < lights.size()) {
+                loadVector(location_lightPosition[i], lights.get(i).getPosition());
+                loadVector(location_lightColour[i], lights.get(i).getColour());
+                loadVector(location_attenuation[i], lights.get(i).getAttenuation());
+            } else {
+                loadVector(location_lightPosition[i], new Vector3f(0, 0, 0));
+                loadVector(location_lightColour[i], new Vector3f(0, 0, 0));
+                loadVector(location_attenuation[i], new Vector3f(1, 0, 0));
+            }
+        }
     }
 
 }

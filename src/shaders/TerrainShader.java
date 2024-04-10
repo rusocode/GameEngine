@@ -4,6 +4,7 @@ import java.util.List;
 
 import entities.Camera;
 import entities.Light;
+import org.lwjgl.util.vector.Vector4f;
 import utils.Maths;
 
 import org.lwjgl.util.vector.Matrix4f;
@@ -17,11 +18,11 @@ public class TerrainShader extends ShaderProgram {
     private static final String FRAGMENT_FILE = "src/shaders/terrainFragmentShader.txt";
 
     private int location_projectionMatrix, location_viewMatrix, location_transformationMatrix;
-    private int[] location_lightPosition, location_lightColour, location_attenuation;
     private int location_shineDamper, location_reflectivity;
     private int location_skyColor;
-    private int location_background, location_r, location_g, location_b;
-    private int location_blendMap;
+    private int location_background, location_r, location_g, location_b, location_blendMap;
+    private int location_plane;
+    private int[] location_lightPosition, location_lightColour, location_attenuation;
 
     public TerrainShader() {
         super(VERTEX_FILE, FRAGMENT_FILE);
@@ -47,6 +48,7 @@ public class TerrainShader extends ShaderProgram {
         location_g = getUniformLocation("g");
         location_b = getUniformLocation("b");
         location_blendMap = getUniformLocation("blendMap");
+        location_plane = getUniformLocation("plane");
 
         location_lightPosition = new int[MAX_LIGHTS];
         location_lightColour = new int[MAX_LIGHTS];
@@ -58,17 +60,6 @@ public class TerrainShader extends ShaderProgram {
             location_attenuation[i] = getUniformLocation("attenuation[" + i + "]");
         }
 
-    }
-
-    /**
-     * Conecta los variables del shader a cada unidad de textura antes de renderizarlas.
-     */
-    public void connectTextureUnits() {
-        loadInt(location_background, 0);
-        loadInt(location_r, 1);
-        loadInt(location_g, 2);
-        loadInt(location_b, 3);
-        loadInt(location_blendMap, 4);
     }
 
     /**
@@ -100,25 +91,6 @@ public class TerrainShader extends ShaderProgram {
     }
 
     /**
-     * Carga las fuentes de luz.
-     *
-     * @param lights fuentes de luz.
-     */
-    public void loadLights(List<Light> lights) {
-        for (int i = 0; i < MAX_LIGHTS; i++) {
-            if (i < lights.size()) {
-                loadVector(location_lightPosition[i], lights.get(i).getPosition());
-                loadVector(location_lightColour[i], lights.get(i).getColour());
-                loadVector(location_attenuation[i], lights.get(i).getAttenuation());
-            } else {
-                loadVector(location_lightPosition[i], new Vector3f(0, 0, 0));
-                loadVector(location_lightColour[i], new Vector3f(0, 0, 0));
-                loadVector(location_attenuation[i], new Vector3f(1, 0, 0));
-            }
-        }
-    }
-
-    /**
      * Carga la luz especular.
      *
      * @param damper       factor de amortiguacion.
@@ -139,5 +111,40 @@ public class TerrainShader extends ShaderProgram {
     public void loadSkyColor(float r, float g, float b) {
         loadVector(location_skyColor, new Vector3f(r, g, b));
     }
+
+    /**
+     * Conecta los variables del shader a cada unidad de textura antes de renderizarlas.
+     */
+    public void connectTextureUnits() {
+        loadInt(location_background, 0);
+        loadInt(location_r, 1);
+        loadInt(location_g, 2);
+        loadInt(location_b, 3);
+        loadInt(location_blendMap, 4);
+    }
+
+    public void loadClipPlane(Vector4f plane) {
+        loadVector(location_plane, plane);
+    }
+
+    /**
+     * Carga las fuentes de luz.
+     *
+     * @param lights fuentes de luz.
+     */
+    public void loadLights(List<Light> lights) {
+        for (int i = 0; i < MAX_LIGHTS; i++) {
+            if (i < lights.size()) {
+                loadVector(location_lightPosition[i], lights.get(i).getPosition());
+                loadVector(location_lightColour[i], lights.get(i).getColour());
+                loadVector(location_attenuation[i], lights.get(i).getAttenuation());
+            } else {
+                loadVector(location_lightPosition[i], new Vector3f(0, 0, 0));
+                loadVector(location_lightColour[i], new Vector3f(0, 0, 0));
+                loadVector(location_attenuation[i], new Vector3f(1, 0, 0));
+            }
+        }
+    }
+
 
 }

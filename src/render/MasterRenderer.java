@@ -4,6 +4,8 @@ import java.util.*;
 
 import entities.*;
 import models.TexturedModel;
+import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 import shaders.EntityShader;
 import shaders.TerrainShader;
 import skybox.SkyboxRenderer;
@@ -58,21 +60,23 @@ public class MasterRenderer {
         GL11.glDisable(GL11.GL_CULL_FACE);
     }
 
-    public void renderScene(List<Entity> entities, List<Terrain> terrains, List<Light> lights, Camera camera) {
+    public void renderScene(List<Entity> entities, List<Terrain> terrains, List<Light> lights, Camera camera, Vector4f clipPlane) {
         for (Terrain terrain : terrains) processTerrain(terrain);
         for (Entity entity : entities) processEntity(entity);
-        render(lights, camera);
+        render(lights, camera, clipPlane);
     }
 
-    public void render(List<Light> lights, Camera camera) {
+    public void render(List<Light> lights, Camera camera, Vector4f clipPlane) {
         prepare();
         entityShader.start();
+        entityShader.loadClipPlane(clipPlane);
         // entityShader.loadSkyColor(RED, GREEN, BLUE); // Lo carga en cada frame para el ciclo dia/noche
         entityShader.loadLights(lights);
         entityShader.loadViewMatrix(camera);
         entityRenderer.render(entities);
         entityShader.stop();
         terrainShader.start();
+        terrainShader.loadClipPlane(clipPlane);
         // terrainShader.loadSkyColor(RED, GREEN, BLUE);
         terrainShader.loadLights(lights);
         terrainShader.loadViewMatrix(camera);

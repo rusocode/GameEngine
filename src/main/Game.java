@@ -8,6 +8,9 @@ import converter.OldOBJLoader;
 import entities.*;
 import guis.*;
 import models.*;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
+import org.lwjgl.util.vector.Vector4f;
 import render.*;
 import terrains.Terrain;
 import textures.*;
@@ -86,11 +89,14 @@ public class Game {
         WaterShader waterShader = new WaterShader();
         WaterRenderer waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix());
         List<WaterTile> waters = new ArrayList<>();
-        waters.add(new WaterTile(75, -75, 0));
+        WaterTile water = new WaterTile(75, -75, 0);
+        waters.add(water);
 
-        WaterFrameBuffers fbos = new WaterFrameBuffers();
-        GuiTexture gui = new GuiTexture(fbos.getReflectionTexture(), new Vector2f(-0.5f, 0.5f), new Vector2f(0.5f, 0.5f));
-        // guis.add(gui);
+        WaterFrameBuffers buffers = new WaterFrameBuffers();
+        GuiTexture refraction = new GuiTexture(buffers.getReflectionTexture(), new Vector2f(0.6f, 0.6f), new Vector2f(0.3f, 0.3f)); // Representa las texturas de refraccion
+        GuiTexture reflection = new GuiTexture(buffers.getReflectionTexture(), new Vector2f(-0.6f, 0.6f), new Vector2f(0.3f, 0.3f)); // Representa las texturas de reflexion
+        guis.add(refraction);
+        guis.add(reflection);
 
         while (!Display.isCloseRequested()) {
             player.move(terrain);
@@ -98,19 +104,39 @@ public class Game {
 
             // updatePicker(picker, lamp, light);
 
-            // Actualiza la textura de reflexion en cada frame
-            // fbos.bindReflectionFrameBuffer();
-            // renderer.renderScene(entities, terrains, lights, camera);
-            // fbos.unbindCurrentFrameBuffer();
+            /* Una vez habilitado un plano de recorte, se debe especificar su ecuación en el Vertex Shader para que se aplique
+             * correctamente durante el renderizado. Esto permite crear efectos complejos, como renderizar escenas desde el
+             * interior de un objeto o mostrar únicamente las partes visibles a través de un agujero. */
+            GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 
-            renderer.renderScene(entities, terrains, lights, camera);
+            // Renderiza las texturas de reflexion
+            buffers.bindReflectionFrameBuffer();
+            // Mueva la camara por debajo del agua para simular el efecto de reflejo en los objetos
+            float distance = 2 * (camera.getPosition().y - water.getHeight());
+            camera.getPosition().y -= distance;
+            camera.invertPitch();
+            // Recorta todo lo que esta por encima de la altura del agua
+            renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, 1, 0, -water.getHeight()));
+            // Vuelve la camara a su posicion original
+            camera.getPosition().y += distance;
+            camera.invertPitch();
+
+            // Renderiza las texturas de refraccion
+            buffers.bindRefractionFrameBuffer();
+            // Recorta todo lo que esta por debajo de la altura del agua
+            renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, -1, 0, water.getHeight()));
+
+            // Renderiza en pantalla
+            GL11.glDisable(GL30.GL_CLIP_DISTANCE0); // Para el renderizado final, solo queremos renderizar toda la escena en pantalla sin recortar nada
+            buffers.unbindCurrentFrameBuffer();
+            renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, 0, 0, 0)); // Deshabilita el plano de recorte
             waterRenderer.render(waters, camera);
             guiRenderer.render(guis);
 
             DisplayManager.update();
         }
 
-        fbos.clean();
+        buffers.clean();
         waterShader.clean();
         guiRenderer.clean();
         renderer.clean();

@@ -33,6 +33,10 @@ public class Camera {
         yaw = 180 - (player.getAngle().y + angleAroundPlayer); // Ver de nuevo
     }
 
+    public void invertPitch() {
+        this.pitch = -pitch;
+    }
+
     /**
      * Calcula la posicion de la camara.
      *

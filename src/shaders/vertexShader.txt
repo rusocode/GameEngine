@@ -23,10 +23,17 @@ uniform vec2 offset;
 const float density = 0.0025; // Determina el espesor de la niebla, y aumentar este valor disminuye la visibilidad general de la escena
 const float gradient = 5.0; // Determina que tan rapido disminuye la visibilidad con la distancia, y aumentar este valor hace que la transicion de visibilidad total a visibilidad 0 sea mucho mas pequenia
 
+// Crea un plano horizontal
+uniform vec4 plane;
+
 // Metodo principal que se ejecutara cada vez que este sombreador de vertices procese un vertice
 void main(void) {
 
     vec4 worldPosition = transformationMatrix * vec4(position, 1.0);
+
+    // Busca la distancia de cada vertice desde ese plano
+    gl_ClipDistance[0] = dot(worldPosition, plane);
+
     // Distancia del vertice a la camara
     vec4 positionRelativeToCam = viewMatrix * worldPosition;
     // Le dice a la GPU donde representar este vertice en la pantalla
