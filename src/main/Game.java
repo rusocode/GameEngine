@@ -86,17 +86,12 @@ public class Game {
         Light light = new Light(new Vector3f(293, 7, -305), new Vector3f(0, 2, 2), new Vector3f(1, 0.01f, 0.002f));
         lights.add(light); */
 
+        WaterFrameBuffers buffers = new WaterFrameBuffers();
         WaterShader waterShader = new WaterShader();
-        WaterRenderer waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix());
+        WaterRenderer waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix(), buffers);
         List<WaterTile> waters = new ArrayList<>();
         WaterTile water = new WaterTile(75, -75, 0);
         waters.add(water);
-
-        WaterFrameBuffers buffers = new WaterFrameBuffers();
-        GuiTexture refraction = new GuiTexture(buffers.getReflectionTexture(), new Vector2f(0.6f, 0.6f), new Vector2f(0.3f, 0.3f)); // Representa las texturas de refraccion
-        GuiTexture reflection = new GuiTexture(buffers.getReflectionTexture(), new Vector2f(-0.6f, 0.6f), new Vector2f(0.3f, 0.3f)); // Representa las texturas de reflexion
-        guis.add(refraction);
-        guis.add(reflection);
 
         while (!Display.isCloseRequested()) {
             player.move(terrain);
