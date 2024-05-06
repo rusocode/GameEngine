@@ -77,7 +77,7 @@ public class WaterFrameBuffers {
 
     /**
      * Para decirle a OpenGL que queremos renderizar en uno de nuestros FBOs tenemos que vincular el FBO relevante y luego todo
-     * lo que rendericemos despues de eso se renderizara a ese ese FBO.
+     * lo que rendericemos despues de eso se renderizara a ese FBO.
      */
     private void bindFrameBuffer(int frameBuffer, int width, int height) {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0); // Se asegura de que la textura no este unida

@@ -18,13 +18,22 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class WaterRenderer {
 
+    private static final String DUDV_MAP = "waterDUDV";
+    // Velocidad de movimiento de las ondas del agua
+    private static final float WAVE_SPEED = 0.03f;
+
     private RawModel quad;
     private final WaterShader shader;
     private final WaterFrameBuffers fbos;
 
+    private float moveFactor;
+
+    private int dudvTexture;
+
     public WaterRenderer(Loader loader, WaterShader shader, Matrix4f projectionMatrix, WaterFrameBuffers fbos) {
         this.shader = shader;
         this.fbos = fbos;
+        dudvTexture = loader.loadTexture(DUDV_MAP);
         shader.start();
         shader.connectTextureUnits();
         shader.loadProjectionMatrix(projectionMatrix);
@@ -45,12 +54,20 @@ public class WaterRenderer {
     private void prepareRender(Camera camera) {
         shader.start();
         shader.loadViewMatrix(camera);
+        // Aumenta el movimiento de las ondas del agua en cada frame
+        moveFactor += WAVE_SPEED * DisplayManager.getFrameTimeSeconds();
+        // Vuelve a 0 cuando llega a 1
+        moveFactor %= 1;
+        // Carga el movimiento en el shader
+        shader.loadMoveFactor(moveFactor);
         GL30.glBindVertexArray(quad.getVaoID());
         GL20.glEnableVertexAttribArray(0);
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, fbos.getReflectionTexture());
         GL13.glActiveTexture(GL13.GL_TEXTURE1);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, fbos.getRefractionTexture());
+        GL13.glActiveTexture(GL13.GL_TEXTURE2);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, dudvTexture);
     }
 
     private void unbind() {
@@ -63,7 +80,7 @@ public class WaterRenderer {
      * Carga un quad en un VAO.
      */
     private void setUpVAO(Loader loader) {
-        // Solo las posiciones de [x] y [z] vectex aqui, [y] se establece en 0 en v.shader
+        // Solo las posiciones de [x] y [z] vertex aqui, [y] se establece en 0 en v.shader
         float[] vertices = {-1, -1, -1, 1, 1, -1, 1, -1, -1, 1, 1, 1};
         quad = loader.loadToVAO(vertices, 2);
     }
