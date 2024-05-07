@@ -18,11 +18,10 @@ const float shineDamper = 20.0;
 const float reflectivity = 0.6;
 
 void main(void) {
-
-    /* Realiza la division de perspectiva para normalizar el espacio del dispositivo. Para muestrear una textura tenemos
-     * que dar las coordenadas del espacio de pantalla de cualquier punto dado del cuadrilatero de agua en este sistema
-     * de coordenadas para poder usar esas mismas coordenadas para muestrear las texturas. Esto se hace dividiendo por
-     * 2 y sumando 0.5, esto nos dara las coordenadas del espacio de la pantalla. */
+/*  Realiza la division de perspectiva para normalizar el espacio del dispositivo. Para muestrear una textura tenemos
+    que dar las coordenadas del espacio de pantalla de cualquier punto dado del cuadrilatero de agua en este sistema
+    de coordenadas para poder usar esas mismas coordenadas para muestrear las texturas. Esto se hace dividiendo por
+    2 y sumando 0.5, esto nos dara las coordenadas del espacio de la pantalla. */
     vec2 ndc = (clipSpace.xy / clipSpace.w) / 2.0 + 0.5;
     // Invierte la coordenada [y] debido a que es una reflexion
     vec2 reflectTexCoords = vec2(ndc.x, -ndc.y);
@@ -37,41 +36,40 @@ void main(void) {
 
     // Ahora podemos usar este valor para distorsionar las coordenadas de textura de reflexion y refraccion
     refractTexCoords += totalDistortion;
-
-    /* Debido a la textura proyectiva, las coordenadas de textura de reflexion y refraccion en la parte inferior de la
-     * pantalla, tendran un valor [y] de casi cero y debido a que la distorsion agrega un offset a las coordenadas de
-     * textura, a veces van a estar por debajo de cero. Esto hace que las texturas se salgan de la parte inferior de la
-     * textura y luego regresen redondeadas hasta la parte superior de la textura debido a la forma en que OpenGL tiene
-     * los tiles. Para solucionar este problema, se fijan las coordenadas de la textura para asegurarnos de que nunca
-     * suban ni bajen demasiado. Esto se hace desde el metodo clamp para sujetar las coordenadas de textura de refraccion
-     * y reflexion entre los valores 0.001 y 0.999. */
-     refractTexCoords = clamp(refractTexCoords, 0.001, 0.999);
+/*  Debido a la textura proyectiva, las coordenadas de textura de reflexion y refraccion en la parte inferior de la
+    pantalla, tendran un valor [y] de casi cero y debido a que la distorsion agrega un offset a las coordenadas de
+    textura, a veces van a estar por debajo de cero. Esto hace que las texturas se salgan de la parte inferior de la
+    textura y luego regresen redondeadas hasta la parte superior de la textura debido a la forma en que OpenGL tiene
+    los tiles. Para solucionar este problema, se fijan las coordenadas de la textura para asegurarnos de que nunca
+    suban ni bajen demasiado. Esto se hace desde el metodo clamp para sujetar las coordenadas de textura de refraccion
+    y reflexion entre los valores 0.001 y 0.999. */
+    refractTexCoords = clamp(refractTexCoords, 0.001, 0.999);
 
     reflectTexCoords += totalDistortion;
-    /* En el caso de la reflexion, tenemos que fijar los componentes de forma separada. Para la coordenada [y], los
-     * valores se invierten entre -0.999 y -0.001. */
+/*  En el caso de la reflexion, tenemos que fijar los componentes de forma separada. Para la coordenada [y], los valores
+    se invierten entre -0.999 y -0.001. */
     reflectTexCoords.x = clamp(reflectTexCoords.x, 0.001, 0.999);
     reflectTexCoords.y = clamp(reflectTexCoords.y, -0.999, -0.001);
 
-    /* Para distorsionar la textura, se agregan desplazamientos a las coordenadas de textura, pero esto solo crea una
-     * distorsion constante en el quad del agua.
-     *
-     * Para que parezca realista, la distorsion debe variar en diferentes puntos de la superficie. Esto se logra con el
-     * DuDv Map, una textura con oscilaciones rojas y verdes que representan vectores 2D de desplazamiento.
-     *
-     * Como los valores rojo y verde son positivos en el DuDv Map, se convierten al rango -1 a 1 multiplicando por 2 y
-     * restando 1, permitiendo distorsiones tanto positivas como negativas para un efecto mas realista. */
+/*  Para distorsionar la textura, se agregan desplazamientos a las coordenadas de textura, pero esto solo crea una
+    distorsion constante en el quad del agua.
+
+    Para que parezca realista, la distorsion debe variar en diferentes puntos de la superficie. Esto se logra con el
+    DuDv Map, una textura con oscilaciones rojas y verdes que representan vectores 2D de desplazamiento.
+
+    Como los valores rojo y verde son positivos en el DuDv Map, se convierten al rango -1 a 1 multiplicando por 2 y
+    restando 1, permitiendo distorsiones tanto positivas como negativas para un efecto mas realista. */
     vec4 reflectColour = texture(reflectionTexture, reflectTexCoords);
     vec4 refractColour = texture(refractionTexture, refractTexCoords);
 
-    /* El normal map es principalmente de color azul porque el valor azul representa el eje de altura [y] del vector
-     * normal. Utilizaremos el componente azul para el componente [y].
-     *
-     * Los componentes rojo y verde se usan como [x] y [z], pero no pueden ser negativos, lo cual es un problema porque
-     * las normales deben poder apuntar en direcciones [x] y [z] negativas para ser realistas.
-     *
-     * Por lo tanto, convertiremos los componentes [x] y [z] del rango 0 a 1, al rango -1 a 1. Asi extraeremos los
-     * vectores normales completos del normal map. */
+/*  El normal map es principalmente de color azul porque el valor azul representa el eje de altura [y] del vector
+    normal. Utilizaremos el componente azul para el componente [y].
+
+    Los componentes rojo y verde se usan como [x] y [z], pero no pueden ser negativos, lo cual es un problema porque
+    las normales deben poder apuntar en direcciones [x] y [z] negativas para ser realistas.
+
+    Por lo tanto, convertiremos los componentes [x] y [z] del rango 0 a 1, al rango -1 a 1. Asi extraeremos los
+    vectores normales completos del normal map. */
 
     // Normaliza el vector que apunta a la camara ya que el producto escalar necesita que los vectores sean vectores unitarios
     vec3 viewVector = normalize(toCameraVector);
@@ -92,11 +90,11 @@ void main(void) {
     specular = pow(specular, shineDamper);
     vec3 specularHighlights = lightColour * specular * reflectivity;
 
-	out_Color = mix(reflectColour, refractColour, refractiveFactor);
+    out_Color = mix(reflectColour, refractColour, refractiveFactor);
     // Representa un color azul verdoso semitransparente en el espacio de color RGBA
     vec4 color = vec4(0.0, 0.3, 0.5, 1.0);
-	float mezcla = 0.2; // 20% mezcla
-	// Mezcla el color final con el color azul verdoso en un 20% y le agrega la luz especular
-	out_Color = mix(out_Color, color, mezcla) + vec4(specularHighlights, 0.0);
+    float mezcla = 0.2; // 20% mezcla
+    // Mezcla el color final con el color azul verdoso en un 20% y le agrega la luz especular
+    out_Color = mix(out_Color, color, mezcla) + vec4(specularHighlights, 0.0);
 
 }

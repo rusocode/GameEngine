@@ -9,8 +9,8 @@ import org.lwjgl.util.vector.Matrix4f;
 
 public class WaterShader extends ShaderProgram {
 
-    private final static String VERTEX_FILE = "src/water/waterVertex.txt";
-    private final static String FRAGMENT_FILE = "src/water/waterFragment.txt";
+    private final static String VERTEX_FILE = "src/water/waterVertex.glsl";
+    private final static String FRAGMENT_FILE = "src/water/waterFragment.glsl";
 
     private int location_modelMatrix, location_viewMatrix, location_projectionMatrix;
     private int location_reflectionTexture, location_refractionTexture;

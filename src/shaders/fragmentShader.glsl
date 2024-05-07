@@ -19,8 +19,8 @@ out vec4 out_Color;
 
 void main(void) {
 
-    /* Normaliza los dos vectores para asegurarse de que el tamanio de los dos vectores sea uno. Asi la direccion del
-     * vector permanece exactamente igual, de modo que solo importa la direccion y la magnitud del vector es irrelevante. */
+/*  Normaliza los dos vectores para asegurarse de que el tamanio de los dos vectores sea uno. Asi la direccion del
+    vector permanece exactamente igual, de modo que solo importa la direccion y la magnitud del vector es irrelevante. */
     vec3 unitNormal = normalize(surfaceNormal);
     // Normaliza el vector de la camara para asegurarnos que el tamanio de este sea solo 1
     vec3 unitVectorToCamera = normalize(toCameraVector);
@@ -34,12 +34,12 @@ void main(void) {
         // Calcula el factor de atenuacion
         float attFactor = attenuation[i].x + (attenuation[i].y * distance) + (attenuation[i].z * distance * distance);
         vec3 unitLightVector = normalize(toLightVector[i]);
-        /* Calcula el producto escalar de los dos vectores normales. El resultado representa que tan correcto debe ser el pixel.
-         * Lo que es importante tener en cuenta es que el producto escalar de dos vectores unitarios que apuntan exactamente en
-         * la misma direccion es uno y el producto escalar de dos vectores perpendiculares que apuntan en direcciones totalmente
-         * diferentes es 0 y todo lo demas esta en algun punto intermedio (0.6, 0.3, etc.). Esto nos da una representacion
-         * perfecta de que tan similares son dos vectores y, por lo tanto, una representacion perfecta de que tan brillante debe
-         * ser un cierto punto en el objeto. */
+    /*  Calcula el producto escalar de los dos vectores normales. El resultado representa que tan correcto debe ser el pixel.
+        Lo que es importante tener en cuenta es que el producto escalar de dos vectores unitarios que apuntan exactamente en
+        la misma direccion es uno y el producto escalar de dos vectores perpendiculares que apuntan en direcciones totalmente
+        diferentes es 0 y todo lo demas esta en algun punto intermedio (0.6, 0.3, etc.). Esto nos da una representacion
+        perfecta de que tan similares son dos vectores y, por lo tanto, una representacion perfecta de que tan brillante debe
+        ser un cierto punto en el objeto. */
         float nDotl = dot(unitNormal, unitLightVector);
         // Se asegura de que el resultado se encuentre entre 0 y 1, porque a veces el producto escalar devolvera valores menores a 0
         float brightness = max(nDotl, 0.0);
@@ -54,8 +54,8 @@ void main(void) {
         float specularFactor = dot(reflectedLightDirection, unitVectorToCamera);
         // Se asegura de que el factor especular sea mayor que cero porque obviamente no podemos tener un brillo negativo
         specularFactor = max(specularFactor, 0.0);
-        /* Aplica la amortiguacion elevando el factor especular a la potencia del valor de amortiguacion, lo que hace que
-         * los factores especulares bajos sean aun mas bajos, pero no afecta tanto a los valores mas altos. */
+    /*  Aplica la amortiguacion elevando el factor especular a la potencia del valor de amortiguacion, lo que hace que
+        los factores especulares bajos sean aun mas bajos, pero no afecta tanto a los valores mas altos. */
         float dampedFactor = pow(specularFactor, shineDamper);
         // level = floor(dampedFactor * levels);
         // dampedFactor = level / levels;
@@ -68,10 +68,10 @@ void main(void) {
     // Se asegura que ninguna parte del modelo se oscurece por completo
     totalDiffuse = max(totalDiffuse, 0.2);
 
-    /* El metodo texture() devuelve el color del pixel en la coordenada de textura obtenida, de modo que muestreara la
-     * textura del modelTexture y la probara en las coordenadas de texturas del pass_textureCoords. Asi obtiene el
-     * color del pixel que encuentre en esas coordenadas de textura y lo envia al pixel que se esta procesando
-     * actualmente. */
+/*  El metodo texture() devuelve el color del pixel en la coordenada de textura obtenida, de modo que muestreara la
+    textura del modelTexture y la probara en las coordenadas de texturas del pass_textureCoords. Asi obtiene el
+    color del pixel que encuentre en esas coordenadas de textura y lo envia al pixel que se esta procesando
+    actualmente. */
     vec4 textureColor = texture(modelTexture, pass_textureCoords);
     // Verifica si el color alpha (transparente) de la textura es menor a 0.5
     if (textureColor.a < 0.5) {

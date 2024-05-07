@@ -7,13 +7,13 @@ uniform samplerCube cubeMap, cubeMap2;
 uniform float blendFactor;
 uniform vec3 fogColour;
 
-/* La forma en que se simula la niebla es desvaneciendo los objetos en el color de esta. Pero al usar un skybox, los
- * objetos distantes aun son muy visibles porque el color de la niebla constrasta con el colorido skybox. Para arreglar
- * esto, vamos a desvancer la seccion inferior del skybox en el color de la niebla para que los objetos distantes una
- * vez mas tengan un fondo de color liso para fusionarse. Vamos a definir dos alturas en el skybox, lowerLimit y
- * upperLimit. Por encima del limite superior, la altura del skybox usa el color de la textura del skybox y por debajo
- * de la altura del limite inferior el skybox sera completamente del color de la niebla. Entre los dos limites, el color
- * se desvanecera linealmente entre el color de la niebla y el color del skybox. */
+/*  La forma en que se simula la niebla es desvaneciendo los objetos en el color de esta. Pero al usar un skybox, los
+    objetos distantes aun son muy visibles porque el color de la niebla constrasta con el colorido skybox. Para arreglar
+    esto, vamos a desvancer la seccion inferior del skybox en el color de la niebla para que los objetos distantes una
+    vez mas tengan un fondo de color liso para fusionarse. Vamos a definir dos alturas en el skybox, lowerLimit y
+    upperLimit. Por encima del limite superior, la altura del skybox usa el color de la textura del skybox y por debajo
+    de la altura del limite inferior el skybox sera completamente del color de la niebla. Entre los dos limites, el color
+    se desvanecera linealmente entre el color de la niebla y el color del skybox. */
 
 const float lowerLimit = 0.0;
 const float upperLimit = 30.0;

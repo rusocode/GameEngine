@@ -4,12 +4,12 @@ in vec2 pass_textureCoords;
 in vec3 surfaceNormal, toLightVector[4], toCameraVector;
 in float visibility;
 
-/* En OpenGL, se utiliza un mapa de mezcla (blendMap) para indicar la ubicacion de diferentes texturas en un terreno.
- * Este mapa asigna colores a texturas especificas, como hierba (negro), tierra (rojo), flores (verde) y camino (azul).
- * Se crea un blendMap para cada terreno, y en los sombreadores, se hace referencia a este mapa para determinar la ubicacion
- * de cada textura. En el Fragment Shader, al implementar multitexturing, se obtienen colores de cuatro texturas para
- * cada pixel en el terreno. El color final del pixel es una mezcla de estos cuatro colores, y el blendMap se utiliza
- * para ajustar la proporcion de cada textura en el resultado final. */
+/*  En OpenGL, se utiliza un mapa de mezcla (blendMap) para indicar la ubicacion de diferentes texturas en un terreno.
+    Este mapa asigna colores a texturas especificas, como hierba (negro), tierra (rojo), flores (verde) y camino (azul).
+    Se crea un blendMap para cada terreno, y en los sombreadores, se hace referencia a este mapa para determinar la ubicacion
+    de cada textura. En el Fragment Shader, al implementar multitexturing, se obtienen colores de cuatro texturas para
+    cada pixel en el terreno. El color final del pixel es una mezcla de estos cuatro colores, y el blendMap se utiliza
+    para ajustar la proporcion de cada textura en el resultado final. */
 uniform sampler2D background, r, g, b, blendMap;
 
 uniform vec3 lightColour[4], attenuation[4];
@@ -28,8 +28,8 @@ void main(void) {
     vec2 tiledCoords = pass_textureCoords * 40.0;
     // Muestrea la textura de fondo en las coordenadas de textura del tile y lo multiplica por la cantidad que se debe representar
     vec4 backgroundTextureColor = texture(background, tiledCoords) * backTextureAmount;
-    /* La textura r se representa dependiendo del valor rojo en el blendMap. Se obtenie el color de esa textura y lo
-     * multiplica por el componente rojo del color del blendMap. */
+/*  La textura r se representa dependiendo del valor rojo en el blendMap. Se obtenie el color de esa textura y lo
+    multiplica por el componente rojo del color del blendMap. */
     vec4 rTextureColor = texture(r, tiledCoords) * blendMapColor.r;
     vec4 gTextureColor = texture(g, tiledCoords) * blendMapColor.g;
     vec4 bTextureColor = texture(b, tiledCoords) * blendMapColor.b;
