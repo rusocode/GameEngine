@@ -68,7 +68,8 @@ public class Game {
 
         placeModels(entities, terrain);
 
-        lights.add(new Light(new Vector3f(20000, 40000, 20000), new Vector3f(1, 1, 1))); // Sol
+        Light sun = new Light(new Vector3f(20000, 40000, 20000), new Vector3f(1, 1, 1));
+        lights.add(sun);
 
         Player player = new Player(playerModel, new Vector3f(100, 0, -100), new Vector3f(0, 180, 0), new Vector3f(0.7f, 0.7f, 0.7f));
         entities.add(player);
@@ -125,7 +126,7 @@ public class Game {
             GL11.glDisable(GL30.GL_CLIP_DISTANCE0); // Para el renderizado final, solo queremos renderizar toda la escena en pantalla sin recortar nada
             buffers.unbindCurrentFrameBuffer();
             renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, 0, 0, 0)); // Deshabilita el plano de recorte
-            waterRenderer.render(waters, camera);
+            waterRenderer.render(waters, camera, sun);
             guiRenderer.render(guis);
 
             DisplayManager.update();

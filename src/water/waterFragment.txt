@@ -3,16 +3,19 @@
 in vec4 clipSpace;
 in vec2 textureCoords;
 in vec3 toCameraVector;
+in vec3 fromLightVector;
 
 out vec4 out_Color;
 
-uniform sampler2D reflectionTexture, refractionTexture, dudvMap;
-
+uniform sampler2D reflectionTexture, refractionTexture, dudvMap, normalMap;
+uniform vec3 lightColour;
 // Offset para donde tomamos muestras del mapa dudv que cambia con el tiempo, lo que hara que el agua parezca que se esta moviendo
 uniform float moveFactor;
 
 // Indica la instensidad de la distorsion
 const float waveStrength = 0.02;
+const float shineDamper = 20.0;
+const float reflectivity = 0.6;
 
 void main(void) {
 
@@ -26,11 +29,11 @@ void main(void) {
     // Las coordenadas de la texturan de refraccion son iguales a las coordenadas normalizadas del dispositivo (ndc)
     vec2 refractTexCoords = vec2(ndc.x, ndc.y);
 
-    // Muestrea el mapa dudv para obtener la distorsion obteniendo solo los valores verde y rojo, y luego se hace la conversion para obtener un rango de valores entre -1 y 1
-    vec2 distortion1 = (texture(dudvMap, vec2(textureCoords.x + moveFactor, textureCoords.y)).rg * 2.0 - 1.0) * waveStrength;
+    // Muestrea el mapa dudv para obtener la distorsion obteniendo solo los valores verde y rojo
+    vec2 distortedTexCoords = texture(dudvMap, vec2(textureCoords.x + moveFactor, textureCoords.y)).rg * 0.1;
     // Mueva la distorsion en una direccion diferente
-    vec2 distortion2 = (texture(dudvMap, vec2(-textureCoords.x + moveFactor, textureCoords.y + moveFactor)).rg * 2.0 - 1.0) * waveStrength;
-    vec2 totalDistortion = distortion1 + distortion2;
+    distortedTexCoords = textureCoords + vec2(distortedTexCoords.x, distortedTexCoords.y + moveFactor);
+    vec2 totalDistortion = (texture(dudvMap, distortedTexCoords).rg * 2.0 - 1.0) * waveStrength;
 
     // Ahora podemos usar este valor para distorsionar las coordenadas de textura de reflexion y refraccion
     refractTexCoords += totalDistortion;
@@ -50,20 +53,25 @@ void main(void) {
     reflectTexCoords.x = clamp(reflectTexCoords.x, 0.001, 0.999);
     reflectTexCoords.y = clamp(reflectTexCoords.y, -0.999, -0.001);
 
-    /* Para distorsionar una textura, podemos agregar un desplazamiento a las coordenadas de texturas usando un vector
-     * como vec2(-0.1, 0.0), en donde desplaza el reflejo hacia la derecha. Pero esto solo agrega una distorcion constante
-     * en todo el quad del agua. Para que esto parezca realista, la distorcion debe ser distinta en diferentes puntos
-     * de la superficie del agua. Por lo que necesitamos que este valor de distorcion sea diferente para diferentes
-     * lugares del quad. Y aqui es donde entra en juego el DuDv Map. Un DuDv Map es solo una textura simple con muchas
-     * oscilaciones rojas y verdes. Esta textura esta llena de muchos colores rojo y verde, y estos valores de rojo y
-     * verde son todos vectores 2D que podemos usar como desplazamientos para agregar a las coordenadas de textura de
-     * reflexion y refraccion. Los valores rojo y verde siempre son positivos en la textura DuDv, obviamente no puede
-     * tener un color negativo, por lo que nuestras distorciones siempre seran positivas. Para tener distorciones tanto
-     * positivas como negativas para que parezca realista, necesitamos convertir los valores rojo y verde del mapa DuDv
-     * antes de usarlo. Los valores de color estan todos entre 0 y 1, asi que para convertirlos entre -1 y 1
-     * multiplicamos x2 y restamos 1. */
+    /* Para distorsionar la textura, se agregan desplazamientos a las coordenadas de textura, pero esto solo crea una
+     * distorsion constante en el quad del agua.
+     *
+     * Para que parezca realista, la distorsion debe variar en diferentes puntos de la superficie. Esto se logra con el
+     * DuDv Map, una textura con oscilaciones rojas y verdes que representan vectores 2D de desplazamiento.
+     *
+     * Como los valores rojo y verde son positivos en el DuDv Map, se convierten al rango -1 a 1 multiplicando por 2 y
+     * restando 1, permitiendo distorsiones tanto positivas como negativas para un efecto mas realista. */
     vec4 reflectColour = texture(reflectionTexture, reflectTexCoords);
     vec4 refractColour = texture(refractionTexture, refractTexCoords);
+
+    /* El normal map es principalmente de color azul porque el valor azul representa el eje de altura [y] del vector
+     * normal. Utilizaremos el componente azul para el componente [y].
+     *
+     * Los componentes rojo y verde se usan como [x] y [z], pero no pueden ser negativos, lo cual es un problema porque
+     * las normales deben poder apuntar en direcciones [x] y [z] negativas para ser realistas.
+     *
+     * Por lo tanto, convertiremos los componentes [x] y [z] del rango 0 a 1, al rango -1 a 1. Asi extraeremos los
+     * vectores normales completos del normal map. */
 
     // Normaliza el vector que apunta a la camara ya que el producto escalar necesita que los vectores sean vectores unitarios
     vec3 viewVector = normalize(toCameraVector);
@@ -72,12 +80,23 @@ void main(void) {
     // Indica que tan reflectante es la superficie del agua calculando la potencia del producto escalar
     refractiveFactor = pow(refractiveFactor, 1.0);
 
-	out_Color = mix(reflectColour, refractColour, refractiveFactor);
+    // Muestrea el Normal Map en las coordenadas de textura distorsionadas
+    vec4 normalMapColour = texture(normalMap, distortedTexCoords);
+    // Extrae la normal de ese color del Normal Map
+    vec3 normal = vec3(normalMapColour.r * 2.0 - 1.0, normalMapColour.b, normalMapColour.g * 2.0 - 1.0);
+    // Normaliza la normal para asegurarnos de que sea un vector unitario
+    normal = normalize(normal);
 
+    vec3 reflectedLight = reflect(normalize(fromLightVector), normal);
+    float specular = max(dot(reflectedLight, viewVector), 0.0);
+    specular = pow(specular, shineDamper);
+    vec3 specularHighlights = lightColour * specular * reflectivity;
+
+	out_Color = mix(reflectColour, refractColour, refractiveFactor);
     // Representa un color azul verdoso semitransparente en el espacio de color RGBA
     vec4 color = vec4(0.0, 0.3, 0.5, 1.0);
 	float mezcla = 0.2; // 20% mezcla
-	// Mezcla el color final con el color azul verdoso en un 20%
-	out_Color = mix(out_Color, color, mezcla);
+	// Mezcla el color final con el color azul verdoso en un 20% y le agrega la luz especular
+	out_Color = mix(out_Color, color, mezcla) + vec4(specularHighlights, 0.0);
 
 }
