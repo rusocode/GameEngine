@@ -2,10 +2,9 @@
 
 in vec2 position;
 
-out vec4 clipSpace;
 out vec2 textureCoords;
-out vec3 toCameraVector;
-out vec3 fromLightVector;
+out vec3 toCameraVector, fromLightVector;
+out vec4 clipSpace;
 
 uniform mat4 projectionMatrix, viewMatrix, modelMatrix;
 uniform vec3 cameraPosition, lightPosition;
@@ -14,13 +13,10 @@ uniform vec3 cameraPosition, lightPosition;
 const float tiling = 6.0;
 
 /*  El efecto Fresnel describe como la reflectividad del agua cambia segun el angulo de vision. El agua parece mas
-    transparente cuando se mira desde arriba y mas reflectante desde angulos bajos.
-
-    Si la normal del agua y el vector hacia la camara apuntan en la misma direccion, el agua debe ser mas transparente.
-    Cuando apuntan en direcciones diferentes, el agua debe ser mas reflectante.
-
-    El producto escalar entre la normal del agua y el vector hacia la camara determina que tan transparente debe ser el
-    agua. */
+    transparente cuando se mira desde arriba y mas reflectante desde angulos bajos. Si la normal del agua y el vector
+    hacia la camara apuntan en la misma direccion, el agua debe ser mas transparente. Cuando apuntan en direcciones
+    diferentes, el agua debe ser mas reflectante. El producto escalar entre la normal del agua y el vector hacia la
+    camara determina que tan transparente debe ser el agua. */
 
 void main(void) {
 

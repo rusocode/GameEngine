@@ -71,7 +71,7 @@ public class Game {
         Light sun = new Light(new Vector3f(20000, 40000, 20000), new Vector3f(1, 1, 1));
         lights.add(sun);
 
-        Player player = new Player(playerModel, new Vector3f(100, 0, -100), new Vector3f(0, 180, 0), new Vector3f(0.7f, 0.7f, 0.7f));
+        Player player = new Player(playerModel, new Vector3f(0, 0, 0), new Vector3f(0, 180, 0), new Vector3f(0.7f, 0.7f, 0.7f));
         entities.add(player);
         Camera camera = new Camera(player);
 

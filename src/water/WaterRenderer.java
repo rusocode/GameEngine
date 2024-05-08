@@ -29,7 +29,8 @@ public class WaterRenderer {
 
     private float moveFactor;
 
-    private int dudvTexture, normalMap;
+    private final int dudvTexture;
+    private final int normalMap;
 
     public WaterRenderer(Loader loader, WaterShader shader, Matrix4f projectionMatrix, WaterFrameBuffers fbos) {
         this.shader = shader;
