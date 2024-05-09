@@ -79,7 +79,7 @@ void main(void) {
 
 }
 
-// Este comentario se aplica a los primeros videos que hacen referencia un cuadrado rectangulo
+//Este comentario se aplica a los primeros videos que hacen referencia un cuadrado rectangulo
 /*  Para resumir, tenemos nuestro cuadrado de 6 lados con sus cuatro vertices almacenados en una matriz de atributos en
     un VAO: V1 (-0.5, 0.5, -0.5), V1 (-0.5, -0.5, -0.5), V2 (0.5, -0.5, -0.5) y V3 (0.5, 0.5, -0.5). El sombreador de
     vertices que acabamos de programar tiene acceso a estas posiciones desde: in vec4 position. Para que el sombreador de

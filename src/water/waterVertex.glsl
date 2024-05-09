@@ -10,7 +10,7 @@ uniform mat4 projectionMatrix, viewMatrix, modelMatrix;
 uniform vec3 cameraPosition, lightPosition;
 
 // Valor para colocar en mosaicos las coordendas de textura
-const float tiling = 6.0;
+const float tiling = 4.0;
 
 /*  El efecto Fresnel describe como la reflectividad del agua cambia segun el angulo de vision. El agua parece mas
     transparente cuando se mira desde arriba y mas reflectante desde angulos bajos. Si la normal del agua y el vector

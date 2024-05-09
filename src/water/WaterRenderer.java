@@ -18,8 +18,8 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class WaterRenderer {
 
-    private static final String DUDV_MAP = "waterDUDV";
-    private static final String NORMAL_MAP = "normalMap";
+    private static final String DUDV_MAP = "dudv";
+    private static final String NORMAL_MAP = "normal";
     // Velocidad de movimiento de las ondas del agua
     private static final float WAVE_SPEED = 0.03f;
 
