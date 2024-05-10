@@ -7,17 +7,13 @@ in vec4 clipSpace;
 out vec4 out_Color;
 
 uniform sampler2D reflectionTexture, refractionTexture;
-/*  Un DuDv map es una textura que contiene vectores de desplazamiento en lugar de colores. Estos vectores de
-    desplazamiento se utilizan para crear la ilusion de detalles geometricos adicionales en una superficie, sin tener
-    que aumentar la complejidad de la malla del modelo 3D. Mas especificamente, cada texel (textura + pixel) del DuDv
-    map contiene un vector 2D codificado en los canales rojo y verde de la textura. Estos vectores se utilizan para
-    desplazar ligeramente la posicion de la superficie en la direccion de la normal de la superficie, creando relieves,
-    hendiduras y otros detalles aparentes. Para distorsionar la superficie del agua, se agregan desplazamientos a las 
-    coordenadas de textura de esta, pero esto solo crea una distorsion constante en el quad del agua. Para que parezca 
-    realista, la distorsion debe variar en diferentes puntos de la superficie. Esto se logra con el DuDv Map, una 
-    textura con oscilaciones rojas y verdes que representan vectores 2D de desplazamiento. Como los valores rojo y verde 
-    son positivos en el DuDv Map, se convierten al rango -1 a 1 multiplicando por 2 y restando 1, permitiendo 
-    distorsiones tanto positivas como negativas para un efecto mas realista. */
+/*  Un DuDv map es una textura con vectores de desplazamiento en lugar de colores. Estos vectores se usan para crear la 
+    ilusion de detalles geometricos en una superficie sin aumentar la complejidad del modelo 3D. Cada texel (textura + 
+    pixel) del DuDv map contiene un vector 2D codificado en rojo y verde. Estos vectores desplazan ligeramente la 
+    superficie creando relieves y hendiduras. Para distorsionar la superficie del agua de forma realista, la distorsion 
+    debe variar en diferentes puntos. El DuDv map, con oscilaciones rojas y verdes que representan vectores 2D de 
+    desplazamiento, permite lograr esto. Como los valores rojo y verde son positivos, se convierten al rango -1 a 1 para 
+    permitir distorsiones tanto positivas como negativas, dando un efecto mas realista. */
 uniform sampler2D dudvMap;
 /*  El normal map es principalmente de color azul porque el valor azul representa el eje de altura [y] del vector
     normal. Utilizaremos el componente azul para el componente [y]. Los componentes rojo y verde se usan como [x] y [z],
@@ -116,10 +112,11 @@ void main(void) {
     // Normaliza la normal para asegurarnos de que sea un vector unitario
     normal = normalize(normal);
 
+    // Calculo Fresnel
     // Normaliza el vector que apunta a la camara ya que el producto escalar necesita que los vectores sean vectores unitarios
     vec3 viewVector = normalize(toCameraVector);
     // Calcula el producto escalar de el vector que apunta a la camara (ya normalizado) y de la normal que apunta hacia arriba
-    float refractiveFactor = dot(viewVector, normal); // Ahora utiliza la normal del normal map para evitar que el agua sea plana, pero vas a ver que resulta un poco extremo y se debe a que las normales estan por todos lados. Esto se soluciona haciendo que las normales apunten hacia arriba aumentando un poco el componente [y] de las normales
+    float refractiveFactor = dot(viewVector, normal); // Ahora utiliza la normal del normal map para evitar que el agua sea plana, pero vas a ver que resulta un poco extremo y se debe a que las normales estan por todos lados. Esto se soluciona haciendo que las normales apunten hacia arriba aumentando un poco el componente [y] de las normales, en este caso se multiplica el componente b que representa el eje y por 3
     // Indica que tan reflectante es la superficie del agua calculando la potencia del producto escalar
     refractiveFactor = pow(refractiveFactor, 1.0); // Valor calculado del efecto Fresnel
 
