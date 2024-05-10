@@ -25,6 +25,7 @@ uniform sampler2D dudvMap;
     [z] negativas para ser realistas. Por lo tanto, convertiremos los componentes [x] y [z] del rango 0 a 1, al rango -1
     a 1. Asi extraeremos los vectores normales completos del normal map. */
 uniform sampler2D normalMap;
+uniform sampler2D depthMap;
 
 uniform vec3 lightColour;
 // Offset para donde tomamos muestras del mapa dudv que cambia con el tiempo, lo que hara que el agua parezca que se esta moviendo
@@ -48,12 +49,38 @@ void main(void) {
     vec2 reflectTexCoords = vec2(ndc.x, -ndc.y); // Invierte la coordenada [y] debido a que es una reflexion
     vec2 refractTexCoords = vec2(ndc.x, ndc.y); // Las coordenadas de la texturan de refraccion son iguales a las coordenadas normalizadas del dispositivo
 
+    // Estos valores deben ser iguales a los de la clase MasterRenderer
+    float near = 0.1;
+    float far = 1000.0;
+/*  Muestrea el mapa de profundidad usando las coordenadas de textura de refraccion obteniendo el componente rojo porque
+    ahi es donde se almacena la informacion de profundidad. Desafortunadamente esto no nos da una distancia, nos da un
+    numero entre 0 y 1 que representa la distancia. Pero no lo es. Ni siquiera representa la distancia linealmente, de
+    hecho es algo como una linea curva (ver foto en celu) que brinda mucha mas precision de profundidad a los objetos
+    mas cercanos en la escena, por lo que vamos a necesitar convertir este valor de profundidad en una distancia. */
+    float depth = texture(depthMap, refractTexCoords).r;
+    // Hace la conversion calculando la distancia desde la camara al terreno bajo el agua
+    float floorDistance = 2.0 * near * far / (far + near - (2.0 * depth - 1.0) * (far - near));
+
+    // Calcula la distancia desde la camara hasta el fragmento actual en la superficie del agua y podemos hacerlo mediante la variable gl_FragCoord usando el componente z para obtener la profundidadd
+    depth = gl_FragCoord.z;
+    // Hace la conversion para convertir la profundidad en una distancia real
+    float waterDistance = 2.0 * near * far / (far + near - (2.0 * depth - 1.0) * (far - near));
+
+/*  Ahora que tenemos la distancia del piso y la distancia de la superficie del agua, podemos calcular la profundidad
+    del agua restando la distancia del agua de la distancia del piso. Ahora tenemos la informacion sobre la profundidad
+    del agua que nos sirve para suavizar los bordes del agua. La forma mas facil de suavizar los bordes es usar la
+    mezcla alfa y hacer que los bordes del cuadrilatero del agua se mezclen gradualmente con transparencia. */
+    float waterDepth = floorDistance - waterDistance;
+
     // Muestrea el DuDv Map para obtener la distorsion movida en [x] obteniendo solo los valores rojo y verde (rg = red, green)
     vec2 distortedTexCoords = texture(dudvMap, vec2(textureCoords.x + moveFactor, textureCoords.y)).rg * 0.1;
     // Ahora mueve la distorsion en la direccion [y] para darle un efecto realista a la distorsion
     distortedTexCoords = textureCoords + vec2(distortedTexCoords.x, distortedTexCoords.y + moveFactor);
-    // Calcula la distorsion total obteniendo valores entre -1 y 1 de cada color en el DuDv Map para un efecto mas realista y se multiplica por la instensidad de la onda
-    vec2 totalDistortion = (texture(dudvMap, distortedTexCoords).rg * 2.0 - 1.0) * waveStrength;
+/*  Calcula la distorsion total obteniendo valores entre -1 y 1 de cada color en el DuDv Map para un efecto mas realista
+    y se multiplica por la instensidad de la onda. Por ultimo se reduce la distorsion alrededor de los bordes del agua
+    para disminuir el efecto de los bordes con fallas multiplicando clamp(waterDepth / 20.0, 0.0, 1.0), en donde se
+    divide por 20 para que la transicion sea mas larga y gradual. */
+    vec2 totalDistortion = (texture(dudvMap, distortedTexCoords).rg * 2.0 - 1.0) * waveStrength * clamp(waterDepth / 20.0, 0.0, 1.0);
 
     // Ahora podemos usar este valor para distorsionar las coordenadas de textura de reflexion y refraccion
     refractTexCoords += totalDistortion;
@@ -82,24 +109,26 @@ void main(void) {
     vec4 reflectColour = texture(reflectionTexture, reflectTexCoords);
     vec4 refractColour = texture(refractionTexture, refractTexCoords);
 
-    // Normaliza el vector que apunta a la camara ya que el producto escalar necesita que los vectores sean vectores unitarios
-    vec3 viewVector = normalize(toCameraVector);
-    // Calcula el producto escalar de el vector que apunta a la camara (ya normalizado) y de la normal que apunta hacia arriba
-    float refractiveFactor = dot(viewVector, vec3(0.0, 1.0, 0.0));
-    // Indica que tan reflectante es la superficie del agua calculando la potencia del producto escalar
-    refractiveFactor = pow(refractiveFactor, 1.0); // Valor calculado del efecto Fresnel
-
     // Muestrea el valor de color del Normal Map en las coordenadas de textura distorsionadas
     vec4 normalMapColour = texture(normalMap, distortedTexCoords);
     // Extrae la normal de ese color del Normal Map
-    vec3 normal = vec3(normalMapColour.r * 2.0 - 1.0, normalMapColour.b, normalMapColour.g * 2.0 - 1.0);
+    vec3 normal = vec3(normalMapColour.r * 2.0 - 1.0, normalMapColour.b * 3.0, normalMapColour.g * 2.0 - 1.0);
     // Normaliza la normal para asegurarnos de que sea un vector unitario
     normal = normalize(normal);
+
+    // Normaliza el vector que apunta a la camara ya que el producto escalar necesita que los vectores sean vectores unitarios
+    vec3 viewVector = normalize(toCameraVector);
+    // Calcula el producto escalar de el vector que apunta a la camara (ya normalizado) y de la normal que apunta hacia arriba
+    float refractiveFactor = dot(viewVector, normal); // Ahora utiliza la normal del normal map para evitar que el agua sea plana, pero vas a ver que resulta un poco extremo y se debe a que las normales estan por todos lados. Esto se soluciona haciendo que las normales apunten hacia arriba aumentando un poco el componente [y] de las normales
+    // Indica que tan reflectante es la superficie del agua calculando la potencia del producto escalar
+    refractiveFactor = pow(refractiveFactor, 1.0); // Valor calculado del efecto Fresnel
 
     vec3 reflectedLight = reflect(normalize(fromLightVector), normal);
     float specular = max(dot(reflectedLight, viewVector), 0.0);
     specular = pow(specular, shineDamper);
-    vec3 specularHighlights = lightColour * specular * reflectivity;
+/*  Multiplica la luz especular por clamp(waterDepth / 5.0, 0.0, 1.0) para atenuar los reflejos especulares alrededor 
+    del borde del agua porque si estos reflejos especulares son demasiado fuertes, arruinan el efecto del borde suave. */
+    vec3 specularHighlights = lightColour * specular * reflectivity * clamp(waterDepth / 5.0, 0.0, 1.0);
 
     // Mezcla el color de reflexion con el color de refraccion dependiendo del angulo de la camara (en %)
     out_Color = mix(reflectColour, refractColour, refractiveFactor);
@@ -108,5 +137,17 @@ void main(void) {
     float mezcla = 0.2; // 20% mezcla
     // Mezcla el color final con el color azul verdoso en un 20% y le agrega la luz especular
     out_Color = mix(out_Color, color, mezcla) + vec4(specularHighlights, 0.0);
+/*  Establece el valor alfa del color de salida para determinar que tan transparente debe ser el agua, asi que configura
+    el punto de color de salida [a] (componente alfa) a la profundidad real del agua. Los bordes del agua son
+    completamente transparentes ya que tienen una profundidad de 0. A medidad que aumenta la profundidad del agua, esta
+    se vuelve menos transparente. Si ahora dividimos la profunidad del agua por 5, agrega una profundidad de agua de 5
+    para aumentar la transicion. El agua tiene un valor alfa de 1 y no es transparente en absoluto, sin embargo, el
+    valor alfa debe permanecer en 1 para profunidades mayores en lugar de aumentar mas. Asi que limita este valor entre
+    0 y 1. Si queremos cambiar la profundidad a la que el agua tiene un valor alfa de 1, entonces puede cambiar ese
+    valor a cualquier profundidad. */
+    out_Color.a = clamp(waterDepth / 5.0, 0.0, 1.0);
+
+    // Testea las areas mas profundas del agua en color blanco y las areas mas altas de color negro
+    // out_Color = vec4(waterDepth / 50.0);
 
 }

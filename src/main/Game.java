@@ -100,9 +100,9 @@ public class Game {
 
             // updatePicker(picker, lamp, light);
 
-            /* Una vez habilitado un plano de recorte, se debe especificar su ecuación en el Vertex Shader para que se aplique
+            /* Una vez habilitado un plano de recorte, se debe especificar su ecuacion en el Vertex Shader para que se aplique
              * correctamente durante el renderizado. Esto permite crear efectos complejos, como renderizar escenas desde el
-             * interior de un objeto o mostrar únicamente las partes visibles a través de un agujero. */
+             * interior de un objeto o mostrar unicamente las partes visibles a traves de un agujero. */
             GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 
             // Renderiza las texturas de reflexion
@@ -111,8 +111,12 @@ public class Game {
             float distance = 2 * (camera.getPosition().y - water.getHeight());
             camera.getPosition().y -= distance;
             camera.invertPitch();
-            // Recorta todo lo que esta por encima de la altura del agua
-            renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, 1, 0, -water.getHeight()));
+            /* Recorta todo lo que esta por encima de la altura del agua. Esto nos deja mucho margen de error y es lo que causa
+             * los fallos, especialmente cuando el agua estaba distorcionada. Ahora que hemos amortiguado la distorsion, el error
+             * casi ha desaparecido, pero todavia se ve algun pixel ocasional, por lo que en lugar de hacer que el plano de recorte
+             * se corte exactamente en la superficie del agua, podemos agregar un pequenio desplazamiento para crea una pequenia
+             * superposicion. */
+            renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, 1, 0, -water.getHeight() + 1f));
             // Vuelve la camara a su posicion original
             camera.getPosition().y += distance;
             camera.invertPitch();
