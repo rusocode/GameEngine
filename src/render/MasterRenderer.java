@@ -4,16 +4,16 @@ import java.util.*;
 
 import entities.*;
 import models.TexturedModel;
-import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
 import shaders.EntityShader;
 import shaders.TerrainShader;
 import skybox.SkyboxRenderer;
 import terrains.Terrain;
 
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector4f;
 import org.lwjgl.util.vector.Matrix4f;
+
+import static org.lwjgl.opengl.GL11.*;
 
 /**
  * Renderiza la escena creando los shader y renders de cada textura.
@@ -51,13 +51,13 @@ public class MasterRenderer {
 
     public static void enableCulling() {
         // Evita que se rendericen las caras posteriores del modelo (Culling Faces)
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glEnable(GL11.GL_BACK);
+        glEnable(GL_CULL_FACE);
+        glEnable(GL_BACK);
     }
 
     // Desactiva la seleccion de caras posteriores cada vez que renderiza un objeto con transparencia
     public static void disableCulling() {
-        GL11.glDisable(GL11.GL_CULL_FACE);
+        glDisable(GL_CULL_FACE);
     }
 
     public void renderScene(List<Entity> entities, List<Terrain> terrains, List<Light> lights, Camera camera, Vector4f clipPlane) {
@@ -112,14 +112,11 @@ public class MasterRenderer {
         terrainShader.clean();
     }
 
-    /**
-     * Se llama una vez en cada fotograma y simplemente prepara a OpenGL para renderizar el juego.
-     */
     public void prepare() {
-        GL11.glEnable(GL11.GL_DEPTH_TEST); // Para que OpenGL pruebe que triangulo esta por encima del otro evitando que se superpongan
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST); // Para que OpenGL pruebe que triangulo esta por encima del otro evitando que se superpongan
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // Borra el color del ultimo fotograma
-        GL11.glClearColor(RED, GREEN, BLUE, 1);
+        glClearColor(RED, GREEN, BLUE, 1);
     }
 
     /**

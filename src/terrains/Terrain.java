@@ -1,17 +1,18 @@
 package terrains;
 
+import models.RawModel;
+import render.Loader;
+import textures.TerrainTexture;
+import textures.TerrainTexturePack;
+import utils.Maths;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import models.RawModel;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
-import render.Loader;
-import textures.TerrainTexture;
-import textures.TerrainTexturePack;
-import utils.Maths;
 
 /**
  * Un terreno es basicamente una entidad.

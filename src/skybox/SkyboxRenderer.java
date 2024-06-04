@@ -5,11 +5,12 @@ import models.RawModel;
 import render.DisplayManager;
 import render.Loader;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
+
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.*;
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.*;
 
 public class SkyboxRenderer {
 
@@ -94,12 +95,12 @@ public class SkyboxRenderer {
         shader.start();
         shader.loadViewMatrix(camera);
         shader.loadFogColour(r, g, b);
-        GL30.glBindVertexArray(cube.getVaoID());
-        GL20.glEnableVertexAttribArray(0);
+        glBindVertexArray(cube.getVaoID());
+        glEnableVertexAttribArray(0);
         bindTextures();
-        GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, cube.getVertexCount());
-        GL20.glDisableVertexAttribArray(0);
-        GL30.glBindVertexArray(0);
+        glDrawArrays(GL_TRIANGLES, 0, cube.getVertexCount());
+        glDisableVertexAttribArray(0);
+        glBindVertexArray(0);
         shader.stop();
     }
 
@@ -126,10 +127,10 @@ public class SkyboxRenderer {
             blendFactor = (time - 21000) / (24000 - 21000);
         }
 
-        GL13.glActiveTexture(GL13.GL_TEXTURE0);
-        GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texture1);
-        GL13.glActiveTexture(GL13.GL_TEXTURE1);
-        GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texture2);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, texture1);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, texture2);
         shader.loadBlendFactor(blendFactor);
     }
 

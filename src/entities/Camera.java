@@ -1,6 +1,5 @@
 package entities;
 
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -24,8 +23,8 @@ public class Camera {
      */
     public void move() {
         calculateZoom();
-        calculatePitch();
-        calculateAngleAroundPlayer();
+        // calculatePitch();
+        calculateAngleAroundPlayerAndPitch();
         calculateCameraPosition(calculateHorizontalDistance(), calculateVerticalDistance());
         /* Usando lo que sabemos sobre angulos en lineas paralelas, sabemos que el angulo de la camara (yaw) debe ser igual a
          * theta. Por lo que tu angulo es igual a todo ese angulo que es 180 grados menos theta. Asi puedes rotar la camara
@@ -86,29 +85,23 @@ public class Camera {
 
     private void calculateZoom() {
         float zoomLevel = 0;
-        if (Keyboard.isKeyDown(Keyboard.KEY_P)) zoomLevel--;
-        if (Keyboard.isKeyDown(Keyboard.KEY_O)) zoomLevel++;
-        // float zoomLevel = Mouse.getDWheel() * 0.1f; // Lo multiplica por 0.1 para evitar que se aleje o acerque rapidamente
+        // if (Keyboard.isKeyDown(Keyboard.KEY_P)) zoomLevel--;
+        // if (Keyboard.isKeyDown(Keyboard.KEY_O)) zoomLevel++;
+        zoomLevel = Mouse.getDWheel() * 0.1f; // Lo multiplica por 0.1 para evitar que se aleje o acerque rapidamente
         zoom -= zoomLevel;
     }
 
-    private void calculatePitch() {
-        // Si se presiono el boton derecho del mouse
-        if (Mouse.isButtonDown(1)) {
-            // Calcula cuanto se a movido la camara hacia arriba o abajo
-            float pitchChange = Mouse.getDY() * 0.1f;
-            pitch -= pitchChange;
-            if (pitch < 1) pitch = 1; // Evita que la camara pase por debajo del terreno
-            else if (pitch > 90) pitch = 90; // Evita que la camara pase por encima del player
-        }
-    }
-
-    private void calculateAngleAroundPlayer() {
+    private void calculateAngleAroundPlayerAndPitch() {
         // Si se presiono el boton izquierdo del mouse
         if (Mouse.isButtonDown(0)) {
             // Calcula cuanto se a movido la camara hacia la izquierda o derecha
-            float angleChange = Mouse.getDX() * 0.07f;
+            float angleChange = Mouse.getDX() * 0.12f;
             angleAroundPlayer -= angleChange;
+            // Calcula cuanto se a movido la camara hacia arriba o abajo
+            float pitchChange = Mouse.getDY() * 0.12f;
+            pitch -= pitchChange;
+            if (pitch < 1) pitch = 1; // Evita que la camara pase por debajo del terreno
+            else if (pitch > 90) pitch = 90; // Evita que la camara pase por encima del player
         }
     }
 

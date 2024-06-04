@@ -10,11 +10,12 @@ import utils.Maths;
 import entities.Camera;
 import entities.Light;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
+
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.*;
 
 public class WaterRenderer {
 
@@ -49,7 +50,7 @@ public class WaterRenderer {
         for (WaterTile tile : water) {
             Matrix4f modelMatrix = Maths.createTransformationMatrix(new Vector3f(tile.getX(), tile.getHeight(), tile.getZ()), new Vector3f(0, 0, 0), new Vector3f(WaterTile.TILE_SIZE, WaterTile.TILE_SIZE, WaterTile.TILE_SIZE));
             shader.loadModelMatrix(modelMatrix);
-            GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, quad.getVertexCount());
+            glDrawArrays(GL_TRIANGLES, 0, quad.getVertexCount());
         }
         unbind();
     }
@@ -64,28 +65,28 @@ public class WaterRenderer {
         // Carga el movimiento en el shader
         shader.loadMoveFactor(moveFactor);
         shader.loadLight(sun);
-        GL30.glBindVertexArray(quad.getVaoID());
-        GL20.glEnableVertexAttribArray(0);
+        glBindVertexArray(quad.getVaoID());
+        glEnableVertexAttribArray(0);
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, fbos.getReflectionTexture());
+        glBindTexture(GL_TEXTURE_2D, fbos.getReflectionTexture());
         GL13.glActiveTexture(GL13.GL_TEXTURE1);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, fbos.getRefractionTexture());
+        glBindTexture(GL_TEXTURE_2D, fbos.getRefractionTexture());
         GL13.glActiveTexture(GL13.GL_TEXTURE2);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, dudvTexture);
+        glBindTexture(GL_TEXTURE_2D, dudvTexture);
         GL13.glActiveTexture(GL13.GL_TEXTURE3);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalMap);
+        glBindTexture(GL_TEXTURE_2D, normalMap);
         GL13.glActiveTexture(GL13.GL_TEXTURE4);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, fbos.getRefractionDepthTexture());
+        glBindTexture(GL_TEXTURE_2D, fbos.getRefractionDepthTexture());
 
         // Habilita la combinacion alfa
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 
     private void unbind() {
-        GL11.glDisable(GL11.GL_BLEND);
-        GL20.glDisableVertexAttribArray(0);
-        GL30.glBindVertexArray(0);
+        glDisable(GL_BLEND);
+        glDisableVertexAttribArray(0);
+        glBindVertexArray(0);
         shader.stop();
     }
 

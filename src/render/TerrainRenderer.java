@@ -8,12 +8,13 @@ import terrains.Terrain;
 import textures.TerrainTexturePack;
 import utils.Maths;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
+
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.*;
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.*;
 
 public class TerrainRenderer {
 
@@ -31,7 +32,7 @@ public class TerrainRenderer {
         for (Terrain terrain : terrains) {
             prepareTexturedModel(terrain);
             loadModelMatrix(terrain);
-            GL11.glDrawElements(GL11.GL_TRIANGLES, terrain.getModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+            glDrawElements(GL_TRIANGLES, terrain.getModel().getVertexCount(), GL_UNSIGNED_INT, 0);
             unbindTexturedModel();
         }
     }
@@ -45,10 +46,10 @@ public class TerrainRenderer {
          * glVertexAttribPointer()) operaran en el VAO activado.
          * En resumen, glBindVertexArray() se utiliza para vincular un VAO especifico, lo que permite a OpenGL recordar los
          * estados de los atributos de vertices asociados a ese VAO para su uso posterior durante el proceso de renderizado. */
-        GL30.glBindVertexArray(rawModel.getVaoID());
-        GL20.glEnableVertexAttribArray(0);
-        GL20.glEnableVertexAttribArray(1);
-        GL20.glEnableVertexAttribArray(2);
+        glBindVertexArray(rawModel.getVaoID());
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
         shader.loadSpecularLight(1, 0);
         bindTextures(terrain);
     }
@@ -60,16 +61,16 @@ public class TerrainRenderer {
      */
     private void bindTextures(Terrain terrain) {
         TerrainTexturePack pack = terrain.getTexturePack();
-        GL13.glActiveTexture(GL13.GL_TEXTURE0);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, pack.getBackground().getID());
-        GL13.glActiveTexture(GL13.GL_TEXTURE1);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, pack.getR().getID());
-        GL13.glActiveTexture(GL13.GL_TEXTURE2);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, pack.getG().getID());
-        GL13.glActiveTexture(GL13.GL_TEXTURE3);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, pack.getB().getID());
-        GL13.glActiveTexture(GL13.GL_TEXTURE4);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, terrain.getBlendMap().getID());
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, pack.getBackground().getID());
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, pack.getR().getID());
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, pack.getG().getID());
+        glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_2D, pack.getB().getID());
+        glActiveTexture(GL_TEXTURE4);
+        glBindTexture(GL_TEXTURE_2D, terrain.getBlendMap().getID());
     }
 
     private void loadModelMatrix(Terrain terrain) {
@@ -78,10 +79,10 @@ public class TerrainRenderer {
     }
 
     private void unbindTexturedModel() {
-        GL20.glDisableVertexAttribArray(0);
-        GL20.glDisableVertexAttribArray(1);
-        GL20.glDisableVertexAttribArray(2);
-        GL30.glBindVertexArray(0);
+        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(2);
+        glBindVertexArray(0);
     }
 
 }

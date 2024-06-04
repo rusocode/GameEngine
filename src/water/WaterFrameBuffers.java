@@ -3,10 +3,11 @@ package water;
 import java.nio.ByteBuffer;
 
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
-import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GL32;
+
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL14.*;
+import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL32.*;
 
 /**
  * Cuando se renderiza una escena, renderizamos nuestros objetos y terrenos uno por uno, pero no aparecen en pantalla hasta que
@@ -32,7 +33,7 @@ public class WaterFrameBuffers {
 
     // Resoluciones, mientras menor sea la resolucion, menos costoso sera renderizar
     protected static final int REFLECTION_WIDTH = 320, REFLECTION_HEIGHT = 180;
-    protected static final int REFRACTION_WIDTH = 1280, REFRACTION_HEIGHT = 720;
+    protected static final int REFRACTION_WIDTH = 800, REFRACTION_HEIGHT = 600;
 
     private int reflectionFrameBuffer, reflectionTexture, reflectionDepthBuffer;
     private int refractionFrameBuffer, refractionTexture, refractionDepthTexture;
@@ -63,8 +64,8 @@ public class WaterFrameBuffers {
      * como ID.
      */
     public void unbindCurrentFrameBuffer() { // Se llama para cambiar al bufer de cuadros predeterminado
-        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
-        GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glViewport(0, 0, Display.getWidth(), Display.getHeight());
     }
 
     public void bindReflectionFrameBuffer() { // Se llama antes de renderizar a este FBO
@@ -80,68 +81,68 @@ public class WaterFrameBuffers {
      * lo que rendericemos despues de eso se renderizara a ese FBO.
      */
     private void bindFrameBuffer(int frameBuffer, int width, int height) {
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0); // Se asegura de que la textura no este unida
-        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, frameBuffer);
+        glBindTexture(GL_TEXTURE_2D, 0); // Se asegura de que la textura no este unida
+        glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
         // Cambia la resolucion de nuestra ventana grafica a la resolucion de nuestro FBO
-        GL11.glViewport(0, 0, width, height);
+        glViewport(0, 0, width, height);
     }
 
     private int createFrameBuffer() {
         // Genera un id para el framebuffer
-        int frameBuffer = GL30.glGenFramebuffers();
+        int frameBuffer = glGenFramebuffers();
         // Vincula el framebuffer
-        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, frameBuffer);
+        glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
         // Indica que siempre renderizaremos al color adjunto 0
-        GL11.glDrawBuffer(GL30.GL_COLOR_ATTACHMENT0);
+        glDrawBuffer(GL_COLOR_ATTACHMENT0);
         return frameBuffer;
     }
 
     private int createTextureAttachment(int width, int height) {
         // Genera un id para la textura
-        int texture = GL11.glGenTextures();
+        int texture = glGenTextures();
         // Enlaza la textura especificando el tipo de textura (GL_TEXTURE_2D) y el id
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
         /* Define una imagen bidimensional como contenido de una textura. Esta funcion especifica los datos de la imagen, como su
          * formato de pixeles, tamaño, y el contenido de los pixeles en si. */
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, width, height, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, (ByteBuffer) null);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         /* Adjunta una textura a un framebuffer. Esto significa que la textura se utilizara como un destino de renderizado en
          * lugar de un framebuffer tradicional. La constante GL_COLOR_ATTACHMENT0 especifica el tipo de buffer de framebuffer al
          * que se adjuntara la textura. */
-        GL32.glFramebufferTexture(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, texture, 0);
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0);
         return texture;
     }
 
     private int createDepthTextureAttachment(int width, int height) {
-        int texture = GL11.glGenTextures();
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL14.GL_DEPTH_COMPONENT32, width, height, 0, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, (ByteBuffer) null);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-        GL32.glFramebufferTexture(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, texture, 0);
+        int texture = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, (ByteBuffer) null);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture, 0);
         return texture;
     }
 
     private int createDepthBufferAttachment(int width, int height) {
         // Genera un id para el buffer de profundidad
-        int depthBuffer = GL30.glGenRenderbuffers();
-        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, depthBuffer);
+        int depthBuffer = glGenRenderbuffers();
+        glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
         /* Especifica el formato y el tamaño de almacenamiento del renderbuffer. Es decir, se utiliza para reservar memoria y
          * configurar el renderbuffer con ciertas propiedades. La constante GL_DEPTH_COMPONENT epecifica el formato interno de
          * almacenamiento de datos del renderbuffer. */
-        GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL11.GL_DEPTH_COMPONENT, width, height);
-        GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL30.GL_RENDERBUFFER, depthBuffer);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
         return depthBuffer;
     }
 
     public void clean() {
-        GL30.glDeleteFramebuffers(reflectionFrameBuffer);
-        GL11.glDeleteTextures(reflectionTexture);
-        GL30.glDeleteRenderbuffers(reflectionDepthBuffer);
-        GL30.glDeleteFramebuffers(refractionFrameBuffer);
-        GL11.glDeleteTextures(refractionTexture);
-        GL11.glDeleteTextures(refractionDepthTexture);
+        glDeleteFramebuffers(reflectionFrameBuffer);
+        glDeleteTextures(reflectionTexture);
+        glDeleteRenderbuffers(reflectionDepthBuffer);
+        glDeleteFramebuffers(refractionFrameBuffer);
+        glDeleteTextures(refractionTexture);
+        glDeleteTextures(refractionDepthTexture);
     }
 
     public int getReflectionTexture() {

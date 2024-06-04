@@ -4,10 +4,6 @@ import models.TexturedModel;
 
 import org.lwjgl.util.vector.Vector3f;
 
-/**
- * Entidad.
- */
-
 public class Entity {
 
     private TexturedModel model;
