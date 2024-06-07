@@ -1,7 +1,7 @@
 package textures;
 
 /**
- * Textura de terreno.
+ * Textura del terreno.
  */
 
 public class TerrainTexture {

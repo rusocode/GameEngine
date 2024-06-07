@@ -23,7 +23,6 @@ public class Camera {
      */
     public void move() {
         calculateZoom();
-        // calculatePitch();
         calculateAngleAroundPlayerAndPitch();
         calculateCameraPosition(calculateHorizontalDistance(), calculateVerticalDistance());
         /* Usando lo que sabemos sobre angulos en lineas paralelas, sabemos que el angulo de la camara (yaw) debe ser igual a

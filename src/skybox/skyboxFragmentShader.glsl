@@ -1,6 +1,7 @@
 #version 400
 
 in vec3 textureCoords;
+
 out vec4 out_Color;
 
 uniform samplerCube cubeMap, cubeMap2;
@@ -38,5 +39,4 @@ void main(void) {
 
     // Solo utiliza el color de la textura del skybox
     out_Color = finalColour;
-
 }

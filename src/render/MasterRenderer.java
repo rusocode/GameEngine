@@ -1,13 +1,13 @@
 package render;
 
-import java.util.*;
-
 import entities.*;
 import models.TexturedModel;
 import shaders.EntityShader;
 import shaders.TerrainShader;
 import skybox.SkyboxRenderer;
 import terrains.Terrain;
+
+import java.util.*;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector4f;
@@ -55,8 +55,8 @@ public class MasterRenderer {
         glEnable(GL_BACK);
     }
 
-    // Desactiva la seleccion de caras posteriores cada vez que renderiza un objeto con transparencia
     public static void disableCulling() {
+        // Desactiva la seleccion de caras posteriores cada vez que renderiza un objeto con transparencia
         glDisable(GL_CULL_FACE);
     }
 

@@ -13,12 +13,9 @@ public class SkyboxShader extends ShaderProgram {
     private static final String VERTEX_FILE = "src/skybox/skyboxVertexShader.glsl";
     private static final String FRAGMENT_FILE = "src/skybox/skyboxFragmentShader.glsl";
 
-    private static final float ROTATE_SPEED = 1f;
-
     private int location_viewMatrix, location_projectionMatrix;
     private int location_fogColour;
-    private int location_cubeMap;
-    private int location_cubeMap2;
+    private int location_cubeMap, location_cubeMap2;
     private int location_blendFactor;
 
     private float rotation;
@@ -53,6 +50,7 @@ public class SkyboxShader extends ShaderProgram {
         matrix.m30 = 0;
         matrix.m31 = 0;
         matrix.m32 = 0;
+        float ROTATE_SPEED = 1;
         rotation += ROTATE_SPEED * DisplayManager.getFrameTimeSeconds();
         // Rota la matriz en el eje y usando el valor de rotacion calculado
         Matrix4f.rotate((float) Math.toRadians(rotation), new Vector3f(0, 1, 0), matrix, matrix);

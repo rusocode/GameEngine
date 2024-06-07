@@ -48,14 +48,14 @@ public class Loader {
      * Carga los objetos que estan compuestos solo por vertices, como guis, skybox y water.
      *
      * @param vertices   array de vertices.
-     * @param dimensions dimension.
+     * @param dimension cantidad de componentes.
      * @return el modelo sin procesar.
      */
-    public RawModel loadToVAO(float[] vertices, int dimensions) {
+    public RawModel loadToVAO(float[] vertices, int dimension) {
         int id = init();
-        loadDataIntoVAO(0, dimensions, vertices);
+        loadDataIntoVAO(0, dimension, vertices);
         unbindVao();
-        return new RawModel(id, vertices.length / dimensions);
+        return new RawModel(id, vertices.length / dimension);
     }
 
     /**

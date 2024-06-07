@@ -7,13 +7,10 @@ out vec3 textureCoords;
 uniform mat4 viewMatrix, projectionMatrix;
 
 void main(void) {
-
 /* 	Como la posicion es un vector 3D entonces necesita agregarle un componente mas (1.0 como el componente w) para
-	que se pueda multiplicar por la matriz de proyeccion y la matriz de vista. Ademas, gl_Position es un tipo de
-	vector 4D. */
+	que se pueda multiplicar por la matriz de proyeccion y la matriz de vista. */
     gl_Position = projectionMatrix * viewMatrix * vec4(position, 1.0);
     textureCoords = position;
-
 }
 
 /* 	Tutoriales:

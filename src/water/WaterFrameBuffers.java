@@ -14,17 +14,17 @@ import static org.lwjgl.opengl.GL32.*;
  * actualizamos la visualizacion. Cuando renderizamos un objeto, primero se representa en el framebuffer. Un framebuffer en OpenGL
  * es un objeto que contiene todos los datos necesarios para realizar el renderizado de una escena, incluidos los buffers de color
  * (matriz 2D de colores) y profundidad. El buffer de profundidad almacena la informacion de profundidad de cada pixel que esta en
- * el bufer de color.
+ * el buffer de color.
  * <p>
- * Sin embargo, no solo tenemos que renderizar en este framebuffer, tambien podemos crear nuestros propios <b>objetos de bufer de
- * fotogramas</b> (FBO). Una vez que hayamos creado un FBO, podemos darles archivos adjuntos como un bufer de color y un bufer de
+ * Sin embargo, no solo tenemos que renderizar en este framebuffer, tambien podemos crear nuestros propios <b>objetos de buffer de
+ * fotogramas</b> (FBO). Una vez que hayamos creado un FBO, podemos darles archivos adjuntos como un buffer de color y un buffer de
  * profundidad, y luego podemos renderizar objetos en este framebuffer en lugar del framebuffer predeterminado. Por lo que antes
  * de renderizar cualquier cosa, ahora tenemos la opcion de donde queremos que se represente el objeto.
  * <p>
- * Con el fin de renderizar agua vamos a crear dos FBOs, ambos con bufer de profundidad y archivos adjuntos de bufer de color. En
+ * Con el fin de renderizar agua vamos a crear dos FBOs, ambos con buffer de profundidad y archivos adjuntos de buffer de color. En
  * uno de estos, representamos la textura de reflexion y en el otro vamos a representar la textura de refraccion. Los archivos
  * adjuntos de buffer aqui seran texturas, por supuesto, para que podamos usarlos para texturizar la superficie del agua, pero
- * el bufer de profundidad de la textura de refraccion tambien sera una textura porque basicamente almacenera la profundidad del
+ * el buffer de profundidad de la textura de refraccion tambien sera una textura porque basicamente almacenera la profundidad del
  * agua y nosotros queremos probar eso en el Fragment Shader en el futuro cuando rendericemos el agua para que podamos hacer
  * algunos efectos de profundidad agradables.
  */
@@ -40,7 +40,7 @@ public class WaterFrameBuffers {
 
     public WaterFrameBuffers() {
         /* Crea dos FBOs, uno con un archivo adjunto de textura de buffer de color y de profundidad, y el otro con un archivo
-         * adjunto de textura de bufer de color y un archivo adjunto de bufer de renderizado de bufer de profundidad. */
+         * adjunto de textura de buffer de color y un archivo adjunto de buffer de renderizado de buffer de profundidad. */
         initialiseReflectionFrameBuffer();
         initialiseRefractionFrameBuffer();
     }
@@ -63,7 +63,7 @@ public class WaterFrameBuffers {
      * Si queremos volver a renderizar al framebuffer predeterminado, tenemos que llamar al metodo glBindFramebuffer y pasarle 0
      * como ID.
      */
-    public void unbindCurrentFrameBuffer() { // Se llama para cambiar al bufer de cuadros predeterminado
+    public void unbindCurrentFrameBuffer() { // Se llama para cambiar al buffer de cuadros predeterminado
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glViewport(0, 0, Display.getWidth(), Display.getHeight());
     }

@@ -21,7 +21,6 @@ import org.lwjgl.util.vector.Vector3f;
  * <p>
  * xGrid y zGrid son coordenadas que determinan en que cuadricula del mundo aparece el terreno. El mundo esta formado por una
  * cuadricula donde cada cuadrado tiene una dimension del tamaño del terreno (SIZE).
- * <br><br>
  * <h3>¿Que significa normalizar un vector?</h3>
  * En OpenGL, los vectores se usan para representar direcciones o magnitudes en un espacio tridimensional. Normalizar un vector
  * significa hacer que su longitud (o magnitud) sea igual a 1, mientras que su direccion permanece igual.

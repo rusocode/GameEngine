@@ -87,9 +87,10 @@ public class SkyboxRenderer {
     }
 
     /**
-     * @param r canal rojo del color de la niebla.
-     * @param g canal verde del color de la niebla.
-     * @param b canal azul del color de la niebla.
+     * @param camera camara.
+     * @param r      canal rojo del color de la niebla.
+     * @param g      canal verde del color de la niebla.
+     * @param b      canal azul del color de la niebla.
      */
     public void render(Camera camera, float r, float g, float b) {
         shader.start();

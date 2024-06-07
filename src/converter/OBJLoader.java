@@ -28,7 +28,7 @@ public class OBJLoader {
         } catch (FileNotFoundException e) {
             System.err.println("Couldn't load file!/n" + e.getMessage());
         }
-        // Bufer que lee desde el archivo
+        // Buffer que lee desde el archivo
         BufferedReader reader = new BufferedReader(fr);
         String line;
         List<Vertex> vertices = new ArrayList<>(); // Lista de objetos Vertex (vertices)

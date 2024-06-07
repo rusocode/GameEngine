@@ -1,17 +1,17 @@
 package water;
 
-import java.util.List;
-
 import models.RawModel;
-import org.lwjgl.opengl.GL13;
 import render.DisplayManager;
 import render.Loader;
 import utils.Maths;
 import entities.Camera;
 import entities.Light;
 
+import java.util.List;
+
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.opengl.GL13;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;

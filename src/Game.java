@@ -6,9 +6,7 @@ import converter.OldOBJLoader;
 import entities.*;
 import guis.*;
 import models.*;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
-import org.lwjgl.util.vector.Vector4f;
+import org.lwjgl.util.vector.Vector2f;
 import render.*;
 import terrains.Terrain;
 import textures.*;
@@ -17,6 +15,9 @@ import utils.MousePicker;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
 
 /**
  * <h3>World Space</h3>
@@ -167,7 +168,6 @@ public class Game {
         flowerModel.getTexture().setHasTransparency(true);
         flowerModel.getTexture().setUseFakeLighting(true);
         lampModel.getTexture().setUseFakeLighting(true);
-
     }
 
     private static void placeModels(List<Entity> entities, Terrain terrain) {

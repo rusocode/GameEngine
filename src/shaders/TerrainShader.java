@@ -1,13 +1,13 @@
 package shaders;
 
-import java.util.List;
-
 import entities.Camera;
 import entities.Light;
-import org.lwjgl.util.vector.Vector4f;
 import utils.Maths;
 
+import java.util.List;
+
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector4f;
 import org.lwjgl.util.vector.Vector3f;
 
 public class TerrainShader extends ShaderProgram {
