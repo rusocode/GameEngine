@@ -39,13 +39,17 @@ public class Maths {
         return matrix;
     }
 
+    /**
+     * Crea una matriz de transformacion usando la traslacion, angulo y escala pasados por parametros para transformar el objeto
+     * (entidad) en la posicion mundial.
+     */
     public static Matrix4f createTransformationMatrix(Vector3f translation, Vector3f angle, Vector3f scale) {
         // Crear una matriz de identidad
         Matrix4f matrix = new Matrix4f();
         matrix.setIdentity();
-        // Aplica la traslacion a la matriz
+        // Aplica la traslacion (posicion) a la matriz
         Matrix4f.translate(translation, matrix, matrix);
-        // Aplica una rotacion a la matriz para cada eje
+        // Aplica la rotacion a la matriz para cada eje del angulo
         Matrix4f.rotate((float) Math.toRadians(angle.x), new Vector3f(1, 0, 0), matrix, matrix); // El metodo toRadians convierte un angulo medido en grados en un angulo aproximadamente equivalente medido en radianes
         Matrix4f.rotate((float) Math.toRadians(angle.y), new Vector3f(0, 1, 0), matrix, matrix);
         Matrix4f.rotate((float) Math.toRadians(angle.z), new Vector3f(0, 0, 1), matrix, matrix);
@@ -60,6 +64,7 @@ public class Maths {
         Matrix4f.rotate((float) Math.toRadians(camera.getPitch()), new Vector3f(1, 0, 0), matrix, matrix);
         Matrix4f.rotate((float) Math.toRadians(camera.getYaw()), new Vector3f(0, 1, 0), matrix, matrix);
         Vector3f cameraPos = camera.getPosition();
+        // Invierte la posicion de la camara para mover todos los objetos en la direccion opuesta
         Vector3f negativeCameraPos = new Vector3f(-cameraPos.x, -cameraPos.y, -cameraPos.z);
         Matrix4f.translate(negativeCameraPos, matrix, matrix);
         return matrix;

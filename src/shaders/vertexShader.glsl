@@ -13,22 +13,18 @@ out float visibility;
 
 uniform mat4 transformationMatrix, viewMatrix, projectionMatrix;
 uniform vec3 lightPosition[4];
-
-// El valor sera 0 si no debemos usar iluminacion falsa y 1 en caso contrario
-uniform float useFakeLighting;
-
+uniform float useFakeLighting; // El valor sera 0 si no debemos usar iluminacion falsa y 1 en caso contrario
 uniform float numberOfRows;
 uniform vec2 offset;
+uniform vec4 plane; // Crea un plano horizontal
 
 const float density = 0.0025; // Determina el espesor de la niebla, y aumentar este valor disminuye la visibilidad general de la escena
 const float gradient = 5.0; // Determina que tan rapido disminuye la visibilidad con la distancia, y aumentar este valor hace que la transicion de visibilidad total a visibilidad 0 sea mucho mas pequenia
 
-// Crea un plano horizontal
-uniform vec4 plane;
-
 // Metodo principal que se ejecutara cada vez que este sombreador de vertices procese un vertice
 void main(void) {
 
+    // Transforma la posicion de la entidad en el espacio mundial
     vec4 worldPosition = transformationMatrix * vec4(position, 1.0);
 
     // Busca la distancia de cada vertice desde ese plano

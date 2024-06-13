@@ -96,7 +96,7 @@ public class SkyboxRenderer {
         shader.start();
         shader.loadViewMatrix(camera);
         shader.loadFogColour(r, g, b);
-        glBindVertexArray(cube.getVaoID());
+        glBindVertexArray(cube.getID());
         glEnableVertexAttribArray(0);
         bindTextures();
         glDrawArrays(GL_TRIANGLES, 0, cube.getVertexCount());

@@ -39,14 +39,7 @@ public class TerrainRenderer {
 
     private void prepareTexturedModel(Terrain terrain) {
         RawModel rawModel = terrain.getModel();
-        /* A partir del modelo en crudo se obtiene el id para vincular el VAO de ese modelo. Un VAO es un objeto de OpenGL que
-         * encapsula el estado de multiples buffers de atributos de vertices (como posiciones, colores, coordenadas de textura,
-         * etc.) necesarios para renderizar una malla o modelo. Cuando se llama a glBindVertexArray(), se activa el VAO
-         * especificado, lo que significa que los comandos subsiguientes que afectan a los atributos de vertices (como
-         * glVertexAttribPointer()) operaran en el VAO activado.
-         * En resumen, glBindVertexArray() se utiliza para vincular un VAO especifico, lo que permite a OpenGL recordar los
-         * estados de los atributos de vertices asociados a ese VAO para su uso posterior durante el proceso de renderizado. */
-        glBindVertexArray(rawModel.getVaoID());
+        glBindVertexArray(rawModel.getID());
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);

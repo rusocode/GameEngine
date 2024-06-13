@@ -65,7 +65,7 @@ public class WaterRenderer {
         // Carga el movimiento en el shader
         shader.loadMoveFactor(moveFactor);
         shader.loadLight(sun);
-        glBindVertexArray(quad.getVaoID());
+        glBindVertexArray(quad.getID());
         glEnableVertexAttribArray(0);
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, fbos.getReflectionTexture());

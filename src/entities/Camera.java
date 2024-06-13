@@ -3,13 +3,19 @@ package entities;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
+/**
+ * Actualiza la posicion y orientacion de la camara en cada fotograma, teniendo en cuenta la posicion y rotacion del jugador, el
+ * zoom y los movimientos del mouse. Esto permite que la camara siga al jugador de manera suave y controlable, ajustando su
+ * posicion y angulos de acuerdo con las interacciones del usuario.
+ */
+
 public class Camera {
 
     private float zoom = 70; // Distancia de la camara al player
     private float angleAroundPlayer; // Angulo alrededor del player
     private final Vector3f position = new Vector3f(0, 0, 0); // No es necesario especificar la posicion de la camara ya que esta depende de la posicion del player
-    private float pitch = 20; // Rotacion alrededor de los ejes [x,y,z], tambien conocido como la inclinacion de la camara
-    private float yaw = 0; // Rotacion?
+    private float pitch = 20; // Angulo de inclinacion de la camara (rotacion alrededor del eje [x])
+    private float yaw = 0; // Angulo de rotacion de la camara (rotacion alrededor del eje [y])
     private float roll;
 
     private final Player player;
@@ -36,7 +42,8 @@ public class Camera {
     }
 
     /**
-     * Calcula la posicion de la camara.
+     * Calcula la posicion de la camara en relacion con la posicion del jugador, utilizando la distancia horizontal y vertical de
+     * la camara al jugador.
      *
      * @param horizontalDistance distancia horizontal.
      * @param verticalDistance   distancia vertical.
@@ -51,12 +58,17 @@ public class Camera {
          * se calcula sumando la rotacion y el angulo del jugador, y se utiliza para determinar los desplazamientos en [x] e [z]
          * mediante funciones trigonometricas (seno y coseno). */
         float theta = player.getAngle().y + angleAroundPlayer;
+        /* Calcula los desplazamientos offsetX y offsetZ utilizando funciones trigonometricas (seno y coseno) con el angulo theta
+         * y la distancia horizontal. Estos desplazamientos representan la posicion de la camara relativa al jugador en los ejes
+         * [x] y [z]. */
         float offsetX = (float) (horizontalDistance * Math.sin(Math.toRadians(theta)));
         float offsetZ = (float) (horizontalDistance * Math.cos(Math.toRadians(theta)));
         /* Resta los desplazamientos a la posicion del player para obtener la posicion correcta de la camara por detras de este.
          * ¿Por que se restan los desplazamientos a la posicion del player en vez de sumarlos? Si miras bien en el grafico del
          * video, el desplazamiento x de la camara desde la vista desde arriba esta en la direccion x negativa y el desplazamiento
-         * z de la camara desde el player tambien esta en la direccion z negativa. */
+         * z de la camara desde el player tambien esta en la direccion z negativa. Esto se hace porque la camara debe estar detras
+         * del jugador, por lo que sus coordenadas [x] y [z] deben ser menores que las del jugador en la direccion indicada por
+         * los desplazamientos. */
         position.x = player.getPosition().x - offsetX;
         position.z = player.getPosition().z - offsetZ;
         /* Como ya conocemos la distancia vertical de la camara al player y la posicion [y] del player, entonces se suman para

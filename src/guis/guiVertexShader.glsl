@@ -28,7 +28,7 @@ void main(void) {
     2.0 para escalar el rango a [0.0, 1.0].
     2. 1 - (position.y + 1.0) / 2.0: Esta parte de la expresion se encarga de mapear la coordenada y de posicion al
     rango [0.0, 1.0]. Sin embargo, aqui se realiza una operacion adicional: 1 - (...). Esto se debe a que en OpenGL,
-    el eje y está invertido en comparacion con el sistema de coordenadas de la textura. En OpenGL, (0.0, 0.0) es la
+    el eje y esta invertido en comparacion con el sistema de coordenadas de la textura. En OpenGL, (0.0, 0.0) es la
     esquina inferior izquierda, mientras que en el sistema de coordenadas de textura, (0.0, 0.0) es la esquina
     superior izquierda. Por lo tanto, se resta el resultado de (position.y + 1.0) / 2.0 de 1.0 para invertir el eje y
     y obtener las coordenadas de textura correctas. */

@@ -49,7 +49,7 @@ public class EntityRenderer {
             List<Entity> batch = entities.get(model);
             for (Entity entity : batch) {
                 loadModelMatrix(entity);
-                /* Renderiza primitivas graficas, como triangulos, lineas o puntos, mediante el uso de indices almacenados en un VBO. Esta
+                /* Renderiza primitivas graficas, como triangulos, lineas o puntos, mediante el uso de indices almacenados en un vbo. Esta
                  * funcion es esencial en el proceso de renderizado y juega un papel fundamental en la visualizacion de modelos 3D. */
                 glDrawElements(GL_TRIANGLES, model.getRawModel().getVertexCount(), GL_UNSIGNED_INT, 0);
             }
@@ -64,10 +64,12 @@ public class EntityRenderer {
      */
     private void prepareTexturedModel(TexturedModel model) {
         RawModel rawModel = model.getRawModel();
-        glBindVertexArray(rawModel.getVaoID());
-        /* Despues de vincular los atributos en el VAO, los habilita especificando el indice correspondiente al atributo en el
-         * Vertex Shader. Al habilitar un atributo, se indica a OpenGL que utilice esos datos durante el renderizado. */
-        glEnableVertexAttribArray(0); // Despues de vincular los atributos del shader de entidades con bindAttribute(0, "position"), los habilita especificando el indice correspondiente al atributo en el Vertex Shader
+        /* Obtiene el id para vincular el vao de ese modelo, lo que permite a OpenGL recordar los estados de los atributos de
+         * vertices asociados a ese vao para su uso posterior durante el proceso de renderizado. */
+        glBindVertexArray(rawModel.getID());
+        /* Habilita la lista de atributos especificando el numero correspondiente. Al habilitar un atributo, se indica a OpenGL que
+         * utilice esos datos durante el renderizado. La lista de atributos viene deshabilitada por defecto. */
+        glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
         // Obtiene la textura del modelo para poder cargar los datos especificos en el shader
@@ -76,6 +78,7 @@ public class EntityRenderer {
         // Deshabilita la seleccion de caras posteriores cada vez que renderiza una textura con transparencia
         if (texture.isHasTransparency()) MasterRenderer.disableCulling();
         shader.loadFakeLighting(texture.isUseFakeLighting());
+        // Carga los valores de luz especular en el shader antes de renderizar el objeto
         shader.loadSpecularLight(texture.getShineDamper(), texture.getReflectivity());
         /* Selecciona la unidad de textura activa entre las disponibles en el contexto. OpenGL permite multiples unidades de
          * textura (generalmente numeradas desde GL_TEXTURE0 hasta GL_TEXTURE31), y esta funcion te permite elegir cual estara
@@ -86,7 +89,7 @@ public class EntityRenderer {
         /* Enlaza una textura a una unidad de textura activa. En OpenGL, las texturas se vinculan a unidades de textura, y esta
          * funcion gestiona esa asociacion. En el uso comun de varias unidades de textura en OpenGL, glBindTexture() facilita
          * cambiar entre texturas al activar diferentes unidades y vincular las texturas correspondientes a esas unidades. Ademas,
-         * al enlazar texturas, se puede configurar como interactuan con los fragmentos en el shader durante el proceso de
+a         * al enlazar texturas, se puede configurar como interactuan con los fragmentos en el shader durante el proceso de
          * renderizado. */
         glBindTexture(GL_TEXTURE_2D, model.getTexture().getID());
     }
@@ -112,7 +115,7 @@ public class EntityRenderer {
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(2);
-        // Desvincula el VAO
+        // Desvincula el vao
         glBindVertexArray(0);
     }
 

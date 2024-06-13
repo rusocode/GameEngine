@@ -14,13 +14,13 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class Player extends Entity {
 
-    private static final float RUN_SPEED = 50; // Velocidad
+    private static final float RUN_SPEED = 50; // Velocidad de movimiento
     private static final float TURN_SPEED = 130; // Velocidad de giro
     private static final float GRAVITY = -50;
     private static final float JUMP_POWER = 30; // Que tan alto salta
 
-    private float currentSpeed; // Distancia
-    private float currentTurnSpeed; // Angulo de giro
+    private float currentSpeed; // Velocidad actual de movimiento
+    private float currentTurnSpeed; // Velocidad actual de giro
     private float upwardsSpeed; // Velocidad hacia arriba
 
     private boolean isInAir;

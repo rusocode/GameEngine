@@ -89,19 +89,19 @@ public class WaterFrameBuffers {
 
     private int createFrameBuffer() {
         // Genera un id para el framebuffer
-        int frameBuffer = glGenFramebuffers();
+        int id = glGenFramebuffers();
         // Vincula el framebuffer
-        glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+        glBindFramebuffer(GL_FRAMEBUFFER, id);
         // Indica que siempre renderizaremos al color adjunto 0
         glDrawBuffer(GL_COLOR_ATTACHMENT0);
-        return frameBuffer;
+        return id;
     }
 
     private int createTextureAttachment(int width, int height) {
         // Genera un id para la textura
-        int texture = glGenTextures();
+        int id = glGenTextures();
         // Enlaza la textura especificando el tipo de textura (GL_TEXTURE_2D) y el id
-        glBindTexture(GL_TEXTURE_2D, texture);
+        glBindTexture(GL_TEXTURE_2D, id);
         /* Define una imagen bidimensional como contenido de una textura. Esta funcion especifica los datos de la imagen, como su
          * formato de pixeles, tamaño, y el contenido de los pixeles en si. */
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, (ByteBuffer) null);
@@ -110,30 +110,30 @@ public class WaterFrameBuffers {
         /* Adjunta una textura a un framebuffer. Esto significa que la textura se utilizara como un destino de renderizado en
          * lugar de un framebuffer tradicional. La constante GL_COLOR_ATTACHMENT0 especifica el tipo de buffer de framebuffer al
          * que se adjuntara la textura. */
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0);
-        return texture;
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, id, 0);
+        return id;
     }
 
     private int createDepthTextureAttachment(int width, int height) {
-        int texture = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, texture);
+        int id = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, id);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, (ByteBuffer) null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture, 0);
-        return texture;
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, id, 0);
+        return id;
     }
 
     private int createDepthBufferAttachment(int width, int height) {
         // Genera un id para el buffer de profundidad
-        int depthBuffer = glGenRenderbuffers();
-        glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
+        int id = glGenRenderbuffers();
+        glBindRenderbuffer(GL_RENDERBUFFER, id);
         /* Especifica el formato y el tamaño de almacenamiento del renderbuffer. Es decir, se utiliza para reservar memoria y
          * configurar el renderbuffer con ciertas propiedades. La constante GL_DEPTH_COMPONENT epecifica el formato interno de
          * almacenamiento de datos del renderbuffer. */
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
-        return depthBuffer;
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, id);
+        return id;
     }
 
     public void clean() {

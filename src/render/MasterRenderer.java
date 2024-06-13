@@ -112,11 +112,18 @@ public class MasterRenderer {
         terrainShader.clean();
     }
 
+    /**
+     * Se llama una vez en cada fotograma y simplemente prepara a OpenGL para renderizar el siguiente frame.
+     */
     public void prepare() {
-        glEnable(GL_DEPTH_TEST); // Para que OpenGL pruebe que triangulo esta por encima del otro evitando que se superpongan
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        // Borra el color del ultimo fotograma
+        // Para que OpenGL pruebe que triangulo esta por encima del otro evitando que se superpongan
+        glEnable(GL_DEPTH_TEST);
+        // Establece el color de limpieza
         glClearColor(RED, GREEN, BLUE, 1);
+        /* Limpia el buffer de color utilizando el color establecido previamente con glClearColor() (si es que se especifico un
+         * color). Si no se establece un color previamente, OpenGL utilizara un color predeterminado (normalmente, negro). Seria
+         * una buena opcion utilizar el color por defecto para evitar agregar una linea. */
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
     /**

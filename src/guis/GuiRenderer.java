@@ -31,7 +31,7 @@ public class GuiRenderer {
 
     public void render(List<GuiTexture> guis) {
         shader.start();
-        glBindVertexArray(quad.getVaoID());
+        glBindVertexArray(quad.getID());
         glEnableVertexAttribArray(0);
         // Le saca la transparencia a la gui (fondo negro de la imagen)
         glEnable(GL_BLEND);

@@ -1,21 +1,20 @@
 #version 400 core
 
-// La entrada al Fragment Shader es la salida del Vertex Shader
 in vec2 pass_textureCoords;
 in vec3 surfaceNormal;
 in vec3 toLightVector[4];
 in vec3 toCameraVector;
 in float visibility;
 
-uniform sampler2D modelTexture; // Textura
+// La salida es el color del pixel que esta procesando actualmente y que sera un vector de 4 colores con su respectivo brillo y luz especular
+out vec4 out_Color;
+
+uniform sampler2D modelTexture;
 uniform vec3 lightColour[4], attenuation[4];
 uniform float shineDamper, reflectivity;
 uniform vec3 skyColor;
 
 const float levels = 3.0;
-
-// La salida es el color del pixel que esta procesando actualmente y que sera un vector de 4 colores con su respectivo brillo y luz especular
-out vec4 out_Color;
 
 void main(void) {
 
@@ -46,9 +45,9 @@ void main(void) {
         // float level = floor(brightness * levels); // Averigua en que nivel de sombreado se encuentra este valor de brillo
         // brightness = level / levels; // Establece el brillo en el limite inferior de ese nivel
         // CALCULA LA LUZ ESPECULAR DEL PIXEL
-        // Crea el vector con los puntos en la direccion de donde proviene la luz, esto es justo lo opuesto al vector que apunta hacia la luz, por lo tanto lo convierte a negativo
+        // Crea el vector con los puntos en la direccion de donde proviene la luz, esto es justo lo opuesto al vector que apunta hacia la luz, por lo tanto lo invierte
         vec3 lightDirection = -unitLightVector;
-        // Esta funcion toma el vector de luz entrante y la normal de la superficie con la que desea reflejar la luz y devuele la luz reflejada
+        // Esta funcion toma el vector de la luz entrante y la normal de la superficie con la que desea reflejar la luz, y devuelve la direccion de la luz reflejada
         vec3 reflectedLightDirection = reflect(lightDirection, unitNormal);
         // Indica que tan brillante debe ser la luz especular sin ninguna amortiguacion (shineDamper)
         float specularFactor = dot(reflectedLightDirection, unitVectorToCamera);
