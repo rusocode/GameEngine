@@ -23,18 +23,19 @@ import org.lwjgl.opengl.GL30;
  * <h3>World Space</h3>
  * Todos los vertices de un cubo o cualquier modelo 3D se especifican en coordenadas locales (local space) o en relacion con el
  * origen del modelo [0,0,0]. Para colocar estos modelos en diferentes lugares del mundo 3D, se transforma cada vertice unsando
- * una <b>matriz de transformacion</b> (model matrix transform) para que todos los vertices esten especificados en coordenadas
+ * una <b>matriz de transformacion</b> (transform matrix) para que todos los vertices esten especificados en coordenadas
  * mundiales, de modo que las posiciones de todos los vertices ahora esten en relacion con el origen del mundo. Luego se
- * transforman todos los vertices usando una <b>matriz de vista</b> (view matrix transform) para que todos los vertices esten en
+ * transforman todos los vertices usando una <b>matriz de vista</b> (view matrix) para que todos los vertices esten en
  * relacion con la posicion de la camara, llamando a esto <b>eye space</b>. Finalmente se usa la <b>matriz de proyeccion</b>
- * (projection matrix transform) para escalar objetos distantes para hacerlos parecer mas pequenios y, en general, para hacer que
- * nuestra vista tenga una forma de frustum (view frustum’s shape). OpenGL luego lleva a cabo la <b>division de perspectiva</b> en
+ * (projection matrix) para escalar objetos distantes para hacerlos parecer mas pequenios y, en general, para hacer que
+ * nuestra vista tenga una forma de frustum (viewing frustum). OpenGL luego lleva a cabo la <b>division de perspectiva</b> en
  * todos los vertices para convertirlos en un <b>espacio de dispositivo normalizado</b> (normalised device space), lo que coloca
  * todos los vertices en terminos del sistema de coordenadas de OpenGL. Finalmente, OpenGL convierte estas posiciones a
  * coordenadas de pixeles 2D en la pantalla para que puedan ser renderizadas y este espacio se llama <b>viewport space</b>.
  * <p>
- * <a href="https://betterexplained.com/articles/vector-calculus-understanding-the-dot-product/">Dot product</a>
- * <a href="http://www.lighthouse3d.com/tutorials/view-frustum-culling/view-frustums-shape/">Frustum Culling</a>
+ * <a href="https://es.wikipedia.org/wiki/Campo_de_visi%C3%B3n_(gr%C3%A1ficos)">Viewing frustum</a>
+ * <a href="http://www.lighthouse3d.com/tutorials/view-frustum-culling/view-frustums-shape/">Frustum culling</a>
+ * <a href="https://www.youtube.com/watch?v=eoXn6nwV694">How do computers display 3D on a 2D screen?</a>
  */
 
 public class Game {

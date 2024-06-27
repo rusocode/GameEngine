@@ -209,9 +209,7 @@ public abstract class ShaderProgram {
     }
 
     protected void loadBoolean(int location, boolean value) {
-        float toLoad = 0;
-        if (value) toLoad = 1;
-        glUniform1f(location, toLoad);
+        glUniform1f(location, value ? 1 : 0);
     }
 
     public void loadMatrix(int location, Matrix4f matrix) {

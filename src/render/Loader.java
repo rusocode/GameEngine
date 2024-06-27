@@ -87,6 +87,7 @@ public class Loader {
      */
     public RawModel loadToVAO(float[] position, float[] textureCoords, float[] normals, int[] indices) {
         int id = init();
+        // Vincula el indice de buffer
         bindIndicesBuffer(indices);
         storeDataInAttributeList(0, 3, position);
         storeDataInAttributeList(1, 2, textureCoords);
@@ -155,7 +156,7 @@ public class Loader {
         /* Carga el buffer de datos en el vbo. Los datos se cargan desde el objeto buffer y se indican como datos estaticos para
          * que OpenGL sepa que nunca vamos a editar los datos una vez que esten almacenados en el vbo. */
         glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
-        /* Coloca el vbo en el vao en una de las listas de atributos. Tomando como ejemplo el atributo 0 (position), lo configura
+        /* Coloca el vbo en una de las listas de atributos del vao. Tomando como ejemplo el atributo 0 (position), lo configura
          * para que use 3 componentes de punto flotante (x, y, z) por vertice, sin normalizacion, con los datos empaquetados uno
          * despues del otro en el buffer, comenzando desde el inicio del buffer. Esta configuracion se aplica si el vbo esta
          * habilitado. */
@@ -183,6 +184,12 @@ public class Loader {
         for (int texture : textures) glDeleteTextures(texture);
     }
 
+    /**
+     * Carga una textura.
+     *
+     * @param fileName nombre del archivo.
+     * @return el id de la textura.
+     */
     public int loadTexture(String fileName) {
         Texture texture = null;
         try {

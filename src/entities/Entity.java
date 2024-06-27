@@ -4,6 +4,10 @@ import models.TexturedModel;
 
 import org.lwjgl.util.vector.Vector3f;
 
+/**
+ * Instancia del modelo texturizado.
+ */
+
 public class Entity {
 
     private TexturedModel model;

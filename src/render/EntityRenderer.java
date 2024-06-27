@@ -49,8 +49,8 @@ public class EntityRenderer {
             List<Entity> batch = entities.get(model);
             for (Entity entity : batch) {
                 loadModelMatrix(entity);
-                /* Renderiza primitivas graficas, como triangulos, lineas o puntos, mediante el uso de indices almacenados en un vbo. Esta
-                 * funcion es esencial en el proceso de renderizado y juega un papel fundamental en la visualizacion de modelos 3D. */
+                /* Renderiza triangulos mediante el uso de indices almacenados en un vbo. Como le estamos pasando un buffer de
+                 * indices que contiene ints, entonces se especifica con GL_UNSIGNED_INT comenzando desde el principio. */
                 glDrawElements(GL_TRIANGLES, model.getRawModel().getVertexCount(), GL_UNSIGNED_INT, 0);
             }
             unbindTexturedModel();

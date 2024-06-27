@@ -63,13 +63,16 @@ public class OBJLoader {
 
                 /* La primera linea base de fern.obj "f 3/1/1 4/2/2 1/3/3" representa un triangulo en el modelo. Cada uno de los
                  * bloques "1/3/3" es un vertice de ese triangulo y los tres numeros (en orden) hacen referencia a la posicion,
-                 * coordenada de textura y normal. Entonces, el ultimo bloque de la linea base (1/3/3) dice que este triangulo en
-                 * particular esta compuesto por el vertice 1, que usa la tercera coordenada de textura y la tercera normal, y ese
-                 * vertice (1) esta conectado al vertice 4 que usa la segunda coordenada de textura y la segunda normal, a su vez
-                 * este vertice (4) esta conectado al vertice 3 que usa la primera coordenada de textura y la primera normal.
-                 * Tecnicamente hablando, en el ultimo bloque (1/3/3), 1 hace referencia al primer vertice del archivo .obj: "v -1.668906 1.421207 -4.981303".
-                 * Luego, 3 hace referencia a la tercera coordenada de textura "vt 0.261788 0.999931" y el ultimo numero del
-                 * bloque (3) hace referencia a la tercera normal "vn 0.008454 0.417798 -0.908475". */
+                 * coordenada de textura y normal que usa ese vertice. Entonces, el ultimo bloque de la linea base (1/3/3) dice
+                 * que este triangulo en particular esta compuesto por el vertice 1, que usa la tercera coordenada de textura y la
+                 * tercera normal, y ese vertice (1) esta conectado al vertice 4 que usa la segunda coordenada de textura y la
+                 * segunda normal, a su vez este vertice (4) esta conectado al vertice 3 que usa la primera coordenada de textura
+                 * y la primera normal. Tecnicamente hablando, en el ultimo bloque (1/3/3), 1 hace referencia al primer vertice
+                 * del archivo .obj: "v -1.668906 1.421207 -4.981303". Luego, 3 hace referencia a la tercera coordenada de
+                 * textura "vt 0.261788 0.999931" y el ultimo numero del bloque (3) hace referencia a la tercera normal "vn
+                 * 0.008454 0.417798 -0.908475". En resumen, usando la informacion de las lineas base (tambien llamadas caras),
+                 * reorganizaremos las listas de texturas y vectores normales para que esten en el mismo orden que la lista de
+                 * datos de posicion de los vertices. */
 
                 /* Divide la linea especificando el espacio como delimitador. Tomando como ejemplo el primer triangulo del archivo
                  * fern.obj, la linea "f 3/1/1 4/2/2 1/3/3" se divide en 4 cadenas:

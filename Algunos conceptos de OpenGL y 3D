@@ -1,0 +1,210 @@
+-VAO y VBO
+Los objetos de matriz de vertices, vertex array objects (VAO) en ingles, son la forma moderna de almacenar y representar modelos en OpenGL 
+reemplazando la lista de visualizacion antigua y el modo inmediato. Un VAO es un objeto para alamcenar datos sobre un modelo 3D. El VAO
+tiene un monton de espacios para almacenar esos datos y estos espacios se conocen como lista de atributos. En uno de esos espacios puede
+almacenar todas las posiciones de los vertices, en otra puede almacenar todos los colores de todos los vertices o el vector normal en cada
+vertice o las coordenadas de textura en cada vertice. Estos conjuntos de datos se almacenan en las listas de atributos como objetos de buffer
+de vertices, vertex buffer objects (VBO) en ingles. Un VBO es solo datos, puede verlo como un conjuto de numeros y esos datos pueden ser
+cualquier cosa, como posiciones, colores, normales o lo que sea. Cada VBO se puede colocar en una lista de atributos separada en el VAO.
+Asi es como se almacenan los datos, pero ¿como accedemos a estos datos cuando los necesitamos? Cada VAO tiene una ID unica, por lo que
+cuando el VAO se almacena en la memoria podemos acceder a el en cualquier momento usando su ID. ¿Pero como representamos exactamente un
+modelo 3D como una carga de datos que podriamos almacenar en un VAO? Cada modelo 3D con el que vamos a tratar esta hecho de varios
+triangulos y cada uno de estos triangulos tiene tres vertices, tres puntos en el espacio tridimensional. Por lo que cada vertice tiene 
+una coordenada 3D, una X, Y y una Z, y si tomamos las coordenadas de cada uno de los tres vertices del triangulo y luego las coordenadas
+de los otros triangulos en el modelo, tendremos una lista datos que representa todas las posiciones de los vertices del modelo. Este tipo
+de datos son los que se pueden poner en el VBO y almacenar en una lista de atributos de un VAO. Un ejemplo simple, seria renderizar el
+modelo 3D mas simple: un rectangulo que esta hecho de solo dos triangulos y vamos a tomar los datos de posicion de los vertices de esos
+triangulos creando un VBO, almacenando los datos en el VBO, creando un VAO, almacenando los datos del VBO en una de las listas de atributos
+del VAO y luego usaremos el ID del VAO para decirle a OpenGL que represente el rectangulo en pantalla.
+
+-Sistema de coordenadas de OpenGL
+En el sistema de coordenadas de OpenGL, el origen es el centro (0,0), (0,1) es el borde superior, (0,-1) es el borde inferior, (-1, 0)
+corresponde al borde izquierdo y (1,0) al borde derecho. Debido a que estamos trabajando en 3D, el eje z apunta hacia usted fuera de
+la pantalla.
+
+-Index buffers
+Supongamos que tenemos 4 vertices para representar un rectangulo, en donde V0 (primer vertice) esta ubicando en (-0.5, 0.5, 0),
+V1 en (-0.5, -0.5, 0), V2 en (0.5, -0.5, 0) y V3 en (0.5, 0.5, 0). ¿Que orden tenemos para darle estas coordenadas a OpenGL? Como bien sabemos,
+todo lo que dibujamos tiene que estar en triangulos y necesitamos informarle a OpenGL sobre los dos triangulos que forman los 4 vertices mencionados.
+OpenGL siempre necesita que especifiquemos estos vertices en el sentido contrario a las agujas del reloj. Asi que empecemos con el triangulo superior
+izquierdo comenzando con el vertice V0. Ahora debe girar en sentido antihorario alrededor del triangulo para especificar los otros vertices, de modo
+que el siguiente sea V1 y finalmente V3, y este es el triangulo superior izquierdo. Asi que para el otro triangulo vamos a iniciar desde V3 hasta V1
+y finalizar en V2. Ahora ambos triangulos estan representados en esta lista de vertices: (-0.5,0.5,0,-0.5,-0.5,0,0.5,0.5,0,0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0).
+Esta lista es la que podemos cargar y renderizar en nuestro juego. Pero hay un problema con este metodo de renderizado.
+Si repasamos como especificamos los vertices, teniamos V0, V1 y V3 para el primer triangulo y luego V3, V1 y V2 para el segundo triangulo, dejando la 
+lista de esta manera: (V0,V1,V3,V3,V1,V2). Como puede ver, los datos para V3 se especifican dos veces al igual que V1. Estamos enviando datos a OpenGL
+para 6 vertices cuando en realidad solo hay cuatro vertices diferentes en el rectangulo. Idealmente, lo que queremos hacer es enviar a OpenGL una lista
+de los cuatro vertices diferentes en el modelo, pero luego OpenGL no tendria forma de saber como conectarlos. Para que podamos decirle a OpenGL como 
+conectarlos usamos otro VBO, otro conjunto de datos llamado Index Buffer para ayudar a definir el modelo y estos datos le dicen a OpenGL el orden en el
+que deben conectar los vertices para hacer triangulos que se puedan representar. Asi que creamos el buffer de indices para nuestro rectangulo y definimos
+los dos triangulos exactamente de la misma manera que antes, asi que comenzamos en el vertice V0 que lo representamos con un 0 en el Index Buffer, luego 
+pasamos a V1 que esta en la posicion 1 en la lista de vertices, y para terminar el primer triangulo lo conectamos a V3 que esta en la posicion 3 en la lista.
+Lo mismo se aplica para el segundo triangulo, quedando la lista de la siguiente forma: (0,1,3,3,1,2). Esta vez estamos usando 4 vertices en lugar de 6, pero
+ahora necesitamos un conjuto adicional de datos, el Index Buffer que contiene 6 ints, por lo que te preguntaras si vale la pena. Cada vertice son 3 floats (x,y,z),
+el primer metodo uso 6 vertices, dando un total de 18 floats. El segundo metodo necesita solo 4 vertices que son 12 floats, pero tambien necesito la ayuda de
+6 ints. Esto parece inutil, los dos metodos parecen usar la misma cantidad de datos para representar el rectangulo. Pero este rectangulo es muy simple, cada vertice
+solo se describe mediante una posicion de 3 floats y esto en la vida real es poco realista. Cuando se implemente la iluminacion, cada vertice necesitara un normal
+asociado a el, que son otros 3 floats, y cada vertice tambien necesitara una coordenada de textura si queremos texturizar nuestros modelos, lo cual, son otros
+2 floats. Ademas, en total cada vertice tendra al menos 8 floats de datos asociados y en sistemas de renderizado mas complejos podria tener aun mas. Entonces,
+esto nos dara un total de: 3 position + 3 normal + 2 tex coords = 8 floats * 6 vertices = 48 floats. Mientras que en el segundo metodo solo necesitariamos
+32 floats: 8 floats * los 4 vertices + los 6 ints. Por lo que ahora puedes comenzar a ver una diferencia entre los dos metodos. En terminos de bytes, suponiendo
+que un float y un int son de 4 bytes cada uno, el primer metodo representa un rectangulo de 192 bytes, mientras que el segundo puede representar solo 152 byte, es decir
+un 20% menos de datos para representar exactamente el mismo rectangulo y esto es solo para un simple rectangulo, donde solo dos de los vertices se compartieron entre
+triangulos. En modelos mas grandes y complejos, los vertices podrian compartirse entre tres, cuatro, cinco o mas triangulos, por lo que las cantidades de datos duplicados
+que enviarias usando el primer metodo seria una locura. El segundo metodo generalmente podra representar un modelo con 30%, 40% o 50% menos de datos!
+
+-Shaders
+Cuando ejecutas el juego, gran parte del procesamiento se realiza en CPU, cosas como los calculos logicos, gameplay, etc; sin embargo, cuando
+se trata de renderizar la escena, como cuando llamamos a glDrawElements(), la GPU entra en accion, la GPU presenta sus objetos en la pantalla
+y determina exactamente como se muestran, por ejemplo, determina si tiene un color, si tiene textura, tambien puede cambiar la posicion y escala
+del objeto en la pantalla, puede calcular como los objetos se ven afectados por la iluminacion, por las sombras, puede agregar efectos de niebla
+a los objetos, todo esto lo maneja la GPU. En el antiguo OpenGL con la funcion fija en el canal, tenias una lista finita de funciones que podias
+usar para decirle a la GPU como renderizar sus objetos. Obviamente eso fue un poco mas simplificado, pero fue mucho mas facil lograr estos efectos,
+pero tambien muy limitado y no le dio al desarrollador mucho margen de maniobra. Ahora, con la moderna tuberia programable en OpenGL, estas funciones
+fijas desaparecieron y podemos programar la GPU nosotros mismos. Esto significa que tenemos que crear cosas como funciones de iluminacion y cosas
+asi nosotros mismos con total flexibilidad, y estos programas que creamos y ejecutamos en la GPU se llaman shaders y se escriben en lenguaje GLSL. 
+¿Como funciona un shader? Hay dos tipos de shader que trabajan juntos para representar una escena: el Vertex Shader y el Fragment Shader. El 
+Vertex Shader se ejecuta una vez para cada vertice en el objeto que se esta representando y cada vez utiliza los datos de vertice almacenados en el 
+VAO como entrada para el Vertex Shader, como la posicion o normales que se esta procesando actualmente. Tenemos que hacer que el Vertex Shader 
+haga dos cosas: primero, que determine la posicion donde el vertice que esta procesando se represente en la pantalla, lo cual sera facil ya que la 
+posicion del vertice que obtenemos como entrada al Vertex Shader es la posicion donde queremos representar el vertice en la pantalla. En segundo 
+lugar, el Vertex Shader usa la entrada, ejecuta el programa y coloca algo en la salida, estas salidas pueden ser cualquier cosa que programe,
+como dos floats, un vector 3D, un vector 2D o cualquier combinacion de vectores flotantes y matrices. Estas salidas solo se usan como entradas al
+Fragment Shader para que elijas lo que necesites. Digamos, por ejemplo, que programamos el Vertex Shader para convertir la posicion que obtuvo como entrada
+en un color para cada vertice, un valor RGB para cada vertice que procesa. Cuando el Vertex Shader se ejecute en este vertice, generara el valor RGB (0,0,0),
+color negro y luego para el siguiente vertice genero (0,0,1), para el otro el (0,1,0) que es el verde y para el ultimo el (0,1,1), y estos colores solo
+se usan como entradas al Fragment Shader. Ahora el Fragment Shader se ejecuta una vez por cada pixel que cubre el objeto en la pantalla, por lo que son 
+bastantes veces cada vez que se ejecuta, utiliza la salida del Vertex Shader para calcular el color final para ese pixel. La salida del Fragment Shader es
+siempre un color RGB, el color del pixel que se esta procesando. ¿Pero cual seria la entrada al Fragment Shader en nuestro ejemplo? Como la salida del 
+Vertex Shader era un color RGB y que las entradas al Fragment Shader son siempre las mismas que las salidas del Vertex Shader, por lo que el Fragment Shader
+en nuestro ejemplo debe usar un color RGB como entrada, pero ¿de que color debe ser la entrada al Fragment Shader cuando procesa un pixel en una posicion
+determinada? Hay cuatro vertices con cuatro colores diferentes en el modelo, entonces ¿cual de estos colores deberia usar el Fragment Shader? ¿y que pasa
+cuando procesa un pixel determinado o cualquiera de los otros pixeles? ¿como decide el Fragment Shader que color deberia usar como entrada al programa?
+En realidad para cada pixel en el que se ejecuta el Fragment Shader, usa una mezcla de las salidas del Vertex Shader para los tres vertices que forman el triangulo
+en el que se encuentra el pixel y los valores de los vertices se interpolan linealmente dependiendo en su distancia desde el pixel, lo que significa que
+la cantidad que cada valor de vertice afecta el valor de entrada del Fragment Shader para un determinado pixel depende de que tan cerca esta el vertice 
+de ese pixel, de modo que cuando el Fragment Shader se ejecuta para un pixel justo al lado del vertice (0,0,0), el color de entrada sera completamente negro
+porque la salida de ese vertice desde el Vertex Shader era negra. Un pixel a medio camino entre los vertices negros y azul (0,0,1) tendria un color
+de entrada a medio camino entre negro y azul (0,0,0.5). Y un pixel que esta entre los vertices azul, verde y cyan, seria una mezcla de ellos. Por lo que 
+para cada pixel, el Fragment Shader utilizara una entrada ligeramente diferente, luego procesa esta entrada de cualquier manera que lo programemos y a
+partir de esto calcula el color de salida de cada pixel. Es importante tener en cuenta que para representar este rectangulo, el Vertex Shader tendra
+que ejecutarse cuatro veces, mientras que el Fragment Shader se ejecutara una vez por cada pixel, lo que para este rectangulo seria algo asi como 10000
+veces.
+En resumen, teniendo el rectangulo con sus cuatro vertices almacenados en una lista de atributos en un VAO, el Vertex Shader tiene acceso a esas posiciones
+en la forma de "in vec3 position;" dentro del codigo. Para que el Vertex Shader se ejecute para cada vertice y use esa posicion de entrada para primero decirle
+a la GPU en que parte de la pantalla se debe representar el vertice, se usa la variable gl_Position. Luego el Vertex Shader calcula un color para cada vertice 
+basado en la posicion de ese vertice estableciendo el componente rojo del color en la posicion x + 0.5, estableciendo el componente verde en 1.0 y el componente 
+azul en la posicion y + 0.5. El Vertex Shader hace esto para cada vertice y produce estas salidas de color desde "out vec3 colour;". Ahora el Fragment Shader
+se ejecuta para cada pixel para decidir el color de cada uno y el color de entrada para cada ejecucion del Fragment Shader es un valor de color interpolado
+linealmente de los colores de salida del Vertex Shader.
+
+-Texture coordinates
+Para texturizar un objeto tenemos que decirle a OpenGL como debe asignar la textura al objeto, asi que primero tenemos que saber un poco sobre el sistema
+de coordenadas de la textura. Ahora sabes que en el mundo tenemos pasto, tierra, etc. y el origen casi siempre esta en la parte inferior izquierda, lo que
+parece bastante logico. Pero asi no es como funciona en OpenGL, para texturas en OpenGL (0,0) esta en la parte superior izquierda de la imagen, siendo (1,0)
+la esquina superior derecha, (0,1) la esquina inferior izquierda y (1,1) la esquina inferior derecha. Las coordenadas de texturas generalmente no se denominan
+coordenadas XY, sino coordenadas UV o, a veces, ST. Echando un vistazo a nuestro rectangulo, hasta ahora solo le hemos dado a cada vertice una coordenada de
+posicion XYZ, pero ahora tambien le daremos a cada vertice una coordenada de textura UV que se usara para determinar que punto de la textura se asigna a cada
+vertice, asi que, como ejemplo, asignaremos a V0 una coordenada UV de (0.25,0.25) en la textura, a V1 (0.75,0.25), V2 (0.75,0.75) y a V3 (0.25,0.75). Ahora,
+si imaginas que la textura se extiende sobre el rectangulo de modo que cada uno de estos puntos y la textura esten realmente conectados a su vertice correspondiente,
+entonces la parte de la textura que cubre el rectangulo se veria asi (ver imagen en celular). Para renderizar toda la textura en el rectangulo hay que conectar
+las esquinas para que V0 se asigne a (0,0), V1 a (1,0), V2 a (1,1) y V3 a (0,1). Estas coordenadas de texturas se almacenan en el VAO, por lo que por el
+momento el VAO tiene un VBO para los datos de posicion sobre cada vertice, y ahora, otro VBO con los datos de las coordenadas de texturas.
+
+-Uniforms
+Antes que nada... las entradas al Vertex Shader provienen de un VAO que el Vertex Shader usa para determinar la salida de los vertices. Estas salidas
+se pasan al Fragment Shader que las interpola y las usa para determinar el color de salida de cada pixel de los objetos. Esto esta muy bien, pero puede
+notar que la unica entrada para todo este sistema proviene de los datos del modelo en el VAO. Esto significa que la unica forma de cambiar el comportamiento
+de los shaders, seria cambiar los datos en el VAO, pero esto es un problema. Vamos a querer otras cosas ademas de solo los datos del modelo que afecten la 
+forma en que nuestros modelos se representen, como las posiciones de la luz y el brillo, la niebla ambiental, el brillo del sol y muchos otros factores. Tampoco
+queremos tener que cambiar el formato del modelo cada vez que queremos mover o rotar el modelo. De cualquier manera, necesitamos otra forma de cambiar
+el comportamiento de los shaders. Ahi es donde entran las variables uniformes. Las variables uniformes son variables en el codigo del shader que se pueden configurar
+desde nuestro codigo java en cualquier momento, esto significa que podemos enviar informacion en cualquier momento a cualquiera de los shaders para cambiar la forma
+en que se representan los objetos. Esto nos brinda la capacidad de calcular variables como la intensidad de la luz, de la posicion del sol o la densidad de la niebla
+en el codigo java y luego enviar estas variables a los shaders para que puedan usar estos valores en sus programas.
+
+-Matrix
+Para lo primero que usaremos a las uniformes es para ayudar a mover los cuadrados alrededor y renderizarlos en diferentes lugares. Asi que tenemos un VAO que contiene
+todos los datos posicionales sobre el cuadrado, pero ¿que pasaria si quisieramos renderizar el mimso cuadrado en una posicion diferente o en una escala diferente?
+¿que pasaria si quisieramos representar exactamente el mismo cuadrado varias veces en la pantalla pero en muchas posiciones y tamanios diferentes? ¿tendriamos que
+crear un VAO nuevo para cada uno de estos cuadrados separados? la respuesta es no. Podemos usar el mismo VAO para cada uno de estos cuadrados y luego mover y cambiar
+el tamanio de cada cuadrado en el Vertex Shader usando variables uniformes y matrices. Asi que imaginemos que tenemos un objeto en el mundo 3D, como un arbol. Ahora hay
+tres cosas que determinan donde se ubica este modelo en el mundo 3D. La primera, que es una posicion XYZ, que tambien podria considerarse como una traslacion de la
+posicion original del objeto. Tambien podemos rotar el objeto y estas rotaciones se representan como un angulo de rotacion alrededor de cada uno de los ejes XYZ,
+dandonos tres valores para la rotacion, rx, ry y rz. Las rotaciones representadas de esta manera se conocen como rotaciones de Euler. Finalmente podemos representar
+objetos en diferentes tamanios que podemos representar como un valor de escala simple, siendo un valor de escala 1 el tamanio normal del objeto. Estos tres factores,
+la traslacion, rotacion y la escala de un objeto determinan como y donde se repesentan en ese objeto y juntos se conocen como transformacion del objeto. Cada entidad
+en nuestro juego tendra su propia transformacion. Podemos representar una transformacion como una traslacion, una rotacion y una escala, pero hay otra forma mas util de
+representar una transformacion, y es usar una matriz de 4x4 (4 filas y 4 columnas de numeros). Cuando se usa la matriz para representar la transformacion se puede
+conocer como matriz de transformacion.  
+De esta forma podemos representar 100 entidades (arboles, por ejemplo), cada una con una posicion, rotacion y tamanio diferente, pero todas usando el mismo modelo.
+Para lograr esto, en realidad tendremos que aplicar la transformacion de cada entidad a los vertices del modelo en algun momento antes de renderizar. Podriamos hacer
+eso editando el VAO cada vez que queramos renderizar el modelo del arbol en una posicion diferente y podriamos aplicar la transformacion a cada uno de los vertices en
+el VAO; sin embargo, si vamos a renderizar un bosque de 100 de arboles, eso significa editar el modelo del arbol del VAO 100 veces en cada fotograma, lo cual seria
+muy lento. Una forma mucho mejor de hacerlo, seria transformar los vertices en el Vertex Shader. Cada vertice tiene que pasar por el Vertex Shader una vez que se
+va a renderizar, por lo que podemos transformarlos desde el shader antes de que se muestren en pantalla. Y aqui es donde las variables uniformes son realmente utiles
+porque podremos cargar la matriz de transformacion para cada entidad que queramos representar desde el codigo java. Por lo que para representar un bosque de 100 arboles,
+lo que tendriamos que hacer seria representar el arbol 100 veces cada vez que se carga una matriz de transformacion diferente que determina donde se representa ese
+arbol en particular.
+
+-Projection Matrix
+La matriz de proyeccion cambia la vista que tenemos actualmente, por lo algo mas realista usando el campo de vision (region cerrada del espacio que delimita los objetos que aparecen representados en la pantalla). Este campo de vision nos brinda una vista mas amplia de los objetos en la distancia y tambien los hace parecer
+mas pequenios cuando estan mas lejos. Hay algunas variables que tenemos que decidir antes de contruir una matriz de proyeccion, como por ejemplo, necesitamos elegir
+el angulo del campo de vision, field of view angle (FOV) en ingles, que determina que tan amplia es nuestra vision, la distancia del plano cercano (near plane distance) y
+la distancia del plano lejano (far distance), que determina que tan lejos podemos ver en la distancia.
+Campo de vision - https://es.wikipedia.org/wiki/Campo_de_visi%C3%B3n_(gr%C3%A1ficos)
+OpenGL Projection Matrix - https://www.songho.ca/opengl/gl_projectionmatrix.html
+
+-View Matrix (Funcionamiento de la camara en OpenGL)
+En OpenGL no existe una camara que muestre los objetos en pantalla, en su lugar se simula el efecto de la camara moviendo los objetos
+en el eje de coordenadas de OpenGL. El centro de la pantalla es [0,0] y no se puede cambiar. Para simular el efecto de movimiento de la 
+camara, se mueven todos los objetos en la direccion opuesta. Por ejemplo, si muevo todo el mundo hacia la derecha hara que parezca que la
+camara se esta moviendo hacia la izquierda. Asi que para mover todos los objetos se usa una matriz de transformacion que representa una 
+transformacion. Eso es exactamente lo opuesto a la transformacion de la camara. Esta matriz se conoce como View Matrix y se actualizara cada
+vez que nuestra camara se mueva.
+
+-Normal
+Un vector normal es un vector de direccion que apunta en la direccion exacta a la que mira una superficie. Cada punto de una superficie
+tiene un vector normal y siempre apunta directamente hacia afuera. En otra palabras, es perpendicular a la cara del objeto. Basicamente la 
+normal de una superficie nos dice en que direccion mira y eso es exactamente lo que necesitamos. Teniendo la normal en cada vertice y la
+posicion de la fuente de luz, podemos calcular que tan brillante debe ser cada punto del objeto. Para hacer esto, para un punto dado del
+objeto, primero vamos a encontrar el vector desde ese punto del objeto hasta la fuente de luz. Ahora cada punto en la superficie del objeto
+tendra dos vectores, un vector que apunta hacia la fuente de luz (toLightVector) y un vector normal que muestra la direccion en la que mira 
+la superficie (surfaceNormal). Mientras mas mira una superficie hacia la luz, mas cerca estan estos dos vectores, por lo que podemos determinar
+que tan brillante debe ser un punto del objeto dependiendo de cuanto apunten los dos vectores en ese punto en la misma direccion. Si los dos 
+vectores apuntan en la misma direccion, el punto sera completamente brillante. En caso contrario, el punto sera menos brillante porque los dos 
+vectores apuntan en direcciones diferentes. Para medir que tan cerca estan dos vectores de apuntar en la misma direccion se usa el Dot 
+Product (producto escalar) de dos vectores. El producto escalar de dos vectores unitarios que apuntan exacatamente en la misma direccion es 1 
+y el producto escalar de dos vectores perpendiculares que apuntan en direcciones totalmente diferentes es 0, y todo lo demas esta en algun 
+punto intermedio, por lo que esto nos da una representacion perfecta de que tan similares son dos vectores y, por lo tanto, una representacion 
+perfecta de que tan brillante debe ser un cierto punto en el objeto.
+En el producto escalar, solo las multiplicaciones en la misma direccion cuentan.
+https://betterexplained.com/articles/vector-calculus-understanding-the-dot-product/
+
+-Specular lighting
+La iluminacion especular es la luz reflejada en objetos brillantes. La luz reflejada corresponde al rayo de luz entrante. La cantidad de luz
+que se refleja depende de la reflectividad de la superficie. Esta cantidad se representa en el codigo con el atributo reflectivity. Si el objeto
+tiene una reflectividad alta, entonces la luz reflejada sera mas fuerte y si tiene una reflectividad baja, entonces la luz reflejada sera mucho
+mas debil. El brillo de este punto tambien depende de un ultimo factor y es la posicion de la camara. Si la camara apunta directo a la luz
+reflejada, entonces el punto tendria un brillo especular muy alto porque la luz reflejada va directamente a la camara. Si la camara esta colocada
+en un lugar opuesto, entonces no entra la luz reflejada, y por lo tanto no tendria ninguna iluminacion especular. Finalmente, si la camara
+estuviera apuntando cerca de la luz reflejada, probablemente recibiria algo de luz y, por lo tanto, el punto tendria un poco de iluminacion
+especular, pero depende del material, por lo que tendremos otro atributo llamado shine damping, que determina que tan cerca debe estar la 
+camara de la luz reflejada para ver cualquier cambio en el brillo de la superficie de los objetos.
+Para calcular la iluminacion especular a partir de reflectivity y shine damping necesitamos la direccion de luz entrante, que es el vector
+desde la fuente de luz hasta el punto del objeto. Luego reflejaremos la luz entrante para obtener la direccion de la luz reflejada y tambien
+necesitamos un vector mas que es un vector desde el punto del objeto hasta la camara. El punto tendra la iluminacion especular mas brillante
+cuando el vector de la luz reflejada y el vector que apunta desde el objeto a la camara esten en la misma direccion. Para descubrir que tan
+cerca estan estos dos vectores de apuntar en la misma direccion, se utiliza el producto escalar para determinar que tan brillante (brightness) 
+debe ser la luz especular en ese punto de la superficie. Podemos usar el atributo shine damping del brillo del material para amortiguar el
+brillo y luego multiplicarlo por la reflectividad de la superficie antes de agregarlo a la iluminacion difusa para obtener el resultado
+final.
+Ahora tenemos el vector de direccion de la luz, el vector que apunta a la camara y la superficie de la normal, asi que todo lo que necesitamos
+ahora es el vector de luz reflejada. GLSL tiene una funcion de reflexion para hacer esto, reflect. Esta funcion toma el vector de la luz entrante
+y la normal de la superficie con la que desea reflejar la luz, y devuelve la direccion de la luz reflejada. Una vez calculada la direccion de
+la luz reflejada (reflectedLightDirection) y el vector normalizado que apunta del objeto a la camara (unitVectorToCamera), podemos hacer el
+calculo del producto escalar para ver cuanta luz reflejada ingresa a la camara.
+
+Recursos:
+How Do Computers Display 3D on a 2D Screen? (Perspective Projection) - https://www.youtube.com/watch?v=eoXn6nwV694
+
