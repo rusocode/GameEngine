@@ -24,6 +24,7 @@ public class TerrainRenderer {
         this.shader = shader;
         shader.start();
         shader.loadProjectionMatrix(projectionMatrix);
+        // Solo necesita conectarlos una vez cuando se carga el juego y luego los samplers permanecen conectados a esas unidades de textura por el resto del tiempo
         shader.connectTextureUnits();
         shader.stop();
     }

@@ -25,10 +25,10 @@ public class MasterRenderer {
     private static final float NEAR_PLANE = 0.1f; // Plano cercano
     private static final float FAR_PLANE = 1000; // Plano lejano
 
-    // https://rgbcolorpicker.com/0-1 o usar los colores del skybox
-    private static final float RED = 0.592f; // 0.5444f | 0.592f
-    private static final float GREEN = 0.871f; // 0.62f | 0.871f
-    private static final float BLUE = 0.949f; // 0.69f | 0.949f
+    // https://rgbcolorpicker.com/0-1 o usar los colores del skybox (que son los que estan asigandos)
+    private static final float RED = 0.5444f;
+    private static final float GREEN = 0.62f;
+    private static final float BLUE = 0.69f;
 
     private Matrix4f projectionMatrix;
 
@@ -49,14 +49,19 @@ public class MasterRenderer {
         skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
     }
 
+    /**
+     * Evita que se rendericen las caras posteriores del modelo (culling faces) evitando las normales que apuntan lejos de la
+     * camara.
+     */
     public static void enableCulling() {
-        // Evita que se rendericen las caras posteriores del modelo (Culling Faces)
         glEnable(GL_CULL_FACE);
         glEnable(GL_BACK);
     }
 
+    /**
+     * Desactiva la seleccion de caras posteriores cada vez que renderiza un objeto con transparencia.
+     */
     public static void disableCulling() {
-        // Desactiva la seleccion de caras posteriores cada vez que renderiza un objeto con transparencia
         glDisable(GL_CULL_FACE);
     }
 

@@ -52,6 +52,7 @@ que un float y un int son de 4 bytes cada uno, el primer metodo representa un re
 un 20% menos de datos para representar exactamente el mismo rectangulo y esto es solo para un simple rectangulo, donde solo dos de los vertices se compartieron entre
 triangulos. En modelos mas grandes y complejos, los vertices podrian compartirse entre tres, cuatro, cinco o mas triangulos, por lo que las cantidades de datos duplicados
 que enviarias usando el primer metodo seria una locura. El segundo metodo generalmente podra representar un modelo con 30%, 40% o 50% menos de datos!
+El Index Buffer representa el orden de la posicion de los vertices usando enteros (ints) evitando asi los vertices repetidos para ahorrar memoria.
 
 -Shaders
 Cuando ejecutas el juego, gran parte del procesamiento se realiza en CPU, cosas como los calculos logicos, gameplay, etc; sin embargo, cuando
@@ -89,7 +90,7 @@ de entrada a medio camino entre negro y azul (0,0,0.5). Y un pixel que esta entr
 para cada pixel, el Fragment Shader utilizara una entrada ligeramente diferente, luego procesa esta entrada de cualquier manera que lo programemos y a
 partir de esto calcula el color de salida de cada pixel. Es importante tener en cuenta que para representar este rectangulo, el Vertex Shader tendra
 que ejecutarse cuatro veces, mientras que el Fragment Shader se ejecutara una vez por cada pixel, lo que para este rectangulo seria algo asi como 10000
-veces.
+veces (ver vertex and fragment shader.png).
 En resumen, teniendo el rectangulo con sus cuatro vertices almacenados en una lista de atributos en un VAO, el Vertex Shader tiene acceso a esas posiciones
 en la forma de "in vec3 position;" dentro del codigo. Para que el Vertex Shader se ejecute para cada vertice y use esa posicion de entrada para primero decirle
 a la GPU en que parte de la pantalla se debe representar el vertice, se usa la variable gl_Position. Luego el Vertex Shader calcula un color para cada vertice 
@@ -107,7 +108,7 @@ coordenadas XY, sino coordenadas UV o, a veces, ST. Echando un vistazo a nuestro
 posicion XYZ, pero ahora tambien le daremos a cada vertice una coordenada de textura UV que se usara para determinar que punto de la textura se asigna a cada
 vertice, asi que, como ejemplo, asignaremos a V0 una coordenada UV de (0.25,0.25) en la textura, a V1 (0.75,0.25), V2 (0.75,0.75) y a V3 (0.25,0.75). Ahora,
 si imaginas que la textura se extiende sobre el rectangulo de modo que cada uno de estos puntos y la textura esten realmente conectados a su vertice correspondiente,
-entonces la parte de la textura que cubre el rectangulo se veria asi (ver imagen en celular). Para renderizar toda la textura en el rectangulo hay que conectar
+entonces la parte de la textura que cubre el rectangulo se veria asi (ver texture coords.png). Para renderizar toda la textura en el rectangulo hay que conectar
 las esquinas para que V0 se asigne a (0,0), V1 a (1,0), V2 a (1,1) y V3 a (0,1). Estas coordenadas de texturas se almacenan en el VAO, por lo que por el
 momento el VAO tiene un VBO para los datos de posicion sobre cada vertice, y ahora, otro VBO con los datos de las coordenadas de texturas.
 
@@ -163,7 +164,7 @@ camara se esta moviendo hacia la izquierda. Asi que para mover todos los objetos
 transformacion. Eso es exactamente lo opuesto a la transformacion de la camara. Esta matriz se conoce como View Matrix y se actualizara cada
 vez que nuestra camara se mueva.
 
--Normal
+-Normal (Iluminacion por pixel)
 Un vector normal es un vector de direccion que apunta en la direccion exacta a la que mira una superficie. Cada punto de una superficie
 tiene un vector normal y siempre apunta directamente hacia afuera. En otra palabras, es perpendicular a la cara del objeto. Basicamente la 
 normal de una superficie nos dice en que direccion mira y eso es exactamente lo que necesitamos. Teniendo la normal en cada vertice y la
@@ -204,6 +205,77 @@ ahora es el vector de luz reflejada. GLSL tiene una funcion de reflexion para ha
 y la normal de la superficie con la que desea reflejar la luz, y devuelve la direccion de la luz reflejada. Una vez calculada la direccion de
 la luz reflejada (reflectedLightDirection) y el vector normalizado que apunta del objeto a la camara (unitVectorToCamera), podemos hacer el
 calculo del producto escalar para ver cuanta luz reflejada ingresa a la camara.
+
+-Terrain
+El terreno es bastante similar a cualquier otra entidad con un modelo que es una malla de vertices y una textura (ver terreno regular.png), pero la diferencia es que un terreno tiene un disenio de vertices muy regular, lo que hace que sea relativamente facil de generar en el codigo en lugar de tener que crearlo en algun
+software de modelado 3D. Nuestros terrenos se estableceran a partir de una cuadricula regular de vertices. Los vertices siempre estan espaciados
+igualmente a lo largo del eje horizontal, por lo que desde arriba del terreno siempre se vera asi (ver cuadricula regular de vertices en terreno.png). Luego 
+se agregaran algunas colinas o cualquier tipo de altura al terreno, para eso tenemos que darle a cada vertice su propia altura individual. Hay muchas 
+tecnicas que podemos usar para generar las alturas de cada vertice. El mundo estara formado por una cuadricula de mosaicos de terreno como este (ver cuadricula de mosaicos de terreno.png).
+
+-Tiled Texture
+Para evitar que la textura se estire sobre todo el terreno es usar el tiled, que es donde renderizas la misma textura varias veces sobre la superficie del terreno (ver tiled3.png). De esta manera la textura no tiene que estirarse y aun puedes usar una textura bastante pequenia. Todo lo que tenemos que hacer es aumentar las coordenadas de textura. Una vez que la coordenada de textura pasa por uno, OpenGL simplemente comienza nuevamente desde cero, por lo que tener coordenadas de textura como esta (ver tiled.png) es exactamente lo mismo que tener coordendas de textura como esta (ver tiled2.png). Esto se hace desde el shader multiplicando las coordenadas de textura
+para colocarlas en forma de tiles dando una mejor definicion.
+
+-Fog
+La forma en que simularemos la niebla es desvaneciendo los objetos en el color del cielo dependiendo de que tan lejos esten de la camara. Los objetos representados
+a lo lejos se representaran completamente en el color del cielo y, por lo tanto apareceran completamente ocultos por la niebla, mientras que los objetos cercanos
+simplemente se representaran en su color normal y todo lo que este en el medio se renderizara usando una mezcla del color del cielo y el color habitual del objeto, y
+el color se volvera cada vez mas similar al color del cielo cuanto mas lejos este el objeto. Hay algunas formas diferentes de calcular cuanta niebla hay en un cierto
+punto del mundo. Introduzcamos una variable llamada visibility que determinara que tan brumoso es un determinado punto. La visibilidad en 1 es completamente visible,
+y un objeto con valor de visibilidad 0 estara completamente cubierto por la niebla y sera renderizado completamente en el color del cielo. Por lo que necesitamos
+un calculo convierta la distancia desde la camara en un valor de visibilidad: visibility = f (distance). Una forma de hacerlo es usando una ecuacion lineal simple,
+tendria una distancia desde la camara en la que todo no se ve afecetado por la niebla, una distancia despues de la cual todo queda completamente oculto por la niebla
+y un periodo de transicion donde la visibilidad disminuye linealmente con la distancia (ver fog.png). En grafico se veria asi (ver grafico.png). Esta es la forma mas
+facil de calcular la niebla, pero no parece tan realista. Lo que vamos a hacer es que la visibilidad aumente exponecialmente con la distancia (ver grafico2.png), ya que
+esto le da una sensacion mas realista a la niebla y este es el calculo que se usa para lograr ese efecto exacto (ver formula.png): la variable density determina el espesor
+de la niebla y aumentar esto disminuira la visibilidad general de la escena, la variable gradient determina que tan rapido la visibilidad disminuye con la distancia y
+aumentar esta variable hace que la transicion de visibilidad total a visibilidad cero sea mucho mas pequenia.
+
+-Multitexturing
+Por el momento nuestro terreno solo usa una textura, asi que si quisieramos agregar un camino al terrreno, tendriamos que agregar el camino a la textura misma y, por
+supuesto, eso no funcionaria con el mosaico (tiled), por lo que tendriamos que crear una textura de alta definicion enorme para cubrir todo el terreno sin parecer
+demasiado estirado. Esto obviamente no es una buena idea, en primer lugar porque cada terreno tendria que tener su propia textura, los archivos de textura tendrian
+que ser masivos para que tuvieran alta definicion y que cada terreno tuviera su propia textura significaria que las texturas ocuparian una gran cantidad de memoria,
+asi que obviamente tenemos que hacerlo de una manera diferente. Por lo que la forma en que funciona el multitexturing es que tenemos multiples texturas que queremos
+renderizar en nuestro terreno (ver multitexturing.png) y luego las renderizamos en diferentes cantidades en todo el terreno, por lo que solo necesitamos usar estas
+pocas texturas y podemos crear un numero finito de caminos y patrones diferentes en los terrenos, y aun podemos colocar las texturas en mosaicos, lo que significa que
+aun podemos usar texturas de tamanio razonable. ¿Como le decimos a OpenGL donde renderizar cada una? Para hacer esto, usamos una textura mas llamada blendMap (mapa de
+mezcla). Este blendMap (ver blendmap.png) representa un terreno y los colores representan las diferentes texturas, por lo que en este ejemplo el negro o la falta de color representa la textura de pasto, el rojo representa la textura de la tierra, el verde las flores y el azul el camino. Por lo que para cada terreno podemos crear una 
+pintura del blendMap en donde queremos que se represente las texturas y luego en los shaders podemos hacer referencia al blendMap para saber donde deberiamos representar
+cada textura de terreno. Tambien si combinamos colores en el blendMap, entonces las texturas se mezclan en el terreno. Esto se implementa en el Fragment Shader del terreno. Generalmente en el Fragment Shader para cada pixel del terreno obtenemos el color del pixel en el lugar correspondiente de la textura del terreno y usamos ese 
+color como color del terreno en ese punto (ver pixel en el punto.png). Pero al usar 4 texturas, para cada pixel en el terreno vamos a obtener el color en el punto
+correspondiente en cada una de las 4 texturas, dandonos cuatro colores. El color final del pixel en el terreno sera una mezcla de estos cuatro colores y usamos el color
+del punto correspondiente en el blendMap para determinar que cantidad de cada color de textura constituye el color final del pixel del terreno (ver mezcla de las 4 texturas para el pixel en el terreno.png). Las texturas que se utilizan para el blendMap tienen que ser potencia de 2 (2x2, 4x4, 16x16, 32x32, etc.).
+Por lo general, vinculamos la textura que queremos usar a al unidad de textura 0 (GL_TEXTURE0) y luegos podemos acceder a ella en los shaders usando un uniform
+de sampler2D texture. Pero, ¿Como hacemos esto con multiples texturas al mismo tiempo? En el Frgment Shader ahora tenemos cinco samplers 2D diferentes (background, r, g, b, blendMap), cada uno de los cuales representa una textura, pero todos necesitan poder accceder a su propia textura y, afortunadamente, no podemos colocar todas
+las texturas en una sola unidad de textura. OpenGL tiene mas de una unidad de textura, por lo que combinamos todas las texturas al mismo tiempo, cada una en su propia
+unidad separada (ver texturas en unidades.png). Finalmente, solo necesitamos decirle a OpenGL que unidad de textura debe usar cada sampler. Para conectar un sampler 2D con una unidad de textura, simplemente cargue el numero de la unidad de textura en ese uniforme 2D del sampler como int, asi que cargamos un cero en el sampler del background para que siempre use la textura en la unidad de textura 0, 1 en el sampler 2D de r, etc. (ver texturas unidas.png).
+
+-Player movement
+Imaginemos por un segundo que estamos mirando la escena desde arriba (ver player desde arriba.png). Aqui esta nuestro jugador y esta mirando en esta direccion. Ya hemos
+calculado que tan lejos viajara en este fotograma (dis) y conocemos la rotacion del jugador en el eje y (getAngle().y), pero ahora solo necesitamos averiguar cual
+sera la proxima posicion del jugador despues de moverse esa distancia en esa direccion. Para hacerlo necesitamos averiguar que tan lejos debe moverse el jugador a lo 
+largo del eje x (dx) y a lo largo del eje z (dz). Luego podemos simplemente agregar la traslacion [x] y [z] a la posicion actual [x] y [z] del player y tendremos la nueva 
+posicion del player. Asi que basicamente lo que tenemos aqui es un triangulo rectangulo donde la posicion actual del player esta en la parte inferior izquierda y la 
+siguiente posicion del player esta en la parte superior derecha (ver siguiente posicion.png). Sabemos que el lado mas largo del triangulo, la hipotenusa, tiene una 
+distancia de longitud d y que el angulo en la esquina inferior izquierda es la rotacion [y] del player. Lo que ahora necesitamos calcular es hasta que punto necesita
+moverse el player en la direccion [x] y que tan lejos debe moverse el player en la direccion [z]. Los conceptos basicos de trigonometria nos diran que el seno de 
+theta: sin(0) = x/d, donde theta es la rotacion [y], es igual a x/d y el coseno de theta: cos(0) = z/d, es igual a z/d. Si reorganizamos estas ecuaciones multiplicando
+ambos lados por d, entonces tenemos un par de ecuaciones que nos muestran como calcular el movimiento [x] y [z] del player (ver ecuacion.png). Es importante convertir
+los grados en radianes para poder cacular la ecuacion.
+https://www.mathsisfun.com/algebra/trigonometry.html
+https://www.youtube.com/watch?v=F21S9Wpi0y8
+
+¿Que significa normalizar un vector?
+En OpenGL, los vectores se usan para representar direcciones o magnitudes en un espacio tridimensional. Normalizar un vector significa hacer que su 
+longitud (o magnitud) sea igual a 1, mientras que su direccion permanece igual.
+Por ejemplo, si tienes un vector (2, 3, 4), su longitud (o magnitud) seria la raiz cuadrada de la suma de los cuadrados de sus componentes, es 
+decir, √ 2^2 + 3^2 + 4^2 = √29 ≈ 5.39. Para normalizarlo, se divide cada componente del vector por su longitud, es decir, (2/5.39,3/5.39,4/5.39) ≈ (0.371,0.557,0.742).
+Entonces, despues de normalizar, el vector tiene una longitud de 1, pero mantiene la misma direccion en el espacio tridimensional.
+En resumen, normalizar un vector en OpenGL implica hacer que su longitud sea 1 mientras se conserva su direccion original. Esto es util para varios 
+calculos en graficos por computadora, como calculos de iluminacion, sombreado y otros efectos visuales. Ademas se asegura que solo represente una 
+direccion pura, para garantizar la consistencia y eficiencia en los calculos, y para asegurar la compatibilidad con algoritmos y bibliotecas especificos.
 
 Recursos:
 How Do Computers Display 3D on a 2D Screen? (Perspective Projection) - https://www.youtube.com/watch?v=eoXn6nwV694

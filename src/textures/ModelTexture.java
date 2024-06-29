@@ -11,7 +11,9 @@ public class ModelTexture {
     private float shineDamper = 1; // Factor de amortiguacion
     private float reflectivity = 0; // Luz reflejada
 
+    // Atributo booleano para determinar si la textura del modelo tiene transparencia (fondo negro)
     private boolean hasTransparency;
+
     /* La textura "herb" consiste en dos quads con normales orientadas en direcciones distintas, lo que causa variaciones notables
      * en la iluminacion. Para corregir esto, se ajustan todas las normales para que apunten hacia arriba, creando una iluminacion
      * falsa. */

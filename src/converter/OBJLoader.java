@@ -16,7 +16,7 @@ import org.lwjgl.util.vector.Vector3f;
 public class OBJLoader {
 
     /**
-     * Carga el obj.
+     * Carga el modelo obj.
      *
      * @param fileName nombre del archivo.
      * @return los datos del modelo.

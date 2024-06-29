@@ -21,21 +21,6 @@ import org.lwjgl.util.vector.Vector3f;
  * <p>
  * xGrid y zGrid son coordenadas que determinan en que cuadricula del mundo aparece el terreno. El mundo esta formado por una
  * cuadricula donde cada cuadrado tiene una dimension del tamaño del terreno (SIZE).
- * <h3>¿Que significa normalizar un vector?</h3>
- * En OpenGL, los vectores se usan para representar direcciones o magnitudes en un espacio tridimensional. Normalizar un vector
- * significa hacer que su longitud (o magnitud) sea igual a 1, mientras que su direccion permanece igual.
- * <p>
- * Por ejemplo, si tienes un vector (2, 3, 4), su longitud (o magnitud) seria la raiz cuadrada de la suma de los cuadrados de sus
- * componentes, es decir, √ 2^2 + 3^2 + 4^2 = √29 ≈ 5.39. Para normalizarlo, se divide cada componente del vector por su longitud,
- * es decir, (2/5.39,3/5.39,4/5.39) ≈ (0.371,0.557,0.742).
- * <p>
- * Entonces, despues de normalizar, el vector tiene una longitud de 1, pero mantiene la misma direccion en el espacio
- * tridimensional.
- * <p>
- * En resumen, normalizar un vector en OpenGL implica hacer que su longitud sea 1 mientras se conserva su direccion original. Esto
- * es util para varios calculos en graficos por computadora, como calculos de iluminacion, sombreado y otros efectos visuales.
- * Ademas se asegura que solo represente una direccion pura, para garantizar la consistencia y eficiencia en los calculos, y para
- * asegurar la compatibilidad con algoritmos y bibliotecas especificos.
  */
 
 public class Terrain {
@@ -45,8 +30,8 @@ public class Terrain {
     private static final float MAX_PIXEL_COLOUR = 256 * 256 * 256; // Color maximo de pixeles
 
     private final float x, z;
-    private final RawModel model;
-    private final TerrainTexturePack texturePack;
+    private final RawModel model; // Malla del terreno
+    private final TerrainTexturePack texturePack; // Textura del terreno
     private final TerrainTexture blendMap; // Mapa de mezcla
 
     // Almacena las alturas de cada vertice del terreno
@@ -112,11 +97,14 @@ public class Terrain {
         return answer;
     }
 
-    private RawModel generateTerrain(Loader loader, String heightMap) {
+    /**
+     * Genera un terreno a partir del heightmap.
+     */
+    private RawModel generateTerrain(Loader loader, String heightmap) {
 
         BufferedImage image = null;
         try {
-            image = ImageIO.read(new File("res/" + heightMap + ".png"));
+            image = ImageIO.read(new File("res/" + heightmap + ".png"));
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }

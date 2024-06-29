@@ -44,11 +44,12 @@ public class EntityRenderer {
     public void render(Map<TexturedModel, List<Entity>> entities) {
         // Itera todos los modelos
         for (TexturedModel model : entities.keySet()) {
+            // Separa la preparacion del modelo del renderizado para una mejor optimizacion, evitando preparar 200 objetos utilizando la misma instancia por ejemplo
             prepareTexturedModel(model);
             // Obtiene la lista de entidades de ese modelo texturizado y las itera
             List<Entity> batch = entities.get(model);
             for (Entity entity : batch) {
-                loadModelMatrix(entity);
+                prepareInstance(entity);
                 /* Renderiza triangulos mediante el uso de indices almacenados en un vbo. Como le estamos pasando un buffer de
                  * indices que contiene ints, entonces se especifica con GL_UNSIGNED_INT comenzando desde el principio. */
                 glDrawElements(GL_TRIANGLES, model.getRawModel().getVertexCount(), GL_UNSIGNED_INT, 0);
@@ -59,6 +60,8 @@ public class EntityRenderer {
 
     /**
      * Prepara el modelo texturizado.
+     * <p>
+     * Ahora se llamda una vez por cuadro en lugar de 200 veces como antes.
      *
      * @param model modelo texturizado.
      */
@@ -89,17 +92,17 @@ public class EntityRenderer {
         /* Enlaza una textura a una unidad de textura activa. En OpenGL, las texturas se vinculan a unidades de textura, y esta
          * funcion gestiona esa asociacion. En el uso comun de varias unidades de textura en OpenGL, glBindTexture() facilita
          * cambiar entre texturas al activar diferentes unidades y vincular las texturas correspondientes a esas unidades. Ademas,
-a         * al enlazar texturas, se puede configurar como interactuan con los fragmentos en el shader durante el proceso de
+         * al enlazar texturas, se puede configurar como interactuan con los fragmentos en el shader durante el proceso de
          * renderizado. */
         glBindTexture(GL_TEXTURE_2D, model.getTexture().getID());
     }
 
     /**
-     * Carga el modelo de la matriz.
+     * Prepara la instancia.
      *
      * @param entity entidad.
      */
-    private void loadModelMatrix(Entity entity) {
+    private void prepareInstance(Entity entity) {
         Matrix4f matrix = Maths.createTransformationMatrix(entity.getPosition(), entity.getAngle(), entity.getScale());
         shader.loadTransformationMatrix(matrix);
         shader.loadOffset(entity.getTextureXOffset(), entity.getTextureYOffset());

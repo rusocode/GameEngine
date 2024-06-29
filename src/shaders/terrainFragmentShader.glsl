@@ -24,8 +24,8 @@ void main(void) {
     vec4 blendMapColor = texture(blendMap, pass_textureCoords);
     // Calcula la cantidad a renderizar restando 1 al color total del blendMap, porque queremos que esto se renderice cuando el blenMap este negro
     float backTextureAmount = 1 - (blendMapColor.r + blendMapColor.g + blendMapColor.b);
-    // Multiplica las coordenadas de textura por 40 para colocarlas en forma de tiles dando una mejor definicion
-    vec2 tiledCoords = pass_textureCoords * 40.0;
+    // Multiplica las coordenadas de textura para colocarlas en forma de tiles dando una mejor definicion y evitar que se estire
+    vec2 tiledCoords = pass_textureCoords * 30.0;
     // Muestrea la textura de fondo en las coordenadas de textura del tile y lo multiplica por la cantidad que se debe representar
     vec4 backgroundTextureColor = texture(background, tiledCoords) * backTextureAmount;
 /*  La textura r se representa dependiendo del valor rojo en el blendMap. Se obtenie el color de esa textura y lo
@@ -34,7 +34,7 @@ void main(void) {
     vec4 gTextureColor = texture(g, tiledCoords) * blendMapColor.g;
     vec4 bTextureColor = texture(b, tiledCoords) * blendMapColor.b;
 
-    // Calcula el color total del terreno
+    // Calcula el color total del terreno, que es una mezcla de los tres colores que ya hemos calculado dependiendo del color del blendMap
     vec4 totalColor = backgroundTextureColor + rTextureColor + gTextureColor + bTextureColor;
 
     vec3 unitNormal = normalize(surfaceNormal);

@@ -34,6 +34,7 @@ import org.lwjgl.opengl.GL30;
  * coordenadas de pixeles 2D en la pantalla para que puedan ser renderizadas y este espacio se llama <b>viewport space</b>.
  * <p>
  * <a href="https://es.wikipedia.org/wiki/Campo_de_visi%C3%B3n_(gr%C3%A1ficos)">Viewing frustum</a>
+ * <a href="https://betterexplained.com/articles/vector-calculus-understanding-the-dot-product/">Dot product</a>
  * <a href="http://www.lighthouse3d.com/tutorials/view-frustum-culling/view-frustums-shape/">Frustum culling</a>
  * <a href="https://www.youtube.com/watch?v=eoXn6nwV694">How do computers display 3D on a 2D screen?</a>
  */
@@ -144,6 +145,7 @@ public class Game {
     }
 
     private static void createTextures(Loader loader) {
+        // TODO Por que en vez de usar el nombre especifico de cada textura uso r,g,b?
         TerrainTexture background = new TerrainTexture(loader.loadTexture(terrain_dir + "grass"));
         TerrainTexture r = new TerrainTexture(loader.loadTexture(terrain_dir + "dirt"));
         TerrainTexture g = new TerrainTexture(loader.loadTexture(terrain_dir + "grass_flowers"));

@@ -118,6 +118,7 @@ public class TerrainShader extends ShaderProgram {
     public void connectTextureUnits() {
         loadInt(location_background, 0);
         loadInt(location_r, 1);
+        // Conecta la textura de unidad g que almaceno en la unidad de textura 2 (GL_TEXTURE2)
         loadInt(location_g, 2);
         loadInt(location_b, 3);
         loadInt(location_blendMap, 4);
