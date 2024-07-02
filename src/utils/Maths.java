@@ -62,7 +62,7 @@ public class Maths {
     public static Matrix4f createViewMatrix(Camera camera) {
         Matrix4f matrix = new Matrix4f();
         matrix.setIdentity();
-        Matrix4f.rotate((float) Math.toRadians(camera.getPitch()), new Vector3f(1, 0, 0), matrix, matrix);
+        Matrix4f.rotate((float) Math.toRadians(camera.getXAngle()), new Vector3f(1, 0, 0), matrix, matrix);
         Matrix4f.rotate((float) Math.toRadians(camera.getYaw()), new Vector3f(0, 1, 0), matrix, matrix);
         Vector3f cameraPos = camera.getPosition();
         // Invierte la posicion de la camara para mover todos los objetos en la direccion opuesta

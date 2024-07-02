@@ -7,11 +7,6 @@ import terrains.Terrain;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 
-/**
- * <a href="https://www.youtube.com/watch?v=F21S9Wpi0y8">Basic Trigonometry</a>
- * <a href="https://www.mathsisfun.com/algebra/trigonometry.html">Introduction to Trigonometry</a>
- */
-
 public class Player extends Entity {
 
     private static final float RUN_SPEED = 50; // Velocidad de movimiento
@@ -38,12 +33,11 @@ public class Player extends Entity {
         checkInputs();
         increaseRotation(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0);
         float distance = currentSpeed * DisplayManager.getFrameTimeSeconds(); // Hipotenusa
-        /* Una vez que se conoce la distancia y la rotacion en el eje [y] (angulo) del jugador, se determina la proxima posicion
-         * del jugador en los ejes [x] y [z]. Se calcula el desplazamiento en estas direcciones mediante las funciones seno y
-         * coseno del angulo [y] multiplicadas por la distancia. La nueva posicion del jugador se obtiene sumando estos
-         * desplazamientos a la posicion actual de los ejes [x] y [z]. Este proceso se conoce como "trazar el punto" a lo
-         * largo y hacia arriba. */
-        /* Teniendo la distancia (hipotenusa) y el angulo [y] del triangulo rectangulo (o del player), queremos saber la distancia
+        /* Una vez que se conoce la distancia y el angulo [y] del jugador, se determina la proxima posicion del jugador en los
+         * ejes [x] y [z]. Se calcula el desplazamiento en estas direcciones mediante las funciones seno y coseno del angulo [y]
+         * multiplicadas por la distancia. La nueva posicion del jugador se obtiene sumando estos desplazamientos a la posicion
+         * actual de los ejes [x] y [z]. Este proceso se conoce como "trazar el punto" a lo largo y hacia arriba. */
+        /* Teniendo la distancia (hipotenusa) y el angulo [y] del triangulo rectangulo (del player), queremos saber la distancia
          * en x que va a moverse el player (lado opuesto al angulo [y]). Esto se hace calculando el seno del angulo, ya que el
          * seno es la relacion entre el lado opuesto y la hipotenusa. El resultado del seno es la razon de las longitudes de los
          * lados, por lo que el opuesto es aproximadamente x veces mas largo que la hipotenusa. Ahora sabiendo esto, podemos

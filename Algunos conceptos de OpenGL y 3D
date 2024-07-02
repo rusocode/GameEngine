@@ -149,7 +149,7 @@ lo que tendriamos que hacer seria representar el arbol 100 veces cada vez que se
 arbol en particular.
 
 -Projection Matrix
-La matriz de proyeccion cambia la vista que tenemos actualmente, por lo algo mas realista usando el campo de vision (region cerrada del espacio que delimita los objetos que aparecen representados en la pantalla). Este campo de vision nos brinda una vista mas amplia de los objetos en la distancia y tambien los hace parecer
+La matriz de proyeccion cambia la vista que tenemos actualmente, por algo mas realista usando el campo de vision (region cerrada del espacio que delimita los objetos que aparecen representados en la pantalla). Este campo de vision nos brinda una vista mas amplia de los objetos en la distancia y tambien los hace parecer
 mas pequenios cuando estan mas lejos. Hay algunas variables que tenemos que decidir antes de contruir una matriz de proyeccion, como por ejemplo, necesitamos elegir
 el angulo del campo de vision, field of view angle (FOV) en ingles, que determina que tan amplia es nuestra vision, la distancia del plano cercano (near plane distance) y
 la distancia del plano lejano (far distance), que determina que tan lejos podemos ver en la distancia.
@@ -164,7 +164,7 @@ camara se esta moviendo hacia la izquierda. Asi que para mover todos los objetos
 transformacion. Eso es exactamente lo opuesto a la transformacion de la camara. Esta matriz se conoce como View Matrix y se actualizara cada
 vez que nuestra camara se mueva.
 
--Normal (Iluminacion por pixel)
+-Normal (Per-Pixel Lighting)
 Un vector normal es un vector de direccion que apunta en la direccion exacta a la que mira una superficie. Cada punto de una superficie
 tiene un vector normal y siempre apunta directamente hacia afuera. En otra palabras, es perpendicular a la cara del objeto. Basicamente la 
 normal de una superficie nos dice en que direccion mira y eso es exactamente lo que necesitamos. Teniendo la normal en cada vertice y la
@@ -178,7 +178,7 @@ vectores apuntan en direcciones diferentes. Para medir que tan cerca estan dos v
 Product (producto escalar) de dos vectores. El producto escalar de dos vectores unitarios que apuntan exacatamente en la misma direccion es 1 
 y el producto escalar de dos vectores perpendiculares que apuntan en direcciones totalmente diferentes es 0, y todo lo demas esta en algun 
 punto intermedio, por lo que esto nos da una representacion perfecta de que tan similares son dos vectores y, por lo tanto, una representacion 
-perfecta de que tan brillante debe ser un cierto punto en el objeto.
+perfecta de que tan brillante debe ser un cierto punto en el objeto (ver normal.png).
 En el producto escalar, solo las multiplicaciones en la misma direccion cuentan.
 https://betterexplained.com/articles/vector-calculus-understanding-the-dot-product/
 
@@ -191,7 +191,7 @@ reflejada, entonces el punto tendria un brillo especular muy alto porque la luz 
 en un lugar opuesto, entonces no entra la luz reflejada, y por lo tanto no tendria ninguna iluminacion especular. Finalmente, si la camara
 estuviera apuntando cerca de la luz reflejada, probablemente recibiria algo de luz y, por lo tanto, el punto tendria un poco de iluminacion
 especular, pero depende del material, por lo que tendremos otro atributo llamado shine damping, que determina que tan cerca debe estar la 
-camara de la luz reflejada para ver cualquier cambio en el brillo de la superficie de los objetos.
+camara de la luz reflejada para ver cualquier cambio en el brillo de la superficie de los objetos (ver specular lighting.png).
 Para calcular la iluminacion especular a partir de reflectivity y shine damping necesitamos la direccion de luz entrante, que es el vector
 desde la fuente de luz hasta el punto del objeto. Luego reflejaremos la luz entrante para obtener la direccion de la luz reflejada y tambien
 necesitamos un vector mas que es un vector desde el punto del objeto hasta la camara. El punto tendra la iluminacion especular mas brillante
@@ -204,7 +204,7 @@ Ahora tenemos el vector de direccion de la luz, el vector que apunta a la camara
 ahora es el vector de luz reflejada. GLSL tiene una funcion de reflexion para hacer esto, reflect. Esta funcion toma el vector de la luz entrante
 y la normal de la superficie con la que desea reflejar la luz, y devuelve la direccion de la luz reflejada. Una vez calculada la direccion de
 la luz reflejada (reflectedLightDirection) y el vector normalizado que apunta del objeto a la camara (unitVectorToCamera), podemos hacer el
-calculo del producto escalar para ver cuanta luz reflejada ingresa a la camara.
+calculo del producto escalar para ver cuanta luz reflejada ingresa a la camara (specularFactor).
 
 -Terrain
 El terreno es bastante similar a cualquier otra entidad con un modelo que es una malla de vertices y una textura (ver terreno regular.png), pero la diferencia es que un terreno tiene un disenio de vertices muy regular, lo que hace que sea relativamente facil de generar en el codigo en lugar de tener que crearlo en algun
@@ -224,7 +224,7 @@ simplemente se representaran en su color normal y todo lo que este en el medio s
 el color se volvera cada vez mas similar al color del cielo cuanto mas lejos este el objeto. Hay algunas formas diferentes de calcular cuanta niebla hay en un cierto
 punto del mundo. Introduzcamos una variable llamada visibility que determinara que tan brumoso es un determinado punto. La visibilidad en 1 es completamente visible,
 y un objeto con valor de visibilidad 0 estara completamente cubierto por la niebla y sera renderizado completamente en el color del cielo. Por lo que necesitamos
-un calculo convierta la distancia desde la camara en un valor de visibilidad: visibility = f (distance). Una forma de hacerlo es usando una ecuacion lineal simple,
+un calculo que convierta la distancia desde la camara en un valor de visibilidad: visibility = f (distance). Una forma de hacerlo es usando una ecuacion lineal simple,
 tendria una distancia desde la camara en la que todo no se ve afecetado por la niebla, una distancia despues de la cual todo queda completamente oculto por la niebla
 y un periodo de transicion donde la visibilidad disminuye linealmente con la distancia (ver fog.png). En grafico se veria asi (ver grafico.png). Esta es la forma mas
 facil de calcular la niebla, pero no parece tan realista. Lo que vamos a hacer es que la visibilidad aumente exponecialmente con la distancia (ver grafico2.png), ya que
@@ -252,21 +252,6 @@ de sampler2D texture. Pero, ¿Como hacemos esto con multiples texturas al mismo 
 las texturas en una sola unidad de textura. OpenGL tiene mas de una unidad de textura, por lo que combinamos todas las texturas al mismo tiempo, cada una en su propia
 unidad separada (ver texturas en unidades.png). Finalmente, solo necesitamos decirle a OpenGL que unidad de textura debe usar cada sampler. Para conectar un sampler 2D con una unidad de textura, simplemente cargue el numero de la unidad de textura en ese uniforme 2D del sampler como int, asi que cargamos un cero en el sampler del background para que siempre use la textura en la unidad de textura 0, 1 en el sampler 2D de r, etc. (ver texturas unidas.png).
 
--Player movement
-Imaginemos por un segundo que estamos mirando la escena desde arriba (ver player desde arriba.png). Aqui esta nuestro jugador y esta mirando en esta direccion. Ya hemos
-calculado que tan lejos viajara en este fotograma (dis) y conocemos la rotacion del jugador en el eje y (getAngle().y), pero ahora solo necesitamos averiguar cual
-sera la proxima posicion del jugador despues de moverse esa distancia en esa direccion. Para hacerlo necesitamos averiguar que tan lejos debe moverse el jugador a lo 
-largo del eje x (dx) y a lo largo del eje z (dz). Luego podemos simplemente agregar la traslacion [x] y [z] a la posicion actual [x] y [z] del player y tendremos la nueva 
-posicion del player. Asi que basicamente lo que tenemos aqui es un triangulo rectangulo donde la posicion actual del player esta en la parte inferior izquierda y la 
-siguiente posicion del player esta en la parte superior derecha (ver siguiente posicion.png). Sabemos que el lado mas largo del triangulo, la hipotenusa, tiene una 
-distancia de longitud d y que el angulo en la esquina inferior izquierda es la rotacion [y] del player. Lo que ahora necesitamos calcular es hasta que punto necesita
-moverse el player en la direccion [x] y que tan lejos debe moverse el player en la direccion [z]. Los conceptos basicos de trigonometria nos diran que el seno de 
-theta: sin(0) = x/d, donde theta es la rotacion [y], es igual a x/d y el coseno de theta: cos(0) = z/d, es igual a z/d. Si reorganizamos estas ecuaciones multiplicando
-ambos lados por d, entonces tenemos un par de ecuaciones que nos muestran como calcular el movimiento [x] y [z] del player (ver ecuacion.png). Es importante convertir
-los grados en radianes para poder cacular la ecuacion.
-https://www.mathsisfun.com/algebra/trigonometry.html
-https://www.youtube.com/watch?v=F21S9Wpi0y8
-
 ¿Que significa normalizar un vector?
 En OpenGL, los vectores se usan para representar direcciones o magnitudes en un espacio tridimensional. Normalizar un vector significa hacer que su 
 longitud (o magnitud) sea igual a 1, mientras que su direccion permanece igual.
@@ -279,4 +264,3 @@ direccion pura, para garantizar la consistencia y eficiencia en los calculos, y 
 
 Recursos:
 How Do Computers Display 3D on a 2D Screen? (Perspective Projection) - https://www.youtube.com/watch?v=eoXn6nwV694
-

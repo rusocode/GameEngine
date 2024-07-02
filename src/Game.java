@@ -110,7 +110,7 @@ public class Game {
             // Mueva la camara por debajo del agua para simular el efecto de reflejo en los objetos
             float distance = 2 * (camera.getPosition().y - water.getHeight());
             camera.getPosition().y -= distance;
-            camera.invertPitch();
+            camera.invertXAngle();
             /* Recorta todo lo que esta por encima de la altura del agua. Esto nos deja mucho margen de error y es lo que causa
              * los fallos, especialmente cuando el agua estaba distorcionada. Ahora que hemos amortiguado la distorsion, el error
              * casi ha desaparecido, pero todavia se ve algun pixel ocasional, por lo que en lugar de hacer que el plano de recorte
@@ -119,7 +119,7 @@ public class Game {
             renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, 1, 0, -water.getHeight() + 1f));
             // Vuelve la camara a su posicion original
             camera.getPosition().y += distance;
-            camera.invertPitch();
+            camera.invertXAngle();
 
             // Renderiza las texturas de refraccion
             buffers.bindRefractionFrameBuffer();
